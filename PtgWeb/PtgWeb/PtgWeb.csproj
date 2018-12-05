@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="babylonClient\**" />
+    <Content Remove="babylonClient\**" />
+    <EmbeddedResource Remove="babylonClient\**" />
+    <None Remove="babylonClient\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

@@ -19,10 +19,6 @@ module.exports = {
                 test: /\.ts$/,
                 use: "ts-loader"
             },
-            {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"]
-            }
         ]
     },
     plugins: [
@@ -30,8 +26,5 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./src/index.html"
         }),
-        new MiniCssExtractPlugin({
-            filename: "css/[name].[chunkhash].css"
-        })
     ]
 };

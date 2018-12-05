@@ -1,17 +1,17 @@
-import "./css/main.css";
+import { Scene, Engine, Vector3 } from 'babylonjs';
+import * as signalR from "@aspnet/signalr";
 
-const divMessages: HTMLDivElement = document.querySelector("#divMessages");
-const tbMessage: HTMLInputElement = document.querySelector("#tbMessage");
-const btnSend: HTMLButtonElement = document.querySelector("#btnSend");
-const username = new Date().getTime();
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/heightmap")
+    .build();
 
-tbMessage.addEventListener("keyup", (e: KeyboardEvent) => {
-    if (e.keyCode === 13) {
-        send();
-    }
+connection.start().catch(err => console.log(err));
+
+connection.on("heightmapData", (heightmapData) => {
+    console.log('heightmap data received');
+    console.log(heightmapData);
 });
 
-btnSend.addEventListener("click", send);
-
-function send() {
+function sendPosition(position: Vector3): void {
+    connection.send("positionChanged", position);
 }
