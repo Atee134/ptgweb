@@ -9,7 +9,26 @@ namespace PtgWeb.Hubs
 {
     public class HeightmapHub : Hub
     {
-        double[][] testHeightMap = new double[][] { new[] { 1d, 2d }, new[] { 3d, 4d }, new[] { 5d, 6d }, };
+        private static readonly Random random = new Random();
+
+        private double[][] testHeightMap;
+        private readonly int heightMapWidth = 512;
+        private readonly int heightMapHeight = 512;
+
+        public HeightmapHub()
+        {
+            testHeightMap = new double[heightMapWidth][];
+
+            for (int i = 0; i < heightMapWidth; i++)
+            {
+                testHeightMap[i] = new double[heightMapHeight];
+
+                for (int j = 0; j < heightMapHeight; j++)
+                {
+                    testHeightMap[i][j] = random.NextDouble() * 100;
+                }
+            }
+        }
 
         public async Task PositionChanged(Vector3 position)
         {
