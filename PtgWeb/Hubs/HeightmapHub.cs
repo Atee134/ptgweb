@@ -12,8 +12,8 @@ namespace PtgWeb.Hubs
         private static readonly Random random = new Random();
 
         private double[][] testHeightMap;
-        private readonly int heightMapWidth = 512;
-        private readonly int heightMapHeight = 512;
+        private readonly int heightMapWidth = 128;
+        private readonly int heightMapHeight = 128;
 
         public HeightmapHub()
         {
