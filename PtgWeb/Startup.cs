@@ -17,6 +17,7 @@ namespace PtgWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,11 +30,12 @@ namespace PtgWeb
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
             app.UseSignalR(options =>
             {
                 options.MapHub<HeightmapHub>("/heightmap");
             });
+
+            app.UseMvc();
         }
     }
 }
