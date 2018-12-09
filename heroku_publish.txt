@@ -1,3 +1,4 @@
 docker build -t ptgweb .
+heroku container:login
 heroku container:push web --app ptgweb
 heroku container:release web --app ptgweb

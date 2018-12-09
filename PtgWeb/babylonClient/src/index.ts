@@ -1,6 +1,8 @@
 import { Scene, Engine, Vector3, UniversalCamera, Color3, Mesh } from 'babylonjs';
 import * as signalR from "@aspnet/signalr";
 
+const baseApiUrl = 'http://ptgweb.herokuapp.com/api/';
+
 document.addEventListener('DOMContentLoaded', startGame);
 
 const resolution = { width: 1920, height: 1080 };
@@ -31,16 +33,17 @@ function startGame() {
 
     scene = createScene();
 
+    var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap', 100, 100, 100, 0, 1, scene);
+    ground.checkCollisions = true;
+
     engine.runRenderLoop(renderLoop);
 }
 
 function createScene(): Scene {
     scene = new Scene(engine);
-    scene.gravity = new Vector3(0, -1, 0);
+    scene.gravity = new Vector3(0, -0.2, 0);
     scene.collisionsEnabled = true;
 
-    var ground = Mesh.CreateGround('myGround', 100, 100, 10, scene);
-    ground.checkCollisions = true;
     camera = createFreeCamera(scene);
     var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
     light.intensity = 0.5;
