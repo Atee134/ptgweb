@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace PtgWeb.Controllers
 {
@@ -15,8 +13,8 @@ namespace PtgWeb.Controllers
         private static readonly Random random = new Random();
 
         private byte[][] testHeightMap;
-        private readonly int heightMapWidth = 128;
-        private readonly int heightMapHeight = 128;
+        private readonly int heightMapWidth = 512;
+        private readonly int heightMapHeight = 512;
 
         public HeightmapController()
         {
@@ -32,45 +30,25 @@ namespace PtgWeb.Controllers
         [HttpGet]
         public IActionResult GetHeightMap()
         {
-            var bmp = new Bitmap(heightMapWidth, heightMapHeight);
-
-            // Lock the bitmap's bits.  
-            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            System.Drawing.Imaging.BitmapData bmpData =
-                bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
-                bmp.PixelFormat);
-
-            // Get the address of the first line.
-            IntPtr ptr = bmpData.Scan0;
-
-            // Declare an array to hold the bytes of the bitmap.
-            int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-            byte[] rgbValues = new byte[bytes];
-
-            // Copy the RGB values into the array.
-            System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
-
-            int counter = 0;
-
-            for (int i = 0; i < heightMapWidth; i++)
+            byte[] fileContent;
+            using (var stream = new MemoryStream())
             {
-                for (int j = 0; j < heightMapHeight; j++)
+                var bitmap = new Bitmap(heightMapWidth, heightMapHeight);
+
+                for (int i = 0; i < heightMapWidth; i++)
                 {
-                    for (int k = 0; k < 3; k++)
+                    for (int j = 0; j < heightMapHeight; j++)
                     {
-                        rgbValues[counter++] = testHeightMap[i][j];
+                        var value = testHeightMap[i][j];
+                        bitmap.SetPixel(i, j, Color.FromArgb(value, value, value));
                     }
                 }
+
+                bitmap.Save(stream, ImageFormat.Bmp);
+                fileContent = stream.ToArray();
             }
-            // Copy the RGB values back to the bitmap
-            System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, bytes);
 
-            // Unlock the bits.
-            bmp.UnlockBits(bmpData);
-
-            bmp.Save("test134.bmp");
-
-            return Ok();
+            return File(fileContent, "image/bmp");
         }
     }
 }
