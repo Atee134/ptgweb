@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+using Ptg.HeightmapGenerator.Interfaces;
 
 namespace PtgWeb.Controllers
 {
@@ -10,45 +7,29 @@ namespace PtgWeb.Controllers
     [ApiController]
     public class HeightmapController : ControllerBase
     {
-        private static readonly Random random = new Random();
+        private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
+        private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
 
-        private byte[][] testHeightMap;
-        private readonly int heightMapWidth = 512;
-        private readonly int heightMapHeight = 512;
-
-        public HeightmapController()
+        public HeightmapController(IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator)
         {
-            testHeightMap = new byte[heightMapWidth][];
-
-            for (int i = 0; i < heightMapWidth; i++)
-            {
-                testHeightMap[i] = new byte[heightMapHeight];
-                random.NextBytes(testHeightMap[i]);
-            }
+            this.randomHeightmapGenerator = randomHeightmapGenerator;
+            this.faultHeightmapGenerator = faultHeightmapGenerator;
         }
 
-        [HttpGet]
-        public IActionResult GetHeightMap()
+        [HttpGet("random")]
+        public IActionResult GetRandomHeightmap(int width, int height)
         {
-            byte[] fileContent;
-            using (var stream = new MemoryStream())
-            {
-                var bitmap = new Bitmap(heightMapWidth, heightMapHeight);
+            var result = randomHeightmapGenerator.GenerateHeightmap(width, height);
 
-                for (int i = 0; i < heightMapWidth; i++)
-                {
-                    for (int j = 0; j < heightMapHeight; j++)
-                    {
-                        var value = testHeightMap[i][j];
-                        bitmap.SetPixel(i, j, Color.FromArgb(value, value, value));
-                    }
-                }
+            return File(result.Heightmap, "image/bmp");
+        }
 
-                bitmap.Save(stream, ImageFormat.Bmp);
-                fileContent = stream.ToArray();
-            }
+        [HttpGet("fault")]
+        public IActionResult GetFaultHeightmap(int width, int height)
+        {
+            var result = faultHeightmapGenerator.GenerateHeightmap(width, height);
 
-            return File(fileContent, "image/bmp");
+            return File(result.Heightmap, "image/bmp");
         }
     }
 }

@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtgWeb", "PtgWeb\PtgWeb.csproj", "{BD5EB33B-B82D-4FCC-A6B5-B489977F36F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtgWeb", "PtgWeb\PtgWeb.csproj", "{BD5EB33B-B82D-4FCC-A6B5-B489977F36F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ptg.Services", "Ptg.Services\Ptg.Services.csproj", "{1AFAC685-2578-44A6-95B9-200AB7C5A358}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ptg.HeightmapGenerator", "Ptg.HeightmapGenerator\Ptg.HeightmapGenerator.csproj", "{CE81FC81-C65E-4BEB-AA87-C038F8944815}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ptg.Common", "Ptg.Common\Ptg.Common.csproj", "{7FD31DE6-75D2-49EE-863C-37DB2D2D01C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{BD5EB33B-B82D-4FCC-A6B5-B489977F36F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD5EB33B-B82D-4FCC-A6B5-B489977F36F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD5EB33B-B82D-4FCC-A6B5-B489977F36F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AFAC685-2578-44A6-95B9-200AB7C5A358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AFAC685-2578-44A6-95B9-200AB7C5A358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AFAC685-2578-44A6-95B9-200AB7C5A358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AFAC685-2578-44A6-95B9-200AB7C5A358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE81FC81-C65E-4BEB-AA87-C038F8944815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE81FC81-C65E-4BEB-AA87-C038F8944815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE81FC81-C65E-4BEB-AA87-C038F8944815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE81FC81-C65E-4BEB-AA87-C038F8944815}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FD31DE6-75D2-49EE-863C-37DB2D2D01C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FD31DE6-75D2-49EE-863C-37DB2D2D01C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FD31DE6-75D2-49EE-863C-37DB2D2D01C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FD31DE6-75D2-49EE-863C-37DB2D2D01C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

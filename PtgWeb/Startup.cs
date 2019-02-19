@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Ptg.HeightmapGenerator.HeightmapGenerators;
+using Ptg.HeightmapGenerator.Interfaces;
 using PtgWeb.Hubs;
 
 namespace PtgWeb
@@ -24,7 +26,10 @@ namespace PtgWeb
             }));
 
             services.AddSignalR();
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+
+            services.AddScoped<IRandomHeightmapGenerator, RandomHeightmapGenerator>();
+            services.AddScoped<IFaultHeightmapGenerator, FaultHeightmapGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
