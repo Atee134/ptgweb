@@ -1,7 +1,7 @@
 import { Scene, Engine, Vector3, UniversalCamera, Color3, Mesh } from 'babylonjs';
 import * as signalR from "@aspnet/signalr";
 
-const baseApiUrl = 'http://ptgweb.herokuapp.com/api/';
+const baseApiUrl = 'http://localhost:5000/api/';
 
 document.addEventListener('DOMContentLoaded', startGame);
 
@@ -33,7 +33,7 @@ function startGame() {
 
     scene = createScene();
 
-    var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap', 100, 100, 100, 0, 1, scene);
+    var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/fault?width=256&height=256&iterationCount=200&offsetPerIteration=5', 256, 256, 150, 0, 15, scene);
     ground.checkCollisions = true;
 
     engine.runRenderLoop(renderLoop);

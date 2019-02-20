@@ -5,6 +5,6 @@
         public int Width { get; set; }
         public int Height { get; set; }
         public int IterationCount { get; set; }
-        public int OffsetInOneIteration { get; set; }
+        public int OffsetPerIteration { get; set; }
     }
 }

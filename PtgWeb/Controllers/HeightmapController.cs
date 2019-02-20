@@ -26,9 +26,9 @@ namespace PtgWeb.Controllers
         }
 
         [HttpGet("fault")]
-        public IActionResult GetFaultHeightmap(FaultHeightmapRequestDto requestDto)
+        public IActionResult GetFaultHeightmap([FromQuery] FaultHeightmapRequestDto requestDto)
         {
-            var result = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetInOneIteration);
+            var result = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
 
             return File(result.Heightmap, "image/bmp");
         }

@@ -18,14 +18,14 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 
         private readonly static Random random = new Random();
 
-        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, int offSetInOneIteration)
+        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, int offsetPerIteration)
         {
             byte[,] heightmapData = InitHeightmapData(width, height);
 
             for (int i = 0; i < iterationCount; i++)
             {
                 (Point start, Point end) linePoints = GenerateLinePoints(width, height);
-                RecalculateHeightmapData(heightmapData, offSetInOneIteration, linePoints.start, linePoints.end);
+                RecalculateHeightmapData(heightmapData, offsetPerIteration, linePoints.start, linePoints.end);
             }
 
             byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
