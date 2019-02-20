@@ -79,34 +79,50 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 
         private (Point start, Point end) GenerateLinePoints(int width, int height)
         {
-            //Side startingSide = (Side)random.Next(0, 4);
-            bool horizontal = random.Next(0, 2) == 1 ? true : false;
+            Side startSide = (Side)random.Next(0, 4);
+            bool oppositeSide = random.Next(0, 2) == 1 ? true : false;
 
+            Side endSide;
 
-
-            Point lineStart;
-            Point lineEnd;
-
-            if (horizontal)
+            switch (startSide)
             {
-                lineStart = new Point(0, random.Next(0, height));
-                lineEnd = new Point(width - 1, random.Next(0, height));
+                case Side.Left:
+                    endSide = oppositeSide ? Side.Right : random.Next(0, 2) == 1 ? Side.Top : Side.Bottom;
+                    break;
+                case Side.Top:
+                    endSide = oppositeSide ? Side.Bottom : random.Next(0, 2) == 1 ? Side.Left : Side.Right;
+                    break;
+                case Side.Right:
+                    endSide = oppositeSide ? Side.Left : random.Next(0, 2) == 1 ? Side.Top : Side.Bottom;
+                    break;
+                case Side.Bottom:
+                    endSide = oppositeSide ? Side.Top : random.Next(0, 2) == 1 ? Side.Left : Side.Right;
+                    break;
+                default:
+                    endSide = Side.Left;
+                    break;
             }
-            else
-            {
-                lineStart = new Point(random.Next(0, width), 0);
-                lineEnd = new Point(random.Next(0, width), height - 1);
-            }
 
-            bool positiveDirection = random.Next(0, 2) == 1 ? true : false;
+            Point lineStart = GenerateRandomPoint(startSide, width, height);
+            Point lineEnd = GenerateRandomPoint(endSide, width, height);
 
-            if (positiveDirection)
+            return (start: lineStart, end: lineEnd);
+        }
+
+        private Point GenerateRandomPoint(Side side, int width, int height)
+        {
+            switch (side)
             {
-                return (start: lineStart, end: lineEnd);
-            }
-            else
-            {
-                return (start: lineEnd, end: lineStart);
+                case Side.Left:
+                    return new Point(0, random.Next(0, height));
+                case Side.Top:
+                    return new Point(random.Next(0, width), height - 1);
+                case Side.Right:
+                    return new Point(width - 1, random.Next(0, height));
+                case Side.Bottom:
+                    return new Point(random.Next(0, width), 0);
+                default:
+                    return new Point();
             }
         }
 
