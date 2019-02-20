@@ -1,26 +1,34 @@
-﻿using Ptg.Common.Dtos;
+﻿using Ptg.Common;
+using Ptg.Common.Dtos;
 using Ptg.HeightmapGenerator.Interfaces;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 
 namespace Ptg.HeightmapGenerator.HeightmapGenerators
 {
     public class FaultHeightmapGenerator : IFaultHeightmapGenerator
     {
-        private readonly static Random random = new Random();
-        private Point lineStart;
-        private Point lineEnd;
-
-        public HeightmapDto GenerateHeightmap(int width, int height)
+        private enum Side
         {
-            GenerateLinePoints(width, height);
+            Left,
+            Top,
+            Right,
+            Bottom
+        }
 
-            byte[,] heightMapData = Generate(width, height);
+        private readonly static Random random = new Random();
 
-            //TODO move WriteToByteArray to a common helper method
-            byte[] heightmapByteArray = WriteToByteArray(heightMapData);
+        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, int offSetInOneIteration)
+        {
+            byte[,] heightmapData = InitHeightmapData(width, height);
+
+            for (int i = 0; i < iterationCount; i++)
+            {
+                (Point start, Point end) linePoints = GenerateLinePoints(width, height);
+                RecalculateHeightmapData(heightmapData, offSetInOneIteration, linePoints.start, linePoints.end);
+            }
+
+            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
 
             return new HeightmapDto
             {
@@ -30,26 +38,56 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             };
         }
 
-        private byte[,] Generate(int width, int height)
+        private void RecalculateHeightmapData(byte[,] heightmapData, int offset, Point lineStart, Point lineEnd)
         {
-            byte[,] heightMapData = new byte[width, height];
+            for (int x = 0; x < heightmapData.GetLength(0); x++)
+            {
+                for (int y = 0; y < heightmapData.GetLength(1); y++)
+                {
+                    byte currentHeightmapValue = heightmapData[x, y];
+
+                    if (IsLeft(lineStart, lineEnd, x, y))
+                    {
+                        if ((int)currentHeightmapValue + offset > byte.MaxValue) currentHeightmapValue = byte.MaxValue;
+                        else currentHeightmapValue += (byte)offset;
+                    }
+                    else
+                    {
+                        if ((int)currentHeightmapValue - offset < byte.MinValue) currentHeightmapValue = byte.MinValue;
+                        else currentHeightmapValue -= (byte)offset;
+                    }
+
+                    heightmapData[x, y] = currentHeightmapValue;
+                }
+            }
+        }
+
+        private byte[,] InitHeightmapData(int width, int height)
+        {
+            byte[,] heightmapData = new byte[width, height];
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    heightMapData[x, y] = isLeft(x, y) ? (byte)0 : (byte)255;
+                    heightmapData[x, y] = 127;
                 }
             }
 
-            return heightMapData;
+            return heightmapData;
         }
 
-        private void GenerateLinePoints(int width, int height)
+        private (Point start, Point end) GenerateLinePoints(int width, int height)
         {
-            bool leftToRight = random.Next(0, 2) == 1 ? true : false;
+            //Side startingSide = (Side)random.Next(0, 4);
+            bool horizontal = random.Next(0, 2) == 1 ? true : false;
 
-            if (leftToRight)
+
+
+            Point lineStart;
+            Point lineEnd;
+
+            if (horizontal)
             {
                 lineStart = new Point(0, random.Next(0, height));
                 lineEnd = new Point(width - 1, random.Next(0, height));
@@ -59,36 +97,22 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 lineStart = new Point(random.Next(0, width), 0);
                 lineEnd = new Point(random.Next(0, width), height - 1);
             }
+
+            bool positiveDirection = random.Next(0, 2) == 1 ? true : false;
+
+            if (positiveDirection)
+            {
+                return (start: lineStart, end: lineEnd);
+            }
+            else
+            {
+                return (start: lineEnd, end: lineStart);
+            }
         }
 
-        private bool isLeft(int x, int y)
+        private bool IsLeft(Point lineStart, Point lineEnd, int x, int y)
         {
             return ((lineEnd.X - lineStart.X) * (y - lineStart.Y) - (lineEnd.Y - lineStart.Y) * (x - lineStart.X)) > 0;
-        }
-
-        private byte[] WriteToByteArray(byte[,] heightMapdata)
-        {
-            byte[] content;
-            int width = heightMapdata.GetLength(0);
-            int height = heightMapdata.GetLength(1);
-            using (var stream = new MemoryStream())
-            {
-                var bitmap = new Bitmap(width, height); // TODO put this back here PixelFormat.Format16bppGrayScale);
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var value = heightMapdata[x, y];
-                        bitmap.SetPixel(x, y, Color.FromArgb(value, value, value)); // TODO with 16bit grayscale format this throws exception, use lockbits instead of setpixel anyway
-                    }
-                }
-
-                bitmap.Save(stream, ImageFormat.Bmp);
-                content = stream.ToArray();
-            }
-
-            return content;
         }
     }
 }

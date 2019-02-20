@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ptg.HeightmapGenerator.Interfaces;
+using PtgWeb.Dtos.Request;
 
 namespace PtgWeb.Controllers
 {
@@ -25,9 +26,9 @@ namespace PtgWeb.Controllers
         }
 
         [HttpGet("fault")]
-        public IActionResult GetFaultHeightmap(int width, int height)
+        public IActionResult GetFaultHeightmap(FaultHeightmapRequestDto requestDto)
         {
-            var result = faultHeightmapGenerator.GenerateHeightmap(width, height);
+            var result = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetInOneIteration);
 
             return File(result.Heightmap, "image/bmp");
         }

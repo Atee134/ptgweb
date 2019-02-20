@@ -4,6 +4,6 @@ namespace Ptg.HeightmapGenerator.Interfaces
 {
     public interface IFaultHeightmapGenerator
     {
-        HeightmapDto GenerateHeightmap(int width, int height);
+        HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, int offSetInOneIteration);
     }
 }
