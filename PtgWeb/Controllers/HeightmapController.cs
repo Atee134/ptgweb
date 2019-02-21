@@ -10,11 +10,13 @@ namespace PtgWeb.Controllers
     {
         private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
+        private readonly IDiamondSquareGenerator diamondSquareGenerator;
 
-        public HeightmapController(IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator)
+        public HeightmapController(IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
         {
             this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
+            this.diamondSquareGenerator = diamondSquareGenerator;
         }
 
         [HttpGet("random")]
@@ -29,6 +31,14 @@ namespace PtgWeb.Controllers
         public IActionResult GetFaultHeightmap([FromQuery] FaultHeightmapRequestDto requestDto)
         {
             var result = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
+
+            return File(result.Heightmap, "image/bmp");
+        }
+
+        [HttpGet("diamondSquare")]
+        public IActionResult GetDiamondSquareHeightmap([FromQuery] FaultHeightmapRequestDto requestDto)
+        {
+            var result = diamondSquareGenerator.Generate(257, 257, 100, 50);
 
             return File(result.Heightmap, "image/bmp");
         }

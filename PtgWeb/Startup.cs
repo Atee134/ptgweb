@@ -30,6 +30,7 @@ namespace PtgWeb
 
             services.AddScoped<IRandomHeightmapGenerator, RandomHeightmapGenerator>();
             services.AddScoped<IFaultHeightmapGenerator, FaultHeightmapGenerator>();
+            services.AddScoped<IDiamondSquareGenerator, DiamondSquareGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
