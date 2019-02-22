@@ -9,73 +9,68 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
     {
         private static readonly Random random = new Random();
 
-        public DiamondSquareGenerator()
+        public HeightmapDto Generate(int size, float offsetRange, float offsetReductionRate)
         {
-
-        }
-
-        public HeightmapDto Generate(int width, int height, byte initialCornerValue, float offsetRange)
-        {
-            //  let A = a width*height 2D array of 0s
-            //  pre - seed four corners of A with a value
-            byte[,] heightmapData = GenerateInitialHeightmapData(width, height, initialCornerValue);
-
-            //  let step_size = width - 1
-            //  let r = a random number within a range
-
-            int stepSize = width - 1;
-
-
-            //  while step_size > 1:
-            //  loop over A
-            //  do diamond_step for each square in A
-
-            //  loop over A
-            //  do square_step for each diamond in A
-
-            //  step_size /= 2
-            //  reduce random range for r
-
-            int offset;
+            float[,] heightmapData = GenerateInitialHeightmapData(size);
+            int stepSize = size - 1;
 
             while (stepSize > 1)
             {
-                for (int x = stepSize / 2; x < width - 1; x += stepSize)
+                float offset;
+
+                for (int x = stepSize / 2; x < size - 1; x += stepSize)
                 {
-                    for (int y = stepSize / 2; y < height - 1; y += stepSize)
+                    for (int y = stepSize / 2; y < size - 1; y += stepSize)
                     {
-                        offset = random.Next((int)(-offsetRange / 2), (int)offsetRange);
+                        offset = GenerateOffset(offsetRange);
                         DiamondStep(x, y, heightmapData, stepSize, offset);
                     }
                 }
 
                 stepSize /= 2;
 
-                for (int x = 0; x < width - 1; x += stepSize)
+                for (int x = 0; x < size; x += stepSize)
                 {
-                    for (int y = 0; y < height - 1; y += stepSize)
+                    for (int y = 0; y < size; y += stepSize)
                     {
-                        offset = random.Next((int)(-offsetRange / 2), (int)offsetRange);
+                        offset = GenerateOffset(offsetRange);
                         SquareStep(x, y, heightmapData, stepSize, offset);
                     }
                 }
 
-                offsetRange *= 0.7f;
+                offsetRange *= offsetReductionRate;
             }
 
-            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
+            byte[,] heightmapByteData = ConverToByteArray(heightmapData);
+
+            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapByteData);
 
             return new HeightmapDto
             {
-                Width = width,
-                Height = height,
+                Width = size,
+                Height = size,
                 Heightmap = heightmapByteArray
             };
         }
 
-        private byte[,] GenerateInitialHeightmapData(int width, int height, byte initialCornerValue)
+        private byte[,] ConverToByteArray(float[,] heightmapFloatData)
         {
-            byte[,] heightmapDataArray = new byte[width, height];
+            byte[,] heightmapByteData = new byte[heightmapFloatData.GetLength(0), heightmapFloatData.GetLength(1)];
+
+            for (int x = 0; x < heightmapByteData.GetLength(0); x++)
+            {
+                for (int y = 0; y < heightmapByteData.GetLength(1); y++)
+                {
+                    heightmapByteData[x, y] = (byte)heightmapFloatData[x, y];
+                }
+            }
+
+            return heightmapByteData;
+        }
+
+        private float[,] GenerateInitialHeightmapData(int size)
+        {
+            float[,] heightmapDataArray = new float[size, size];
 
             for (int x = 0; x < heightmapDataArray.GetLength(0); x++)
             {
@@ -85,63 +80,67 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 }
             }
 
-            heightmapDataArray[0, 0] = 240;
-            heightmapDataArray[0, height - 1] = 60;
-            heightmapDataArray[width - 1, 0] = 120;
-            heightmapDataArray[width - 1, height - 1] = 50;
+            heightmapDataArray[0, 0] = random.Next(0, 256);
+            heightmapDataArray[0, size - 1] = random.Next(0, 256);
+            heightmapDataArray[size - 1, 0] = random.Next(0, 256);
+            heightmapDataArray[size - 1, size - 1] = random.Next(0, 256);
 
             return heightmapDataArray;
         }
 
-        private void DiamondStep(int x, int y, byte[,] heightmapDataArray, int stepSize, int offset)
+        private float GenerateOffset(float offsetRange)
+        {
+            return Convert.ToSingle(random.NextDouble() * offsetRange * 2 - offsetRange);
+        }
+
+        private void DiamondStep(int x, int y, float[,] heightmapDataArray, int stepSize, float offset)
         {
             if (heightmapDataArray[x, y] != 0) return;
 
-            stepSize /= 2;
+            int halfStep = stepSize / 2;
 
-            int topLeft = heightmapDataArray[x - stepSize, y + stepSize];
-            int topRight = heightmapDataArray[x + stepSize, y + stepSize];
-            int bottomLeft = heightmapDataArray[x - stepSize, y - stepSize];
-            int bottomRight = heightmapDataArray[x + stepSize, y - stepSize];
+            float topLeft = heightmapDataArray[x - halfStep, y + halfStep];
+            float topRight = heightmapDataArray[x + halfStep, y + halfStep];
+            float bottomLeft = heightmapDataArray[x - halfStep, y - halfStep];
+            float bottomRight = heightmapDataArray[x + halfStep, y - halfStep];
 
-            int value = (((topLeft + topRight + bottomLeft + bottomRight) / 4) + offset);
+            float value = (topLeft + topRight + bottomLeft + bottomRight) / 4 + offset;
 
             if (value > byte.MaxValue) value = byte.MaxValue;
             else if (value < byte.MinValue) value = byte.MinValue;
 
-            heightmapDataArray[x, y] = (byte)value;
+            heightmapDataArray[x, y] = value;
         }
 
-        private void SquareStep(int x, int y, byte[,] heightmapDataArray, int stepSize, int offset)
+        private void SquareStep(int x, int y, float[,] heightmapDataArray, int stepSize, float offset)
         {
             if (heightmapDataArray[x, y] != 0) return;
 
-            int width = heightmapDataArray.GetLength(0);
-            int height = heightmapDataArray.GetLength(1);
+            int size = heightmapDataArray.GetLength(0);
 
-            int left;
-            int top;
-            int right;
-            int bottom;
+            float left;
+            float top;
+            float right;
+            float bottom;
 
             if (x - stepSize >= 0) left = heightmapDataArray[x - stepSize, y];
             else left = heightmapDataArray[x + stepSize, y];
 
-            if (x + stepSize <= width - 1) right = heightmapDataArray[x + stepSize, y];
+            if (x + stepSize <= size - 1) right = heightmapDataArray[x + stepSize, y];
             else right = heightmapDataArray[x - stepSize, y];
 
             if (y - stepSize >= 0) bottom = heightmapDataArray[x, y - stepSize];
             else bottom = heightmapDataArray[x, y + stepSize];
 
-            if (y + stepSize <= height - 1) top = heightmapDataArray[x, y + stepSize];
+            if (y + stepSize <= size - 1) top = heightmapDataArray[x, y + stepSize];
             else top = heightmapDataArray[x, y - stepSize];
 
-            byte value = (byte)(((left + top + right + bottom) / 4) + offset);
+            float value = (left + top + right + bottom) / 4 + offset;
 
             if (value > byte.MaxValue) value = byte.MaxValue;
             else if (value < byte.MinValue) value = byte.MinValue;
 
-            heightmapDataArray[x, y] = (byte)value;
+            heightmapDataArray[x, y] = value;
         }
     }
 }

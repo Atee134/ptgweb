@@ -36,9 +36,9 @@ namespace PtgWeb.Controllers
         }
 
         [HttpGet("diamondSquare")]
-        public IActionResult GetDiamondSquareHeightmap([FromQuery] FaultHeightmapRequestDto requestDto)
+        public IActionResult GetDiamondSquareHeightmap([FromQuery] DiamondSquareHeightmapRequestDto requestDto)
         {
-            var result = diamondSquareGenerator.Generate(257, 257, 100, 50);
+            var result = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
 
             return File(result.Heightmap, "image/bmp");
         }
