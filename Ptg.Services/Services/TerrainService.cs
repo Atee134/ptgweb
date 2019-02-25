@@ -64,7 +64,7 @@ namespace Ptg.Services.Services
 
         private void GenerateSplatmap(HeightmapDto heightmapDto)
         {
-            var splatmap = heightBasedSplatmapGenerator.Generate(heightmapDto, 0.4f, 0.2f, 0);
+            var splatmap = heightBasedSplatmapGenerator.Generate(heightmapDto, 0.3f, 0.17f, 0.16f);
             splatmap.Id = heightmapDto.Id;
 
             repository.AddSplatmap(splatmap);

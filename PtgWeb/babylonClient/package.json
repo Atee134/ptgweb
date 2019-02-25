@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode=development --watch",
-    "build": "webpack --mode=production",
-    "publish": "npm run build && dotnet publish -c Release"
+    "build": "webpack --mode=production"
   },
   "keywords": [],
   "author": "",

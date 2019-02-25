@@ -1,7 +1,8 @@
 import * as signalR from "@aspnet/signalr";
-import { Engine, Scene, UniversalCamera, StandardMaterial, Texture, Mesh, Vector3, Color4, DirectionalLight, Color3, TerrainMaterial } from 'babylonjs';
+import { Engine, Scene, UniversalCamera, Texture, Mesh, Vector3, Color4, DirectionalLight, Color3, TerrainMaterial } from 'babylonjs';
 import 'babylonjs-materials';
 
+//const baseApiUrl = 'http://ptgweb.herokuapp.com/api/';
 const baseApiUrl = 'http://localhost:5000/api/';
 
 document.addEventListener('DOMContentLoaded', startGame);

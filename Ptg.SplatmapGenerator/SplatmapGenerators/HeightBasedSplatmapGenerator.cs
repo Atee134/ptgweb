@@ -8,9 +8,9 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
 {
     public class HeightBasedSplatmapGenerator : IHeightBasedSplatmapGenerator
     {
-        public SplatmapDto Generate(HeightmapDto heightmapDto, float lowPercent, float highPercent, float transitionPercent)
+        public SplatmapDto Generate(HeightmapDto heightmapDto, float lowPercent, float midPercent, float highPercent)
         {
-            float midPercent = 1 - (lowPercent + highPercent);
+            float transitionPercent = 1 - (lowPercent + midPercent + highPercent);
 
             var allValues = heightmapDto.HeightmapFloatArray.Cast<float>();
             float minHeight = allValues.Min();
@@ -21,11 +21,19 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
             float lowMinValue = minHeight;
             float lowMaxValue = minHeight + totalValueRange * lowPercent;
 
-            float midMinValue = lowMaxValue;
-            float midMaxValue = lowMaxValue + totalValueRange * midPercent;
+            float lowMidTransitionMinValue = lowMaxValue;
+            float lowMidTransitionMaxValue = lowMaxValue + totalValueRange * transitionPercent / 2;
+            float lowMidTransitionRange = lowMidTransitionMaxValue - lowMidTransitionMinValue;
 
-            float highMinValue = midMaxValue;
-            float highMaxValue = midMaxValue + totalValueRange * highPercent;
+            float midMinValue = lowMidTransitionMaxValue;
+            float midMaxValue = lowMidTransitionMaxValue + totalValueRange * midPercent;
+
+            float midHighTransitionMinValue = midMaxValue;
+            float midHighTransitionMaxValue = midMaxValue + totalValueRange * transitionPercent / 2;
+            float midHighTransitionRange = midHighTransitionMaxValue - midHighTransitionMinValue;
+
+            float highMinValue = midHighTransitionMaxValue;
+            float highMaxValue = midHighTransitionMaxValue + totalValueRange * highPercent;
 
             Color[,] colors = new Color[heightmapDto.Width, heightmapDto.Height];
 
@@ -37,15 +45,29 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
 
                     if (value >= lowMinValue && value < lowMaxValue)
                     {
-                        colors[x, y] = Color.Red;
+                        colors[x, y] = Color.FromArgb(255, 0, 0);
+                    }
+                    else if (value >= lowMidTransitionMinValue && value < lowMidTransitionMaxValue)
+                    {
+                        float currentPercent = (value - lowMidTransitionMinValue) / lowMidTransitionRange;
+                        int green = (int)(255 * currentPercent);
+                        int red = 255 - green;
+                        colors[x, y] = Color.FromArgb(red, green, 0);
                     }
                     else if (value >= midMinValue && value < midMaxValue)
                     {
-                        colors[x, y] = Color.Green;
+                        colors[x, y] = Color.FromArgb(0, 255, 0);
+                    }
+                    else if (value >= midHighTransitionMinValue && value < midHighTransitionMaxValue)
+                    {
+                        float currentPercent = (value - midHighTransitionMinValue) / midHighTransitionRange;
+                        int blue = (int)(255 * currentPercent);
+                        int green = 255 - blue;
+                        colors[x, y] = Color.FromArgb(0, green, blue);
                     }
                     else if (value >= highMinValue)
                     {
-                        colors[x, y] = Color.Blue;
+                        colors[x, y] = Color.FromArgb(0, 0, 255);
                     }
                 }
             }
