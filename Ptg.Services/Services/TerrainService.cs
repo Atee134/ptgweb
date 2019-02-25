@@ -53,6 +53,7 @@ namespace Ptg.Services.Services
             heightmapDto.Id = id;
 
             repository.AddHeightmap(heightmapDto);
+            GenerateSplatmap(heightmapDto);
 
             repository.SaveChanges();
 
@@ -61,10 +62,10 @@ namespace Ptg.Services.Services
 
         private void GenerateSplatmap(HeightmapDto heightmapDto)
         {
-            //var splatmap = randomSplatmapGenerator.Generate(heightmap);
+            var splatmap = randomSplatmapGenerator.Generate(heightmapDto);
+            splatmap.Id = heightmapDto.Id;
 
-            //repository.AddSplatmap(splatmap);
+            repository.AddSplatmap(splatmap);
         }
-
     }
 }

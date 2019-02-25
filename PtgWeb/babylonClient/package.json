@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.0",
-    "babylonjs": "^3.3.0"
+    "babylonjs": "^3.3.0",
+    "babylonjs-materials": "^3.3.0"
   }
 }

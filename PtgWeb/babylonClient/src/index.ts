@@ -1,5 +1,6 @@
 import * as signalR from "@aspnet/signalr";
-import { Engine, Scene, UniversalCamera, StandardMaterial, Texture, Mesh, Vector3, Color4, DirectionalLight } from 'babylonjs';
+import { Engine, Scene, UniversalCamera, StandardMaterial, Texture, Mesh, Vector3, Color4, DirectionalLight, Color3, TerrainMaterial } from 'babylonjs';
+import 'babylonjs-materials';
 
 const baseApiUrl = 'http://localhost:5000/api/';
 
@@ -33,14 +34,6 @@ function startGame() {
 
     scene = createScene();
 
-    // Ground
-    var groundMaterial = new StandardMaterial("ground", scene);
-    const groundTexture = new Texture("textures/grass.jpg", scene);
-    groundTexture.uScale = 50;
-    groundTexture.vScale = 50;
-    groundMaterial.diffuseTexture = groundTexture;
-
-
     const options = {
         size: 513,
         offsetRange: 1500,
@@ -58,10 +51,45 @@ function startGame() {
       }).then(function(guid) {
         var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/' + guid, 256, 256, 300, 0, 15, scene);
         ground.checkCollisions = true;
-        ground.material = groundMaterial;
+
+
+        ground.material = createTerrainMaterial(scene, baseApiUrl + 'splatmap/' + guid);
+
+        // fetch(baseApiUrl + 'splatmap/' + guid)
+        //     .then(function(response) {
+        //         return response.json();
+        //     })
+        //     .then(function(splatmap) {
+        //         console.log(JSON.stringify(myJson));
+        //     });
       });
 
     engine.runRenderLoop(renderLoop);
+}
+
+function createTerrainMaterial(scene: Scene, splatmapUrl: string): TerrainMaterial {
+    	// Create terrain material
+	var terrainMaterial = new TerrainMaterial("terrainMaterial", scene);
+    terrainMaterial.specularColor = new Color3(0.5, 0.5, 0.5);
+    terrainMaterial.specularPower = 64;
+	
+	// Set the mix texture (represents the RGB values)
+    terrainMaterial.mixTexture = new Texture(splatmapUrl, scene);
+	
+	// Diffuse textures following the RGB values of the mix map
+	// diffuseTexture1: Red
+	// diffuseTexture2: Green
+	// diffuseTexture3: Blue
+    terrainMaterial.diffuseTexture1 = new Texture("textures/floor.png", scene);
+    terrainMaterial.diffuseTexture2 = new Texture("textures/rock.png", scene);
+    terrainMaterial.diffuseTexture3 = new Texture("textures/grass.png", scene);
+    
+	// Bump textures according to the previously set diffuse textures
+    terrainMaterial.bumpTexture1 = new Texture("textures/floor_bump.png", scene);
+    terrainMaterial.bumpTexture2 = new Texture("textures/rockn.png", scene);
+    terrainMaterial.bumpTexture3 = new Texture("textures/grassn.png", scene);
+
+    return terrainMaterial;
 }
 
 function createScene(): Scene {

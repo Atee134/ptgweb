@@ -30,5 +30,29 @@ namespace Ptg.Common
 
             return content;
         }
+
+        public static byte[] WriteToByteArray(Color[,] heightMapdata)
+        {
+            byte[] content;
+            int width = heightMapdata.GetLength(0);
+            int height = heightMapdata.GetLength(1);
+            using (var stream = new MemoryStream())
+            {
+                var bitmap = new Bitmap(width, height); // TODO put this back here PixelFormat.Format16bppGrayScale);
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        bitmap.SetPixel(x, y, heightMapdata[x, y]); // TODO with 16bit grayscale format this throws exception, use lockbits instead of setpixel anyway
+                    }
+                }
+
+                bitmap.Save(stream, ImageFormat.Bmp);
+                content = stream.ToArray();
+            }
+
+            return content;
+        }
     }
 }

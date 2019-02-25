@@ -58,7 +58,7 @@ namespace PtgWeb.Controllers
             return File(result.HeightmapByteArray, "image/bmp");
         }
 
-        [HttpGet("~/api/splatmap")]
+        [HttpGet("~/api/splatmap/{id}")]
         public IActionResult GetSplatmap(Guid id)
         {
             var result = repository.Getsplatmap(id);
