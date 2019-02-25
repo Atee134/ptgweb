@@ -1,5 +1,5 @@
 import * as signalR from "@aspnet/signalr";
-import { Scalar, Engine, Scene, UniversalCamera, StandardMaterial, Texture, Mesh, Vector3, Color4, DirectionalLight } from 'babylonjs';
+import { Engine, Scene, UniversalCamera, StandardMaterial, Texture, Mesh, Vector3, Color4, DirectionalLight } from 'babylonjs';
 
 const baseApiUrl = 'http://localhost:5000/api/';
 
@@ -40,9 +40,26 @@ function startGame() {
     groundTexture.vScale = 50;
     groundMaterial.diffuseTexture = groundTexture;
 
-    var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/diamondSquare?size=257&offsetRange=250&offsetReductionRate=0.5', 256, 256, 200, 0, 15, scene);
-    ground.checkCollisions = true;
-    ground.material = groundMaterial;
+
+    const options = {
+        size: 513,
+        offsetRange: 1500,
+        offsetReductionRate: 0.4
+    };
+
+    fetch(baseApiUrl + 'heightmap/diamondSquare', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(options)
+      }).then(function(response) {
+        return response.json();
+      }).then(function(guid) {
+        var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/' + guid, 256, 256, 300, 0, 15, scene);
+        ground.checkCollisions = true;
+        ground.material = groundMaterial;
+      });
 
     engine.runRenderLoop(renderLoop);
 }
