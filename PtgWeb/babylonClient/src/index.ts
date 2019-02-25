@@ -1,9 +1,9 @@
 import * as signalR from "@aspnet/signalr";
-import { Engine, Scene, UniversalCamera, Texture, Mesh, Vector3, Color4, DirectionalLight, Color3, TerrainMaterial } from 'babylonjs';
+import { Engine, Scene, UniversalCamera, Texture, Mesh, Vector3, Color4, DirectionalLight, Color3, TerrainMaterial, MeshBuilder, CubeTexture, StandardMaterial } from 'babylonjs';
 import 'babylonjs-materials';
 
-//const baseApiUrl = 'http://ptgweb.herokuapp.com/api/';
-const baseApiUrl = 'http://localhost:5000/api/';
+const baseApiUrl = 'http://ptgweb.herokuapp.com/api/';
+//const baseApiUrl = 'http://localhost:5000/api/';
 
 document.addEventListener('DOMContentLoaded', startGame);
 
@@ -55,7 +55,20 @@ function startGame() {
         ground.material = createTerrainMaterial(scene, baseApiUrl + 'splatmap/' + guid);
       });
 
+    createSkyBox(scene);
+
     engine.runRenderLoop(renderLoop);
+}
+
+function createSkyBox(scene: Scene): void {
+    const skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+    const skyboxMaterial = new StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = new CubeTexture("textures/miramar", scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
 }
 
 function createTerrainMaterial(scene: Scene, splatmapUrl: string): TerrainMaterial {
