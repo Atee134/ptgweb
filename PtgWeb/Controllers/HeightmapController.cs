@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Ptg.Common.Dtos.Request;
 using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.Interfaces;
 using Ptg.Services.Interfaces;
-using PtgWeb.Common.Dtos.Request;
 using System;
 
 namespace PtgWeb.Controllers
@@ -26,26 +26,26 @@ namespace PtgWeb.Controllers
             this.diamondSquareGenerator = diamondSquareGenerator;
         }
 
-        [HttpGet("random")]
-        public IActionResult GetRandomHeightmap(int width, int height)
+        [HttpPost("random")]
+        public IActionResult CreateRandomHeightmap([FromBody] RandomHeightmapRequestDto requestDto)
         {
-            var result = randomHeightmapGenerator.GenerateHeightmap(width, height);
+            var result = terrainService.Generate(requestDto);
 
-            return File(result.HeightmapByteArray, "image/bmp");
+            return Ok(result);
         }
 
-        [HttpGet("fault")]
-        public IActionResult GetFaultHeightmap([FromQuery] FaultHeightmapRequestDto requestDto)
+        [HttpPost("fault")]
+        public IActionResult CreateFaultHeightmap([FromBody] FaultHeightmapRequestDto requestDto)
         {
-            var result = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
+            var result = terrainService.Generate(requestDto);
 
-            return File(result.HeightmapByteArray, "image/bmp");
+            return Ok(result);
         }
 
         [HttpPost("diamondSquare")]
         public IActionResult CreateDiamondSquareHeightmap([FromBody] DiamondSquareHeightmapRequestDto requestDto)
         {
-            var result = terrainService.GenerateDiamondSquareTerrain(requestDto);
+            var result = terrainService.Generate(requestDto);
 
             return Ok(result);
         }

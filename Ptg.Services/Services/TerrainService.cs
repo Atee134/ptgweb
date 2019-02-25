@@ -1,9 +1,10 @@
 ﻿using System;
+using Ptg.Common.Dtos;
+using Ptg.Common.Dtos.Request;
 using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.Interfaces;
 using Ptg.Services.Interfaces;
 using Ptg.SplatmapGenerator.Interfaces;
-using PtgWeb.Common.Dtos.Request;
 
 namespace Ptg.Services.Services
 {
@@ -24,22 +25,46 @@ namespace Ptg.Services.Services
             this.diamondSquareGenerator = diamondSquareGenerator;
         }
 
-        public Guid GenerateDiamondSquareTerrain(DiamondSquareHeightmapRequestDto requestDto)
+        public Guid Generate(DiamondSquareHeightmapRequestDto requestDto)
+        {
+            var heightmapDto = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
+
+            return CreateHeightmap(heightmapDto);
+        }
+
+        public Guid Generate(FaultHeightmapRequestDto requestDto)
+        {
+            var heightmapDto = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
+
+            return CreateHeightmap(heightmapDto);
+        }
+
+        public Guid Generate(RandomHeightmapRequestDto requestDto)
+        {
+            var heightmapDto = randomHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height);
+
+            return CreateHeightmap(heightmapDto);
+        }
+
+        private Guid CreateHeightmap(HeightmapDto heightmapDto)
         {
             var id = Guid.NewGuid();
 
-            var heightmap = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
-            heightmap.Id = id;
+            heightmapDto.Id = id;
 
-            repository.AddHeightmap(heightmap);
-
-            //var splatmap = randomSplatmapGenerator.Generate(heightmap);
-
-            //repository.AddSplatmap(splatmap);
+            repository.AddHeightmap(heightmapDto);
 
             repository.SaveChanges();
 
             return id;
         }
+
+        private void GenerateSplatmap(HeightmapDto heightmapDto)
+        {
+            //var splatmap = randomSplatmapGenerator.Generate(heightmap);
+
+            //repository.AddSplatmap(splatmap);
+        }
+
     }
 }

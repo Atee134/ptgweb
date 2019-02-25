@@ -1,4 +1,4 @@
-﻿namespace PtgWeb.Common.Dtos.Request
+﻿namespace Ptg.Common.Dtos.Request
 {
     public class FaultHeightmapRequestDto
     {
