@@ -11,16 +11,18 @@ namespace Ptg.Services.Services
     public class TerrainService : ITerrainService
     {
         private readonly IRepository repository;
-        private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IRandomSplatmapGenerator randomSplatmapGenerator;
+        private readonly IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator;
+        private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
         private readonly IDiamondSquareGenerator diamondSquareGenerator;
 
-        public TerrainService(IRepository repository, IRandomHeightmapGenerator randomHeightmapGenerator, IRandomSplatmapGenerator randomSplatmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
+        public TerrainService(IRepository repository, IRandomSplatmapGenerator randomSplatmapGenerator, IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
         {
             this.repository = repository;
-            this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.randomSplatmapGenerator = randomSplatmapGenerator;
+            this.heightBasedSplatmapGenerator = heightBasedSplatmapGenerator;
+            this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
             this.diamondSquareGenerator = diamondSquareGenerator;
         }
@@ -62,7 +64,7 @@ namespace Ptg.Services.Services
 
         private void GenerateSplatmap(HeightmapDto heightmapDto)
         {
-            var splatmap = randomSplatmapGenerator.Generate(heightmapDto);
+            var splatmap = heightBasedSplatmapGenerator.Generate(heightmapDto, 0.4f, 0.2f, 0);
             splatmap.Id = heightmapDto.Id;
 
             repository.AddSplatmap(splatmap);

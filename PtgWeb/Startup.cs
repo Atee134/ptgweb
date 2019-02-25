@@ -34,6 +34,7 @@ namespace PtgWeb
             services.AddScoped<ITerrainService, TerrainService>();
             services.AddSingleton<IRepository, RepositoryInMemory>(); // TODO remove reference to DataAccess, make separate service init classes in the projects
             services.AddScoped<IRandomSplatmapGenerator, RandomSplatmapGenerator>();
+            services.AddScoped<IHeightBasedSplatmapGenerator, HeightBasedSplatmapGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

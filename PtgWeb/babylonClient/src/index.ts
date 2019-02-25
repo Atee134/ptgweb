@@ -51,17 +51,7 @@ function startGame() {
       }).then(function(guid) {
         var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/' + guid, 256, 256, 300, 0, 15, scene);
         ground.checkCollisions = true;
-
-
         ground.material = createTerrainMaterial(scene, baseApiUrl + 'splatmap/' + guid);
-
-        // fetch(baseApiUrl + 'splatmap/' + guid)
-        //     .then(function(response) {
-        //         return response.json();
-        //     })
-        //     .then(function(splatmap) {
-        //         console.log(JSON.stringify(myJson));
-        //     });
       });
 
     engine.runRenderLoop(renderLoop);
@@ -80,14 +70,18 @@ function createTerrainMaterial(scene: Scene, splatmapUrl: string): TerrainMateri
 	// diffuseTexture1: Red
 	// diffuseTexture2: Green
 	// diffuseTexture3: Blue
-    terrainMaterial.diffuseTexture1 = new Texture("textures/floor.png", scene);
-    terrainMaterial.diffuseTexture2 = new Texture("textures/rock.png", scene);
-    terrainMaterial.diffuseTexture3 = new Texture("textures/grass.png", scene);
+    terrainMaterial.diffuseTexture1 = new Texture("textures/grass.jpg", scene);
+    terrainMaterial.diffuseTexture2 = new Texture("textures/rock.jpg", scene);
+    terrainMaterial.diffuseTexture3 = new Texture("textures/snow.jpg", scene);
+
+    terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 30;
+    terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 20;
+    terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
     
 	// Bump textures according to the previously set diffuse textures
-    terrainMaterial.bumpTexture1 = new Texture("textures/floor_bump.png", scene);
-    terrainMaterial.bumpTexture2 = new Texture("textures/rockn.png", scene);
-    terrainMaterial.bumpTexture3 = new Texture("textures/grassn.png", scene);
+    // terrainMaterial.bumpTexture1 = new Texture("textures/floor_bump.png", scene);
+    // terrainMaterial.bumpTexture2 = new Texture("textures/rockn.png", scene);
+    // terrainMaterial.bumpTexture3 = new Texture("textures/grassn.png", scene);
 
     return terrainMaterial;
 }
