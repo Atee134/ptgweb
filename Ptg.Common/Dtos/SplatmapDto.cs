@@ -2,7 +2,7 @@
 
 namespace Ptg.Common.Dtos
 {
-    public class HeightmapDto
+    public class SplatmapDto
     {
         public Guid Id { get; set; }
 
@@ -10,8 +10,6 @@ namespace Ptg.Common.Dtos
 
         public int Height { get; set; }
 
-        public float[,] HeightmapFloatArray { get; set; }
-
-        public byte[] HeightmapByteArray { get; set; }
+        public byte[] SplatmapByteArray { get; set; }
     }
 }

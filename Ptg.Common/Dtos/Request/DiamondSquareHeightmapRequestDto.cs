@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PtgWeb.Dtos.Request
+namespace PtgWeb.Common.Dtos.Request
 {
     public class DiamondSquareHeightmapRequestDto
     {

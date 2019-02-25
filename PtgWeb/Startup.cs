@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.HeightmapGenerators;
 using Ptg.HeightmapGenerator.Interfaces;
+using Ptg.Services.Interfaces;
+using Ptg.Services.Services;
+using Ptg.SplatmapGenerator.Interfaces;
+using Ptg.SplatmapGenerator.SplatmapGenerators;
 using PtgWeb.Hubs;
 
 namespace PtgWeb
@@ -31,6 +31,9 @@ namespace PtgWeb
             services.AddScoped<IRandomHeightmapGenerator, RandomHeightmapGenerator>();
             services.AddScoped<IFaultHeightmapGenerator, FaultHeightmapGenerator>();
             services.AddScoped<IDiamondSquareGenerator, DiamondSquareGenerator>();
+            services.AddScoped<ITerrainService, TerrainService>();
+            services.AddSingleton<IRepository, RepositoryInMemory>(); // TODO remove reference to DataAccess, make separate service init classes in the projects
+            services.AddScoped<IRandomSplatmapGenerator, RandomSplatmapGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

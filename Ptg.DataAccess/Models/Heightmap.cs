@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Ptg.Common.Dtos
+namespace Ptg.DataAccess.Models
 {
-    public class HeightmapDto
+    public class Heightmap
     {
         public Guid Id { get; set; }
 

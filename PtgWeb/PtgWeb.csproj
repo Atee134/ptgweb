@@ -25,7 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ptg.DataAccess\Ptg.DataAccess.csproj" />
     <ProjectReference Include="..\Ptg.HeightmapGenerator\Ptg.HeightmapGenerator.csproj" />
+    <ProjectReference Include="..\Ptg.Services\Ptg.Services.csproj" />
+    <ProjectReference Include="..\Ptg.SplatmapGenerator\Ptg.SplatmapGenerator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

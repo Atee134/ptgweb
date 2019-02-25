@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.Interfaces;
-using PtgWeb.Dtos.Request;
+using Ptg.Services.Interfaces;
+using PtgWeb.Common.Dtos.Request;
+using System;
 
 namespace PtgWeb.Controllers
 {
@@ -8,12 +11,16 @@ namespace PtgWeb.Controllers
     [ApiController]
     public class HeightmapController : ControllerBase
     {
+        private readonly IRepository repository;
+        private readonly ITerrainService terrainService;
         private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
         private readonly IDiamondSquareGenerator diamondSquareGenerator;
 
-        public HeightmapController(IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
+        public HeightmapController(IRepository repository, ITerrainService terrainService, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
         {
+            this.repository = repository;
+            this.terrainService = terrainService;
             this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
             this.diamondSquareGenerator = diamondSquareGenerator;
@@ -24,7 +31,7 @@ namespace PtgWeb.Controllers
         {
             var result = randomHeightmapGenerator.GenerateHeightmap(width, height);
 
-            return File(result.Heightmap, "image/bmp");
+            return File(result.HeightmapByteArray, "image/bmp");
         }
 
         [HttpGet("fault")]
@@ -32,15 +39,31 @@ namespace PtgWeb.Controllers
         {
             var result = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
 
-            return File(result.Heightmap, "image/bmp");
+            return File(result.HeightmapByteArray, "image/bmp");
         }
 
-        [HttpGet("diamondSquare")]
-        public IActionResult GetDiamondSquareHeightmap([FromQuery] DiamondSquareHeightmapRequestDto requestDto)
+        [HttpPost("diamondSquare")]
+        public IActionResult CreateDiamondSquareHeightmap([FromBody] DiamondSquareHeightmapRequestDto requestDto)
         {
-            var result = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
+            var result = terrainService.GenerateDiamondSquareTerrain(requestDto);
 
-            return File(result.Heightmap, "image/bmp");
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetHeightmap(Guid id)
+        {
+            var result = repository.GetHeightmap(id);
+
+            return File(result.HeightmapByteArray, "image/bmp");
+        }
+
+        [HttpGet("~/api/splatmap")]
+        public IActionResult GetSplatmap(Guid id)
+        {
+            var result = repository.Getsplatmap(id);
+
+            return File(result.SplatmapByteArray, "image/bmp");
         }
     }
 }

@@ -1,5 +1,5 @@
-import { Scene, Engine, Vector3, UniversalCamera, Color3, Mesh } from 'babylonjs';
 import * as signalR from "@aspnet/signalr";
+import { Scalar, Engine, Scene, UniversalCamera, StandardMaterial, Texture, Mesh, Vector3, Color4, DirectionalLight } from 'babylonjs';
 
 const baseApiUrl = 'http://localhost:5000/api/';
 
@@ -33,8 +33,16 @@ function startGame() {
 
     scene = createScene();
 
-    var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/fault?width=256&height=256&iterationCount=200&offsetPerIteration=5', 256, 256, 150, 0, 15, scene);
+    // Ground
+    var groundMaterial = new StandardMaterial("ground", scene);
+    const groundTexture = new Texture("textures/grass.jpg", scene);
+    groundTexture.uScale = 50;
+    groundTexture.vScale = 50;
+    groundMaterial.diffuseTexture = groundTexture;
+
+    var ground = Mesh.CreateGroundFromHeightMap('myGround', baseApiUrl + 'heightmap/diamondSquare?size=257&offsetRange=250&offsetReductionRate=0.5', 256, 256, 200, 0, 15, scene);
     ground.checkCollisions = true;
+    ground.material = groundMaterial;
 
     engine.runRenderLoop(renderLoop);
 }
@@ -43,17 +51,18 @@ function createScene(): Scene {
     scene = new Scene(engine);
     scene.gravity = new Vector3(0, -0.2, 0);
     scene.collisionsEnabled = true;
+    scene.clearColor = new Color4(0.275, 0.82, 1, 1);
 
     camera = createFreeCamera(scene);
-    var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+    var light = new DirectionalLight("DirectionalLight", new Vector3(0, -1, 0), scene);
     light.intensity = 0.5;
     return scene;
 }
 
 function createFreeCamera(scene) {
-    let cam = new UniversalCamera('universalCamera', new BABYLON.Vector3(0, 5, -10), scene);
+    let cam = new UniversalCamera('universalCamera', new Vector3(0, 50, -10), scene);
     cam.attachControl(canvas);
-    cam.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+    cam.ellipsoid = new Vector3(1, 1, 1);
     cam.checkCollisions = true;
     cam.applyGravity = true;
 

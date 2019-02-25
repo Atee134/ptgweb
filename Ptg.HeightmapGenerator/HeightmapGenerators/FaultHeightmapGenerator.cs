@@ -34,7 +34,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             {
                 Width = width,
                 Height = height,
-                Heightmap = heightmapByteArray
+                HeightmapByteArray = heightmapByteArray
             };
         }
 
