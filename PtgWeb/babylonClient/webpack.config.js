@@ -29,6 +29,9 @@ module.exports = {
         }),
         new CopyWebpackPlugin([
             {from:'src/textures',to:'textures'} 
-        ])
+        ]),
+        new webpack.ProvidePlugin({
+            BABYLON: 'babylonjs',
+          })
     ]
 };

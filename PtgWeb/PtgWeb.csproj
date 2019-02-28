@@ -3,13 +3,18 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <DockerTargetOS>Linux</DockerTargetOS>
+    <TypeScriptToolsVersion>3.0</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="babylonClient\**" />
+    <Compile Remove="ptg-web-client\**" />
     <Content Remove="babylonClient\**" />
+    <Content Remove="ptg-web-client\**" />
     <EmbeddedResource Remove="babylonClient\**" />
+    <EmbeddedResource Remove="ptg-web-client\**" />
     <None Remove="babylonClient\**" />
+    <None Remove="ptg-web-client\**" />
   </ItemGroup>
 
   <ItemGroup>
