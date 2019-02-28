@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Ptg.Common.Dtos.Request;
 using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.Interfaces;
@@ -47,6 +48,13 @@ namespace PtgWeb.Controllers
         {
             var result = terrainService.Generate(requestDto);
 
+            var what = HttpContext.Session.GetString("Test");
+
+            if (what == null)
+            {
+                HttpContext.Session.SetString("Test", Guid.NewGuid().ToString());
+            }
+
             return Ok(result);
         }
 
@@ -54,6 +62,8 @@ namespace PtgWeb.Controllers
         public IActionResult GetHeightmap(Guid id)
         {
             var result = repository.GetHeightmap(id);
+
+            var what = HttpContext.Session.GetString("Test");
 
             return File(result.HeightmapByteArray, "image/bmp");
         }

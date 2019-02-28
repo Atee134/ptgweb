@@ -9,6 +9,7 @@ using Ptg.Services.Services;
 using Ptg.SplatmapGenerator.Interfaces;
 using Ptg.SplatmapGenerator.SplatmapGenerators;
 using PtgWeb.Hubs;
+using System;
 
 namespace PtgWeb
 {
@@ -26,6 +27,9 @@ namespace PtgWeb
             }));
 
             services.AddSignalR();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(5);//You can set Time   
+            });
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
             services.AddScoped<IRandomHeightmapGenerator, RandomHeightmapGenerator>();
@@ -54,6 +58,7 @@ namespace PtgWeb
                 options.MapHub<HeightmapHub>("/heightmap");
             });
 
+            app.UseSession();
             app.UseMvc();
         }
     }
