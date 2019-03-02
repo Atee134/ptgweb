@@ -35,6 +35,7 @@ namespace PtgWeb
             services.AddScoped<IRandomHeightmapGenerator, RandomHeightmapGenerator>();
             services.AddScoped<IFaultHeightmapGenerator, FaultHeightmapGenerator>();
             services.AddScoped<IDiamondSquareGenerator, DiamondSquareGenerator>();
+            services.AddScoped<IGameManagerService, GameManagerService>();
             services.AddScoped<ITerrainService, TerrainService>();
             services.AddSingleton<IRepository, RepositoryInMemory>(); // TODO remove reference to DataAccess, make separate service init classes in the projects
             services.AddScoped<IRandomSplatmapGenerator, RandomSplatmapGenerator>();

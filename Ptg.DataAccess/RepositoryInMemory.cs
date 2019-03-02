@@ -2,6 +2,7 @@
 using Ptg.DataAccess.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ptg.DataAccess
 {
@@ -9,11 +10,15 @@ namespace Ptg.DataAccess
     {
         private readonly Dictionary<Guid, Heightmap> heightmaps;
         private readonly Dictionary<Guid, Splatmap> splatmaps;
+        private readonly List<Player> players;
+        private readonly List<Guid> liveSessions;
 
         public RepositoryInMemory()
         {
             heightmaps = new Dictionary<Guid, Heightmap>();
             splatmaps = new Dictionary<Guid, Splatmap>();
+            players = new List<Player>();
+            liveSessions = new List<Guid>();
         }
 
         // TODO use automapper
@@ -45,6 +50,23 @@ namespace Ptg.DataAccess
             splatmaps.Add(splatmapDto.Id, splatmap);
         }
 
+        public int AddPlayer(PlayerDto playerDto)
+        {
+            var playersInSession = players.Where(p => p.SessionId == playerDto.SessionId).ToList();
+            int playerId = playersInSession.Count == 0 ? 1 : playersInSession.Max(p => p.Id);
+
+            var player = new Player
+            {
+                Id = playerId,
+                Name = playerDto.Name,
+                SessionId = playerDto.SessionId
+            };
+
+            players.Add(player);
+
+            return playerId;
+        }
+
         public HeightmapDto GetHeightmap(Guid id)
         {
             var heightmap = heightmaps[id];
@@ -72,9 +94,29 @@ namespace Ptg.DataAccess
             };
         }
 
+        public void AddSession(Guid sessionId)
+        {
+            liveSessions.Add(sessionId);
+        }
+
+        public bool IsInSessions(Guid sessionId)
+        {
+            return liveSessions.Contains(sessionId);
+        }
+
+        public void RemoveSession(Guid sessionId)
+        {
+            if (liveSessions.Contains(sessionId))
+            {
+                liveSessions.Remove(sessionId);
+            }
+        }
+
         public void SaveChanges()
         {
             return;
         }
+
+      
     }
 }
