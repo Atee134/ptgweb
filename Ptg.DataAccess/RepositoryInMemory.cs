@@ -94,12 +94,22 @@ namespace Ptg.DataAccess
             };
         }
 
+        public bool HeightmapExists(Guid id)
+        {
+            return heightmaps.ContainsKey(id);
+        }
+
+        public bool SplatmapExists(Guid id)
+        {
+            return splatmaps.ContainsKey(id);
+        }
+
         public void AddSession(Guid sessionId)
         {
             liveSessions.Add(sessionId);
         }
 
-        public bool IsInSessions(Guid sessionId)
+        public bool SessionExists(Guid sessionId)
         {
             return liveSessions.Contains(sessionId);
         }

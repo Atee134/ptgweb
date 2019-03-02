@@ -1,4 +1,5 @@
 ﻿using Ptg.Common.Dtos;
+using Ptg.Common.Exceptions;
 using Ptg.DataAccess;
 using Ptg.Services.Interfaces;
 using System;
@@ -25,6 +26,11 @@ namespace Ptg.Services.Services
 
         public int AddPlayer(Guid sessionId, string playerName)
         {
+            if (!repository.SessionExists(sessionId))
+            {
+                throw new PtgNotFoundException($"Session with ID: {sessionId} does not exist.");
+            }
+
             var playerDto = new PlayerDto
             {
                 SessionId = sessionId,
@@ -36,6 +42,14 @@ namespace Ptg.Services.Services
             repository.SaveChanges();
 
             return playerId;
+        }
+
+        public void ValidateGameSessionStart(Guid sessionId, Guid terrainDataId)
+        {
+            if (!repository.SessionExists(sessionId) || !repository.HeightmapExists(terrainDataId) || !repository.SplatmapExists(terrainDataId))
+            {
+                throw new PtgNotFoundException($"Game session not found, or terrain data is not ready yet");
+            }
         }
     }
 }

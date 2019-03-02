@@ -11,7 +11,9 @@ namespace Ptg.DataAccess
         void AddSession(Guid sessionId);
         HeightmapDto GetHeightmap(Guid id);
         SplatmapDto Getsplatmap(Guid id);
-        bool IsInSessions(Guid sessionId);
+        bool HeightmapExists(Guid id);
+        bool SplatmapExists(Guid id);
+        bool SessionExists(Guid sessionId);
         void RemoveSession(Guid sessionId);
         void SaveChanges();
     }

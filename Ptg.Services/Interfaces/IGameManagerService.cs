@@ -6,5 +6,6 @@ namespace Ptg.Services.Interfaces
     {
         Guid CreateGameSession();
         int AddPlayer(Guid sessionId, string playerName);
+        void ValidateGameSessionStart(Guid sessionId, Guid terrainDataId);
     }
 }

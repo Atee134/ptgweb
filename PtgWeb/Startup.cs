@@ -23,7 +23,8 @@ namespace PtgWeb
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
-                       .AllowAnyHeader();
+                       .AllowAnyHeader()
+                       .AllowCredentials();
             }));
 
             services.AddSignalR();
@@ -57,6 +58,7 @@ namespace PtgWeb
             app.UseSignalR(options =>
             {
                 options.MapHub<HeightmapHub>("/heightmap");
+                options.MapHub<GameManagerHub>("/gameManager");
             });
 
             app.UseSession();

@@ -19,7 +19,7 @@ export class HeightmapService {
   }
 
   getSplatmap(options: any): Observable<string> { // TODO add swagger generated dtos
-    return this.http.post<string>('api/heightmap/diamondSquare', {options});
+    return this.http.post<string>(`${environment.baseUrl}api/splatmap/diamondSquare`, {options});
   }
 
   // TODO add swagger generated dtos
