@@ -1,4 +1,25 @@
-<p>
-  <button (click)="onSubmit()">Press me</button>
-  <button (click)="createSession()">create</button>
-</p>
+<div class="container">
+  <h1 class="text-center mt-4">Login</h1>
+  <hr>
+  <form (ngSubmit)="onCreateSession()" #createForm="ngForm">
+    <div class="form-group">
+      <label for="playerName">Player name:</label>
+      <input type="text" class="form-control" id="playerName"
+            required
+            [(ngModel)]="playerName" name="playerName">
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg" [disabled]="!createForm.form.valid">Create lobby</button>
+  </form>
+
+  <form (ngSubmit)="onJoinSession()" #joinForm="ngForm">
+    <div class="form-group">
+      <label for="sessionId">Game lobby ID:</label>
+      <input type="text" class="form-control" id="sessionId"
+            required
+            [(ngModel)]="gameSessionId" name="sessionId">
+    </div>
+
+    <button type="submit" class="float-right btn btn-primary btn-lg" [disabled]="!createForm.form.valid || !joinForm.form.valid">Join lobby</button>
+  </form>
+</div>

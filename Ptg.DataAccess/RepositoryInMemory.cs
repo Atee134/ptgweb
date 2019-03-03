@@ -94,6 +94,24 @@ namespace Ptg.DataAccess
             };
         }
 
+        public List<PlayerDto> GetPlayers(Guid sessionId)
+        {
+            var playersInSession = players.Where(p => p.SessionId == sessionId);
+
+            List<PlayerDto> playerDtos = new List<PlayerDto>();
+            foreach (var player in playersInSession)
+            {
+                playerDtos.Add(new PlayerDto
+                {
+                    Id = player.Id,
+                    Name = player.Name,
+                    SessionId = player.SessionId
+                });
+            }
+
+            return playerDtos;
+        }
+
         public bool HeightmapExists(Guid id)
         {
             return heightmaps.ContainsKey(id);
@@ -126,7 +144,5 @@ namespace Ptg.DataAccess
         {
             return;
         }
-
-      
     }
 }

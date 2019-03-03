@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Scene, Engine, Vector3, Color4, DirectionalLight, UniversalCamera } from 'babylonjs';
 import { HeightmapService } from '../_services/heightmap.service';
+import { DiamondSquareHeightmapRequestDto } from '../_models/generatedDtos';
 
 @Component({
   selector: 'app-game',
@@ -94,7 +95,14 @@ export class GameComponent implements OnInit {
   }
 
   private buildTerrain() {
-    this.heightmapService.generateDiamondSquareHeightmap(513, 1500, 0.4).subscribe(resp => {
+
+    const requestDto = new DiamondSquareHeightmapRequestDto({
+      size: 513,
+      offsetRange: 1500,
+      offsetReductionRate: 0.4
+    });
+
+    this.heightmapService.generateDiamondSquareHeightmap(requestDto).subscribe(resp => {
       this.terrainDataId = resp;
       this.heightmapService.createGround(this.terrainDataId, null, this.scene);
     });

@@ -1,5 +1,6 @@
 ﻿using Ptg.Common.Dtos;
 using System;
+using System.Collections.Generic;
 
 namespace Ptg.DataAccess
 {
@@ -11,6 +12,7 @@ namespace Ptg.DataAccess
         void AddSession(Guid sessionId);
         HeightmapDto GetHeightmap(Guid id);
         SplatmapDto Getsplatmap(Guid id);
+        List<PlayerDto> GetPlayers(Guid sessionId);
         bool HeightmapExists(Guid id);
         bool SplatmapExists(Guid id);
         bool SessionExists(Guid sessionId);

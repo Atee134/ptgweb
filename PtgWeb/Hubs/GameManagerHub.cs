@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Ptg.Common.Dtos.Signalr;
 using System;
 using System.Threading.Tasks;
 
@@ -12,9 +13,10 @@ namespace PtgWeb.Hubs
             await base.OnConnectedAsync();
         }
 
-        public async Task JoinSession(string sessionId)
+        public async Task JoinSession(JoinGameSessionMessage message)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
+            await Clients.Group(message.SessionId).SendAsync("playerJoined", message.PlayerName);
+            await Groups.AddToGroupAsync(Context.ConnectionId, message.SessionId);
         }
 
         public async Task SendTerrainDataIdToSession(Guid terrainDataId, Guid sessionId)

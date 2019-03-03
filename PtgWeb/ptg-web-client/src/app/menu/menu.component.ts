@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SignalRService } from '../_services/signalr.service';
 import { SessionService } from '../_services/session.service';
+import { CreateGameSessionRequestDto, JoinGameSessionRequestDto } from '../_models/generatedDtos';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -9,7 +11,10 @@ import { SessionService } from '../_services/session.service';
 })
 export class MenuComponent implements OnInit {
 
-  constructor(private sessionService: SessionService, private signalrService: SignalRService) { }
+  public playerName: string;
+  public gameSessionId: string;
+
+  constructor(private sessionService: SessionService, private signalrService: SignalRService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -19,9 +24,24 @@ export class MenuComponent implements OnInit {
     this.signalrService.sendJoinSession('whatever');
   }
 
-  createSession() {
-    this.sessionService.createSession('asdsad').subscribe(resp => {
-      console.log(resp);
+  onCreateSession() {
+    const requestDto = new CreateGameSessionRequestDto({
+      playerName: this.playerName
+    });
+
+    this.sessionService.createSession(requestDto).subscribe(resp => {
+      this.router.navigate(['/lobby/' + resp]);
+    });
+  }
+
+  onJoinSession() {
+    const requestDto = new JoinGameSessionRequestDto({
+      playerName: this.playerName,
+      sessionId: this.gameSessionId
+    });
+
+    this.sessionService.joinSession(requestDto).subscribe(resp => {
+      this.router.navigate(['/lobby/' + resp]);
     });
   }
 

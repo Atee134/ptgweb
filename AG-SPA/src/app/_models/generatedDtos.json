@@ -1,0 +1,205 @@
+﻿{
+  "swagger": "2.0",
+  "info": {
+    "title": "Swagger specification",
+    "version": "1.0.0"
+  },
+  "definitions": {
+    "CreateGameSessionRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PlayerName": {
+          "type": "string"
+        }
+      }
+    },
+    "DiamondSquareHeightmapRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Size",
+        "OffsetRange",
+        "OffsetReductionRate"
+      ],
+      "properties": {
+        "Size": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OffsetRange": {
+          "type": "number",
+          "format": "double"
+        },
+        "OffsetReductionRate": {
+          "type": "number",
+          "format": "double",
+          "maximum": 1.0,
+          "minimum": 0.0
+        }
+      }
+    },
+    "FaultHeightmapRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Width",
+        "Height",
+        "IterationCount",
+        "OffsetPerIteration"
+      ],
+      "properties": {
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "IterationCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OffsetPerIteration": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "JoinGameSessionRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "SessionId"
+      ],
+      "properties": {
+        "SessionId": {
+          "type": "string",
+          "format": "guid"
+        },
+        "PlayerName": {
+          "type": "string"
+        }
+      }
+    },
+    "RandomHeightmapRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "HeightmapDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "HeightmapFloatArray": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "HeightmapByteArray": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "SplatmapDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "SplatmapByteArray": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "PlayerDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "SessionId"
+      ],
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "SessionId": {
+          "type": "string",
+          "format": "guid"
+        }
+      }
+    },
+    "StartGameSesionRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "SessionId",
+        "TerrainDataId"
+      ],
+      "properties": {
+        "SessionId": {
+          "type": "string",
+          "format": "guid"
+        },
+        "TerrainDataId": {
+          "type": "string",
+          "format": "guid"
+        }
+      }
+    }
+  }
+}

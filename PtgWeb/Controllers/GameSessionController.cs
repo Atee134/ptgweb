@@ -38,6 +38,7 @@ namespace PtgWeb.Controllers
 
             HttpContext.Session.SetString("SessionId", sessionId.ToString());
             HttpContext.Session.SetInt32("PlayerId", playerId);
+            HttpContext.Session.SetString("SessionCreator", "true");
 
             return Ok(sessionId);
         }
@@ -54,21 +55,30 @@ namespace PtgWeb.Controllers
 
             HttpContext.Session.SetString("SessionId", requestDto.SessionId.ToString());
             HttpContext.Session.SetInt32("PlayerId", playerId);
+            HttpContext.Session.SetString("SessionCreator", "false");
 
-            return NoContent();
+            return Ok(requestDto.SessionId);
         }
 
         [HttpPost("start")]
         public async Task<IActionResult> StartGameSession([FromBody] StartGameSesionRequestDto requestDto)
         {
-            // TODO add check that the session admin was the one who called start
-            gameManagerService.ValidateGameSessionStart(requestDto.SessionId, requestDto.TerrainDataId);
+            if (bool.TryParse(HttpContext.Session.GetString("SessionCreator"), out bool creator) && creator)
+            {
+                gameManagerService.ValidateGameSessionStart(requestDto.SessionId, requestDto.TerrainDataId);
 
-            await gameManagerHubContext.Clients.Group(requestDto.SessionId.ToString()).SendAsync("receiveTerrainDataGuid", requestDto.TerrainDataId);
-
-            // TODO register event on client for this
-
+                await gameManagerHubContext.Clients.Group(requestDto.SessionId.ToString()).SendAsync("receiveTerrainDataGuid", requestDto.TerrainDataId);
+            }
             return NoContent();
+            // TODO register event on client for this
+        }
+
+        [HttpGet("{sessionId}/players")]
+        public IActionResult GetPlayersOfSession(Guid sessionId)
+        {
+            var players = repository.GetPlayers(sessionId);
+
+            return Ok(players);
         }
     }
 }

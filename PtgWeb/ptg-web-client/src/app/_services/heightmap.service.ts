@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GroundMesh, Scene, Mesh } from 'babylonjs';
 import { environment } from 'src/environments/environment.prod';
+import { DiamondSquareHeightmapRequestDto, SplatmapDto } from '../_models/generatedDtos';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +19,11 @@ export class HeightmapService {
     return ground;
   }
 
-  getSplatmap(options: any): Observable<string> { // TODO add swagger generated dtos
-    return this.http.post<string>(`${environment.baseUrl}api/splatmap/diamondSquare`, {options});
+  getSplatmap(terrainDataId: string): Observable<SplatmapDto> {
+    return this.http.get<SplatmapDto>(`${environment.baseUrl}api/splatmap/${terrainDataId}`);
   }
 
-  // TODO add swagger generated dtos
-  generateDiamondSquareHeightmap(size: number, offsetRange: number, offsetReductionRate: number): Observable<string> {
-    return this.http.post<string>(`${environment.baseUrl}api/heightmap/diamondSquare`, {size, offsetRange, offsetReductionRate});
+  generateDiamondSquareHeightmap(requestDto: DiamondSquareHeightmapRequestDto): Observable<string> {
+    return this.http.post<string>(`${environment.baseUrl}api/heightmap/diamondSquare`, requestDto);
   }
 }
