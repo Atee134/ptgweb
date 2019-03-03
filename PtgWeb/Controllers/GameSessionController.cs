@@ -67,7 +67,7 @@ namespace PtgWeb.Controllers
             {
                 gameManagerService.ValidateGameSessionStart(requestDto.SessionId, requestDto.TerrainDataId);
 
-                await gameManagerHubContext.Clients.Group(requestDto.SessionId.ToString()).SendAsync("receiveTerrainDataGuid", requestDto.TerrainDataId);
+                await gameManagerHubContext.Clients.Group(requestDto.SessionId.ToString()).SendAsync("receiveTerrainDataId", requestDto.TerrainDataId);
             }
             return NoContent();
             // TODO register event on client for this

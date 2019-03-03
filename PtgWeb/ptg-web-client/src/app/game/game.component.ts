@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Scene, Engine, Vector3, Color4, DirectionalLight, UniversalCamera } from 'babylonjs';
 import { HeightmapService } from '../_services/heightmap.service';
 import { DiamondSquareHeightmapRequestDto } from '../_models/generatedDtos';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -32,9 +33,10 @@ export class GameComponent implements OnInit {
   private resolution = { width: 1920, height: 1080 }; // TODO add this as an input component, and make it selectable from the settings
   private terrainDataId: string;
 
-  constructor(private heightmapService: HeightmapService) { }
+  constructor(private route: ActivatedRoute, private heightmapService: HeightmapService) { }
 
   ngOnInit() {
+    this.terrainDataId = this.route.snapshot.paramMap.get('terrainDataId');
     this.canvas = this.initializeCanvas(this.resolution);
     this.engine = this.initializeEngine(this.canvas);
     this.scene = this.initializeScene(this.engine, this.canvas);
@@ -95,17 +97,7 @@ export class GameComponent implements OnInit {
   }
 
   private buildTerrain() {
-
-    const requestDto = new DiamondSquareHeightmapRequestDto({
-      size: 513,
-      offsetRange: 1500,
-      offsetReductionRate: 0.4
-    });
-
-    this.heightmapService.generateDiamondSquareHeightmap(requestDto).subscribe(resp => {
-      this.terrainDataId = resp;
-      this.heightmapService.createGround(this.terrainDataId, null, this.scene);
-    });
+    this.heightmapService.createGround(this.terrainDataId, null, this.scene);
   }
 
   private startRendering() {

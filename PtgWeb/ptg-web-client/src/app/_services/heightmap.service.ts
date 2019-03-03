@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GroundMesh, Scene, Mesh } from 'babylonjs';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 import { DiamondSquareHeightmapRequestDto, SplatmapDto } from '../_models/generatedDtos';
 
 @Injectable({
