@@ -19,18 +19,13 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
   }
 
-  onSubmit() {
-    console.log('buttonpressed');
-    this.signalrService.sendJoinSession('whatever');
-  }
-
   onCreateSession() {
     const requestDto = new CreateGameSessionRequestDto({
       playerName: this.playerName
     });
 
     this.sessionService.createSession(requestDto).subscribe(resp => {
-      this.router.navigate(['/lobby/' + resp]);
+      this.router.navigate([`/lobby/${resp}/${this.playerName}`]);
     });
   }
 
@@ -41,7 +36,7 @@ export class MenuComponent implements OnInit {
     });
 
     this.sessionService.joinSession(requestDto).subscribe(resp => {
-      this.router.navigate(['/lobby/' + resp]);
+      this.router.navigate([`/lobby/${resp}/${this.playerName}`]);
     });
   }
 

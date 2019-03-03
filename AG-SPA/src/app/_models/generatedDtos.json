@@ -5,6 +5,61 @@
     "version": "1.0.0"
   },
   "definitions": {
+    "HeightmapDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "HeightmapFloatArray": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "HeightmapByteArray": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "PlayerDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "SessionId"
+      ],
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "SessionId": {
+          "type": "string",
+          "format": "guid"
+        }
+      }
+    },
     "CreateGameSessionRequestDto": {
       "type": "object",
       "additionalProperties": false,
@@ -101,37 +156,21 @@
         }
       }
     },
-    "HeightmapDto": {
+    "StartGameSesionRequestDto": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "Id",
-        "Width",
-        "Height"
+        "SessionId",
+        "TerrainDataId"
       ],
       "properties": {
-        "Id": {
+        "SessionId": {
           "type": "string",
           "format": "guid"
         },
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "HeightmapFloatArray": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "HeightmapByteArray": {
+        "TerrainDataId": {
           "type": "string",
-          "format": "byte"
+          "format": "guid"
         }
       }
     },
@@ -162,42 +201,15 @@
         }
       }
     },
-    "PlayerDto": {
+    "JoinGameSessionMessage": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "Id",
-        "SessionId"
-      ],
       "properties": {
-        "Id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Name": {
+        "SessionId": {
           "type": "string"
         },
-        "SessionId": {
-          "type": "string",
-          "format": "guid"
-        }
-      }
-    },
-    "StartGameSesionRequestDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "SessionId",
-        "TerrainDataId"
-      ],
-      "properties": {
-        "SessionId": {
-          "type": "string",
-          "format": "guid"
-        },
-        "TerrainDataId": {
-          "type": "string",
-          "format": "guid"
+        "PlayerName": {
+          "type": "string"
         }
       }
     }

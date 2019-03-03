@@ -76,7 +76,7 @@ namespace PtgWeb.Controllers
         [HttpGet("{sessionId}/players")]
         public IActionResult GetPlayersOfSession(Guid sessionId)
         {
-            var players = repository.GetPlayers(sessionId);
+            var players = gameManagerService.GetPlayerNamesInSession(sessionId);
 
             return Ok(players);
         }

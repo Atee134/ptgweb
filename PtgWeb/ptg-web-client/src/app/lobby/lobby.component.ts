@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PlayerDto } from '../_models/generatedDtos';
+import { JoinGameSessionMessage } from '../_models/generatedDtos';
 import { SessionService } from '../_services/session.service';
 import { SignalRService } from '../_services/signalr.service';
 
@@ -10,14 +10,15 @@ import { SignalRService } from '../_services/signalr.service';
   styleUrls: ['./lobby.component.css']
 })
 export class LobbyComponent implements OnInit {
-
+  public ownName: string;
   public gameSessionId: string;
-  public players: PlayerDto[];
+  public players: string[];
 
   constructor(private route: ActivatedRoute, private sessionService: SessionService, private signalrService: SignalRService) { }
 
   ngOnInit() {
-    this.gameSessionId = this.route.snapshot.paramMap.get('id');
+    this.gameSessionId = this.route.snapshot.paramMap.get('sessionId');
+    this.ownName = this.route.snapshot.paramMap.get('playerName');
     this.getPlayers(this.gameSessionId);
     this.subscribeToSignalrEvents();
     this.onJoinedLobby();
@@ -36,7 +37,11 @@ export class LobbyComponent implements OnInit {
   }
 
   private onJoinedLobby() {
-    // TODO add player name as input parameter to his component, then here pass a dto to signalrSerice containing the playername and sessionId as well
-    this.signalrService.sendJoinSession(this.gameSessionId);
+    const message = new JoinGameSessionMessage({
+      playerName: this.ownName,
+      sessionId: this.gameSessionId
+    });
+
+    this.signalrService.sendJoinSession(message);
   }
 }

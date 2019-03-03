@@ -8,6 +8,124 @@
 
 
 
+export class HeightmapDto implements IHeightmapDto {
+    id!: string;
+    width!: number;
+    height!: number;
+    heightmapFloatArray?: number[] | null;
+    heightmapByteArray?: string | null;
+
+    constructor(data?: IHeightmapDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            if (data["HeightmapFloatArray"] && data["HeightmapFloatArray"].constructor === Array) {
+                this.heightmapFloatArray = [] as any;
+                for (let item of data["HeightmapFloatArray"])
+                    this.heightmapFloatArray!.push(item);
+            }
+            this.heightmapByteArray = data["HeightmapByteArray"] !== undefined ? data["HeightmapByteArray"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): HeightmapDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new HeightmapDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        if (this.heightmapFloatArray && this.heightmapFloatArray.constructor === Array) {
+            data["HeightmapFloatArray"] = [];
+            for (let item of this.heightmapFloatArray)
+                data["HeightmapFloatArray"].push(item);
+        }
+        data["HeightmapByteArray"] = this.heightmapByteArray !== undefined ? this.heightmapByteArray : <any>null;
+        return data; 
+    }
+
+    clone(): HeightmapDto {
+        const json = this.toJSON();
+        let result = new HeightmapDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IHeightmapDto {
+    id: string;
+    width: number;
+    height: number;
+    heightmapFloatArray?: number[] | null;
+    heightmapByteArray?: string | null;
+}
+
+export class PlayerDto implements IPlayerDto {
+    id!: number;
+    name?: string | null;
+    sessionId!: string;
+
+    constructor(data?: IPlayerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.name = data["Name"] !== undefined ? data["Name"] : <any>null;
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PlayerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlayerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Name"] = this.name !== undefined ? this.name : <any>null;
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        return data; 
+    }
+
+    clone(): PlayerDto {
+        const json = this.toJSON();
+        let result = new PlayerDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IPlayerDto {
+    id: number;
+    name?: string | null;
+    sessionId: string;
+}
+
 export class CreateGameSessionRequestDto implements ICreateGameSessionRequestDto {
     playerName?: string | null;
 
@@ -251,14 +369,11 @@ export interface IRandomHeightmapRequestDto {
     height: number;
 }
 
-export class HeightmapDto implements IHeightmapDto {
-    id!: string;
-    width!: number;
-    height!: number;
-    heightmapFloatArray?: number[] | null;
-    heightmapByteArray?: string | null;
+export class StartGameSesionRequestDto implements IStartGameSesionRequestDto {
+    sessionId!: string;
+    terrainDataId!: string;
 
-    constructor(data?: IHeightmapDto) {
+    constructor(data?: IStartGameSesionRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -269,53 +384,36 @@ export class HeightmapDto implements IHeightmapDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
-            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
-            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
-            if (data["HeightmapFloatArray"] && data["HeightmapFloatArray"].constructor === Array) {
-                this.heightmapFloatArray = [] as any;
-                for (let item of data["HeightmapFloatArray"])
-                    this.heightmapFloatArray!.push(item);
-            }
-            this.heightmapByteArray = data["HeightmapByteArray"] !== undefined ? data["HeightmapByteArray"] : <any>null;
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.terrainDataId = data["TerrainDataId"] !== undefined ? data["TerrainDataId"] : <any>null;
         }
     }
 
-    static fromJS(data: any): HeightmapDto {
+    static fromJS(data: any): StartGameSesionRequestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new HeightmapDto();
+        let result = new StartGameSesionRequestDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["Id"] = this.id !== undefined ? this.id : <any>null;
-        data["Width"] = this.width !== undefined ? this.width : <any>null;
-        data["Height"] = this.height !== undefined ? this.height : <any>null;
-        if (this.heightmapFloatArray && this.heightmapFloatArray.constructor === Array) {
-            data["HeightmapFloatArray"] = [];
-            for (let item of this.heightmapFloatArray)
-                data["HeightmapFloatArray"].push(item);
-        }
-        data["HeightmapByteArray"] = this.heightmapByteArray !== undefined ? this.heightmapByteArray : <any>null;
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["TerrainDataId"] = this.terrainDataId !== undefined ? this.terrainDataId : <any>null;
         return data; 
     }
 
-    clone(): HeightmapDto {
+    clone(): StartGameSesionRequestDto {
         const json = this.toJSON();
-        let result = new HeightmapDto();
+        let result = new StartGameSesionRequestDto();
         result.init(json);
         return result;
     }
 }
 
-export interface IHeightmapDto {
-    id: string;
-    width: number;
-    height: number;
-    heightmapFloatArray?: number[] | null;
-    heightmapByteArray?: string | null;
+export interface IStartGameSesionRequestDto {
+    sessionId: string;
+    terrainDataId: string;
 }
 
 export class SplatmapDto implements ISplatmapDto {
@@ -373,62 +471,11 @@ export interface ISplatmapDto {
     splatmapByteArray?: string | null;
 }
 
-export class PlayerDto implements IPlayerDto {
-    id!: number;
-    name?: string | null;
-    sessionId!: string;
+export class JoinGameSessionMessage implements IJoinGameSessionMessage {
+    sessionId?: string | null;
+    playerName?: string | null;
 
-    constructor(data?: IPlayerDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
-            this.name = data["Name"] !== undefined ? data["Name"] : <any>null;
-            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): PlayerDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PlayerDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Id"] = this.id !== undefined ? this.id : <any>null;
-        data["Name"] = this.name !== undefined ? this.name : <any>null;
-        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
-        return data; 
-    }
-
-    clone(): PlayerDto {
-        const json = this.toJSON();
-        let result = new PlayerDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IPlayerDto {
-    id: number;
-    name?: string | null;
-    sessionId: string;
-}
-
-export class StartGameSesionRequestDto implements IStartGameSesionRequestDto {
-    sessionId!: string;
-    terrainDataId!: string;
-
-    constructor(data?: IStartGameSesionRequestDto) {
+    constructor(data?: IJoinGameSessionMessage) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -440,13 +487,13 @@ export class StartGameSesionRequestDto implements IStartGameSesionRequestDto {
     init(data?: any) {
         if (data) {
             this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
-            this.terrainDataId = data["TerrainDataId"] !== undefined ? data["TerrainDataId"] : <any>null;
+            this.playerName = data["PlayerName"] !== undefined ? data["PlayerName"] : <any>null;
         }
     }
 
-    static fromJS(data: any): StartGameSesionRequestDto {
+    static fromJS(data: any): JoinGameSessionMessage {
         data = typeof data === 'object' ? data : {};
-        let result = new StartGameSesionRequestDto();
+        let result = new JoinGameSessionMessage();
         result.init(data);
         return result;
     }
@@ -454,19 +501,19 @@ export class StartGameSesionRequestDto implements IStartGameSesionRequestDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
-        data["TerrainDataId"] = this.terrainDataId !== undefined ? this.terrainDataId : <any>null;
+        data["PlayerName"] = this.playerName !== undefined ? this.playerName : <any>null;
         return data; 
     }
 
-    clone(): StartGameSesionRequestDto {
+    clone(): JoinGameSessionMessage {
         const json = this.toJSON();
-        let result = new StartGameSesionRequestDto();
+        let result = new JoinGameSessionMessage();
         result.init(json);
         return result;
     }
 }
 
-export interface IStartGameSesionRequestDto {
-    sessionId: string;
-    terrainDataId: string;
+export interface IJoinGameSessionMessage {
+    sessionId?: string | null;
+    playerName?: string | null;
 }

@@ -1,8 +1,11 @@
 ﻿using Ptg.Common.Dtos;
+using Ptg.Common.Dtos.Signalr;
 using Ptg.Common.Exceptions;
 using Ptg.DataAccess;
 using Ptg.Services.Interfaces;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ptg.Services.Services
 {
@@ -42,6 +45,13 @@ namespace Ptg.Services.Services
             repository.SaveChanges();
 
             return playerId;
+        }
+
+        public List<string> GetPlayerNamesInSession(Guid sessionId)
+        {
+            var players = repository.GetPlayers(sessionId);
+
+            return players.Select(p => p.Name).ToList();
         }
 
         public void ValidateGameSessionStart(Guid sessionId, Guid terrainDataId)

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
-import { PlayerDto } from '../_models/generatedDtos';
+import { JoinGameSessionMessage } from '../_models/generatedDtos';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ import { PlayerDto } from '../_models/generatedDtos';
 export class SignalRService {
   private hubConnection: HubConnection;
 
-  public playerJoined = new Subject<PlayerDto>();
+  public playerJoined = new Subject<string>();
 
   constructor() {
     this.createConnection();
@@ -19,8 +19,8 @@ export class SignalRService {
     this.startConnection();
   }
 
-  public sendJoinSession(sessionId: string) {
-    this.hubConnection.invoke('JoinSession', sessionId);
+  public sendJoinSession(message: JoinGameSessionMessage) {
+    this.hubConnection.invoke('JoinSession', message);
   }
 
   private createConnection() {
@@ -37,7 +37,7 @@ export class SignalRService {
 
   // TODO register event for receiveTerrainDataGuid
   private registerOnServerEvents(): void {
-    this.hubConnection.on('playerJoined', (player: PlayerDto) => {
+    this.hubConnection.on('playerJoined', (player: string) => {
       this.playerJoined.next(player);
     });
   }

@@ -23,7 +23,7 @@ export class SessionService {
     return this.http.post<string>(`${environment.baseUrl}api/gameSession/start`, requestDto, {withCredentials: true});
   }
 
-  public getPlayers(sessionId: string): Observable<PlayerDto[]> {
-    return this.http.get<PlayerDto[]>(`${environment.baseUrl}api/gameSession/${sessionId}/players`);
+  public getPlayers(sessionId: string): Observable<string[]> {
+    return this.http.get<string[]>(`${environment.baseUrl}api/gameSession/${sessionId}/players`);
   }
 }

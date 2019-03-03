@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Ptg.Common.Dtos.Signalr;
+using Ptg.DataAccess;
 using System;
 using System.Threading.Tasks;
 
@@ -7,6 +8,11 @@ namespace PtgWeb.Hubs
 {
     public class GameManagerHub : Hub
     {
+        public GameManagerHub(IRepository repository)
+        {
+
+        }
+
         public override async Task OnConnectedAsync()
         {
             var asd = 5;
