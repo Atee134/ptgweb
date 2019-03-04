@@ -26,8 +26,8 @@
                   [(ngModel)]="gameSessionId" name="sessionId">
           </div>
 
-          <button type="submit" class="btn btn-primary btn-sm" [disabled]="!createForm.form.valid || !joinForm.form.valid">Join</button>
-          <button type="button" class="float-right btn btn-secondary btn-sm" [disabled]="!createForm.form.valid" (click)="changeJoinMode(false)">Back</button>
+          <button type="button" class="btn btn-secondary btn-sm" [disabled]="!createForm.form.valid" (click)="changeJoinMode(false)">Back</button>
+          <button type="submit" class="float-right btn btn-primary btn-sm" [disabled]="!createForm.form.valid || !joinForm.form.valid">Join</button>
         </form>
       </div>
     </div>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,41 +27,46 @@ namespace PtgWeb.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult CreateGameSession([FromBody] CreateGameSessionRequestDto requestDto)
+        public async Task<IActionResult> CreateGameSession([FromBody] CreateGameSessionRequestDto requestDto)
         {
-            // TODO if sessionId and playerId both exist, remove player from players, if all players are removed from a session, remove session from sessions
+            await CheckSession();
 
             var sessionId = gameManagerService.CreateGameSession();
 
-            int playerId = gameManagerService.AddPlayer(sessionId, requestDto.PlayerName);
+            gameManagerService.AddPlayer(sessionId, requestDto.PlayerName);
 
             HttpContext.Session.SetString("SessionId", sessionId.ToString());
-            HttpContext.Session.SetInt32("PlayerId", playerId);
+            HttpContext.Session.SetString("PlayerName", requestDto.PlayerName);
             HttpContext.Session.SetString("SessionCreator", "true");
 
             return Ok(sessionId);
         }
 
         [HttpPost("join")]
-        public IActionResult JoinGameSession([FromBody] JoinGameSessionRequestDto requestDto)
+        public async Task<IActionResult> JoinGameSession([FromBody] JoinGameSessionRequestDto requestDto)
         {
-            if (HttpContext.Session.GetString("SessionId") != null)
-            {
-                throw new PtgInvalidActionException("You are already in a lobby.");
-            }
+            await CheckSession();
 
             if (!Guid.TryParse(requestDto.SessionId, out Guid sessionGuid))
             {
                 throw new PtgInvalidActionException("The provided Game Lobby ID is not valid.");
             }
 
-            int playerId = gameManagerService.AddPlayer(sessionGuid, requestDto.PlayerName); // TODO add error handling middleware, if session is not found return 404 to client
+            gameManagerService.AddPlayer(sessionGuid, requestDto.PlayerName); // TODO add error handling middleware, if session is not found return 404 to client
 
             HttpContext.Session.SetString("SessionId", requestDto.SessionId.ToString());
-            HttpContext.Session.SetInt32("PlayerId", playerId);
+            HttpContext.Session.SetString("PlayerName", requestDto.PlayerName);
             HttpContext.Session.SetString("SessionCreator", "false");
 
             return Ok(sessionGuid);
+        }
+
+        [HttpDelete("leave")]
+        public async Task<IActionResult> LeaveGameSession()
+        {
+            await CheckSession();
+
+            return NoContent();
         }
 
         [HttpPost("start")]
@@ -77,6 +80,24 @@ namespace PtgWeb.Controllers
             }
             return NoContent();
             // TODO register event on client for this
+        }
+
+        private async Task CheckSession()
+        {
+            string existingSessionId = HttpContext.Session.GetString("SessionId");
+            string existingPlayerName = HttpContext.Session.GetString("PlayerName");
+            if (existingSessionId != null && existingPlayerName != null)
+            {
+                HttpContext.Session.Clear();
+
+                var player = gameManagerService.GetPlayer(Guid.Parse(existingSessionId), existingPlayerName);
+                await gameManagerHubContext.Clients.Group(player.SessionId.ToString()).SendAsync("playerLeft", player.Name);
+                if (player.SignalRConnectionId != null)
+                {
+                    await gameManagerHubContext.Groups.RemoveFromGroupAsync(player.SignalRConnectionId, existingSessionId);
+                }
+                gameManagerService.RemovePlayer(Guid.Parse(existingSessionId), existingPlayerName);
+            }
         }
 
         [HttpGet("{sessionId}/players")]

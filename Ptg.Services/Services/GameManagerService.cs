@@ -1,5 +1,4 @@
 ﻿using Ptg.Common.Dtos;
-using Ptg.Common.Dtos.Signalr;
 using Ptg.Common.Exceptions;
 using Ptg.DataAccess;
 using Ptg.Services.Interfaces;
@@ -27,7 +26,7 @@ namespace Ptg.Services.Services
             return sessionId;
         }
 
-        public int AddPlayer(Guid sessionId, string playerName)
+        public void AddPlayer(Guid sessionId, string playerName)
         {
             if (!repository.SessionExists(sessionId))
             {
@@ -40,11 +39,34 @@ namespace Ptg.Services.Services
                 Name = playerName
             };
 
-            int playerId = repository.AddPlayer(playerDto);
+            repository.AddPlayer(playerDto);
 
             repository.SaveChanges();
+        }
 
-            return playerId;
+        public void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId)
+        {
+            repository.AddSignalrConnectionIdToPlayer(sessionId, playerName, connectionId);
+        }
+
+        public void RemovePlayer(Guid sessionId, string playerName)
+        {
+            repository.RemovePlayer(sessionId, playerName);
+
+            if (repository.PlayerCountInSession(sessionId) == 0)
+            {
+                repository.RemoveSession(sessionId);
+            }
+        }
+
+        public PlayerDto GetPlayer(Guid sessionId, string playerName)
+        {
+            return repository.GetPlayer(sessionId, playerName);
+        }
+
+        public PlayerDto GetPlayer(string signalrConnectionId)
+        {
+            return repository.GetPlayer(signalrConnectionId);
         }
 
         public List<string> GetPlayerNamesInSession(Guid sessionId)

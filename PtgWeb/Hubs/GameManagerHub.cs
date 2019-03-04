@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Ptg.Common.Dtos.Signalr;
+using Ptg.Common.Exceptions;
 using Ptg.DataAccess;
+using Ptg.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -8,19 +10,37 @@ namespace PtgWeb.Hubs
 {
     public class GameManagerHub : Hub
     {
-        public GameManagerHub(IRepository repository)
-        {
+        private readonly IGameManagerService gameManagerService;
 
+        public GameManagerHub(IGameManagerService gameManagerService)
+        {
+            this.gameManagerService = gameManagerService;
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            try
+            {
+                var player = gameManagerService.GetPlayer(Context.ConnectionId);
+                gameManagerService.RemovePlayer(player.SessionId, player.Name);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, player.SessionId.ToString());
+                await Clients.Group(player.SessionId.ToString()).SendAsync("playerLeft", player.Name);
+            }
+            catch (PtgNotFoundException)
+            {
+                // if player cannot be found, it is already deleted, don't need to do anything else
+            }
+            await base.OnDisconnectedAsync(exception);
         }
 
         public override async Task OnConnectedAsync()
         {
-            var asd = 5;
             await base.OnConnectedAsync();
         }
 
         public async Task JoinSession(JoinGameSessionMessage message)
         {
+            gameManagerService.AddSignalrConnectionIdToPlayer(Guid.Parse(message.SessionId), message.PlayerName, Context.ConnectionId);
             await Clients.Group(message.SessionId).SendAsync("playerJoined", message.PlayerName);
             await Groups.AddToGroupAsync(Context.ConnectionId, message.SessionId);
         }

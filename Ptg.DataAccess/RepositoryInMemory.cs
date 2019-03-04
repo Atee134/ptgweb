@@ -1,4 +1,5 @@
 ﻿using Ptg.Common.Dtos;
+using Ptg.Common.Exceptions;
 using Ptg.DataAccess.Models;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace Ptg.DataAccess
             splatmaps.Add(splatmapDto.Id, splatmap);
         }
 
-        public int AddPlayer(PlayerDto playerDto)
+        public void AddPlayer(PlayerDto playerDto)
         {
             var playersInSession = players.Where(p => p.SessionId == playerDto.SessionId).ToList();
             int playerId = playersInSession.Count == 0 ? 1 : playersInSession.Max(p => p.Id);
@@ -63,8 +64,62 @@ namespace Ptg.DataAccess
             };
 
             players.Add(player);
+        }
 
-            return playerId;
+        public void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId)
+        {
+            var player = players.FirstOrDefault(p => p.SessionId == sessionId && p.Name == playerName);
+
+            if (player != null)
+            {
+                player.SignalRConnectionId = connectionId;
+            }
+            else
+            {
+                throw new PtgNotFoundException("Player is not found");
+            }
+        }
+
+        public void RemovePlayer(Guid sessionId, string playerName)
+        {
+            var player = players.FirstOrDefault(p => p.SessionId == sessionId && p.Name == playerName);
+
+            if (player != null)
+            {
+                players.Remove(player);
+            }
+            else
+            {
+                throw new PtgNotFoundException("Player is not found");
+            }
+        }
+
+        public PlayerDto GetPlayer(Guid sessionId, string playerName)
+        {
+            var player = players.FirstOrDefault(p => p.SessionId == sessionId && p.Name == playerName);
+
+            if (player == null) throw new PtgNotFoundException("Player not found");
+
+            return new PlayerDto
+            {
+                Name = player.Name,
+                SessionId = player.SessionId,
+                SignalRConnectionId = player.SignalRConnectionId
+            };
+        }
+
+        public PlayerDto GetPlayer(string signalrConnectionId)
+        {
+            var player = players.FirstOrDefault(p => p.SignalRConnectionId == signalrConnectionId);
+
+            if (player == null) throw new PtgNotFoundException("Player not found");
+
+            return new PlayerDto
+            {
+                Name = player.Name,
+                SessionId = player.SessionId,
+                SignalRConnectionId = player.SignalRConnectionId
+            };
         }
 
         public HeightmapDto GetHeightmap(Guid id)
@@ -103,7 +158,6 @@ namespace Ptg.DataAccess
             {
                 playerDtos.Add(new PlayerDto
                 {
-                    Id = player.Id,
                     Name = player.Name,
                     SessionId = player.SessionId
                 });
@@ -132,6 +186,11 @@ namespace Ptg.DataAccess
             return liveSessions.Contains(sessionId);
         }
 
+        public int PlayerCountInSession(Guid sessionId)
+        {
+            return players.Count(p => p.SessionId == sessionId);
+        }
+
         public void RemoveSession(Guid sessionId)
         {
             if (liveSessions.Contains(sessionId))
@@ -144,5 +203,7 @@ namespace Ptg.DataAccess
         {
             return;
         }
+
+
     }
 }

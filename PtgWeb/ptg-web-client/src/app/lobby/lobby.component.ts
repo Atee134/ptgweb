@@ -42,6 +42,10 @@ export class LobbyComponent implements OnInit {
       this.players.push(player);
     });
 
+    this.signalrService.playerLeft.subscribe(player => {
+      this.players = this.players.filter(p => p !== player);
+    });
+
     this.signalrService.receiveTerrainDataIdReceived.subscribe(terrainDataId => {
       this.router.navigate([`/game/${terrainDataId}`]);
     });
@@ -70,6 +74,12 @@ export class LobbyComponent implements OnInit {
       });
 
       this.sessionService.startSession(sessionStartRequestDto).subscribe(res => {});
+    });
+  }
+
+  public onBack() {
+    this.sessionService.leaveSession().subscribe(resp => {
+      this.router.navigate(['/menu']);
     });
   }
 }

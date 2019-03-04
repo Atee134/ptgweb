@@ -13,5 +13,7 @@ namespace Ptg.DataAccess.Models
 
         [Required]
         public Guid SessionId { get; set; }
+
+        public string SignalRConnectionId { get; set; }
     }
 }

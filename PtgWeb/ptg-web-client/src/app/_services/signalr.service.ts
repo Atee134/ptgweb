@@ -13,6 +13,7 @@ export class SignalRService {
   private hubConnection: HubConnection;
 
   public playerJoined = new Subject<string>();
+  public playerLeft = new Subject<string>();
   public receiveTerrainDataIdReceived = new Subject<string>();
 
   constructor() {
@@ -63,6 +64,10 @@ export class SignalRService {
   private registerOnServerEvents(): void {
     this.hubConnection.on('playerJoined', (player: string) => {
       this.playerJoined.next(player);
+    });
+
+    this.hubConnection.on('playerLeft', (player: string) => {
+      this.playerLeft.next(player);
     });
 
     this.hubConnection.on('receiveTerrainDataId', (receiveTerrainDataId: string) => {
