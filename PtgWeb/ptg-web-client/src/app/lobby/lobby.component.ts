@@ -19,8 +19,8 @@ export class LobbyComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private sessionService: SessionService,
               private signalrService: SignalRService,
-              private router: Router,
-              private heightmapService: HeightmapService) { }
+              private router: Router
+              ) { }
 
   ngOnInit() {
     this.gameSessionId = this.route.snapshot.paramMap.get('sessionId');
@@ -58,23 +58,6 @@ export class LobbyComponent implements OnInit {
     });
 
     this.signalrService.sendJoinSession(message);
-  }
-
-  public onStart() {
-    const heightmapRequestDto = new DiamondSquareHeightmapRequestDto({
-      size: 513,
-      offsetRange: 1500,
-      offsetReductionRate: 0.4
-    });
-
-    this.heightmapService.generateDiamondSquareHeightmap(heightmapRequestDto).subscribe(terrainDataId => {
-      const sessionStartRequestDto = new StartGameSesionRequestDto({
-        sessionId: this.gameSessionId,
-        terrainDataId
-      });
-
-      this.sessionService.startSession(sessionStartRequestDto).subscribe(res => {});
-    });
   }
 
   public onBack() {

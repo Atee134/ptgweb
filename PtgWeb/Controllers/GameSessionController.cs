@@ -91,12 +91,15 @@ namespace PtgWeb.Controllers
                 HttpContext.Session.Clear();
 
                 var player = gameManagerService.GetPlayer(Guid.Parse(existingSessionId), existingPlayerName);
-                await gameManagerHubContext.Clients.Group(player.SessionId.ToString()).SendAsync("playerLeft", player.Name);
-                if (player.SignalRConnectionId != null)
+                if (player != null)
                 {
-                    await gameManagerHubContext.Groups.RemoveFromGroupAsync(player.SignalRConnectionId, existingSessionId);
+                    await gameManagerHubContext.Clients.Group(player.SessionId.ToString()).SendAsync("playerLeft", player.Name);
+                    if (player.SignalRConnectionId != null)
+                    {
+                        await gameManagerHubContext.Groups.RemoveFromGroupAsync(player.SignalRConnectionId, existingSessionId);
+                    }
+                    gameManagerService.RemovePlayer(Guid.Parse(existingSessionId), existingPlayerName);
                 }
-                gameManagerService.RemovePlayer(Guid.Parse(existingSessionId), existingPlayerName);
             }
         }
 

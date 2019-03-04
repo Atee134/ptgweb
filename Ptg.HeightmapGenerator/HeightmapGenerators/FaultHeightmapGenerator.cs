@@ -18,9 +18,9 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 
         private readonly static Random random = new Random();
 
-        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, int offsetPerIteration)
+        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, float offsetPerIteration)
         {
-            byte[,] heightmapData = InitHeightmapData(width, height);
+            float[,] heightmapData = InitHeightmapData(width, height);
 
             for (int i = 0; i < iterationCount; i++)
             {
@@ -34,27 +34,28 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             {
                 Width = width,
                 Height = height,
-                HeightmapByteArray = heightmapByteArray
+                HeightmapByteArray = heightmapByteArray,
+                HeightmapFloatArray = heightmapData
             };
         }
 
-        private void RecalculateHeightmapData(byte[,] heightmapData, int offset, Point lineStart, Point lineEnd)
+        private void RecalculateHeightmapData(float[,] heightmapData, float offset, Point lineStart, Point lineEnd)
         {
             for (int x = 0; x < heightmapData.GetLength(0); x++)
             {
                 for (int y = 0; y < heightmapData.GetLength(1); y++)
                 {
-                    byte currentHeightmapValue = heightmapData[x, y];
+                    float currentHeightmapValue = heightmapData[x, y];
 
                     if (IsLeft(lineStart, lineEnd, x, y))
                     {
                         if ((int)currentHeightmapValue + offset > byte.MaxValue) currentHeightmapValue = byte.MaxValue;
-                        else currentHeightmapValue += (byte)offset;
+                        else currentHeightmapValue += offset;
                     }
                     else
                     {
                         if ((int)currentHeightmapValue - offset < byte.MinValue) currentHeightmapValue = byte.MinValue;
-                        else currentHeightmapValue -= (byte)offset;
+                        else currentHeightmapValue -= offset;
                     }
 
                     heightmapData[x, y] = currentHeightmapValue;
@@ -62,9 +63,9 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             }
         }
 
-        private byte[,] InitHeightmapData(int width, int height)
+        private float[,] InitHeightmapData(int width, int height)
         {
-            byte[,] heightmapData = new byte[width, height];
+            float[,] heightmapData = new float[width, height];
 
             for (int x = 0; x < width; x++)
             {

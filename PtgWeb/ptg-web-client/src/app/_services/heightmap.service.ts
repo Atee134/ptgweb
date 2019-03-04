@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GroundMesh, Scene, Mesh } from 'babylonjs';
 import { environment } from 'src/environments/environment';
-import { DiamondSquareHeightmapRequestDto, SplatmapDto } from '../_models/generatedDtos';
+import { DiamondSquareHeightmapRequestDto, SplatmapDto, FaultHeightmapRequestDto } from '../_models/generatedDtos';
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +25,9 @@ export class HeightmapService {
 
   generateDiamondSquareHeightmap(requestDto: DiamondSquareHeightmapRequestDto): Observable<string> {
     return this.http.post<string>(`${environment.baseUrl}api/heightmap/diamondSquare`, requestDto);
+  }
+
+  generateFaultHeightmap(requestDto: FaultHeightmapRequestDto): Observable<string> {
+    return this.http.post<string>(`${environment.baseUrl}api/heightmap/fault`, requestDto);
   }
 }

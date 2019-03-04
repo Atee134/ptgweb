@@ -19,16 +19,12 @@ namespace PtgWeb.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            try
+            var player = gameManagerService.GetPlayer(Context.ConnectionId);
+            if (player != null)
             {
-                var player = gameManagerService.GetPlayer(Context.ConnectionId);
                 gameManagerService.RemovePlayer(player.SessionId, player.Name);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, player.SessionId.ToString());
                 await Clients.Group(player.SessionId.ToString()).SendAsync("playerLeft", player.Name);
-            }
-            catch (PtgNotFoundException)
-            {
-                // if player cannot be found, it is already deleted, don't need to do anything else
             }
             await base.OnDisconnectedAsync(exception);
         }

@@ -30,7 +30,6 @@ export class SignalRService {
     const promise = new Promise((resolve, reject) => {
       let invokeAttempts = 0;
       const stateCheckerId = setInterval(() => {
-        console.log('checked');
         if (this.hubConnection.state === HubConnectionState.Connected) {
           this.hubConnection.invoke(methodName, message);
           clearInterval(stateCheckerId);
@@ -39,6 +38,7 @@ export class SignalRService {
           invokeAttempts++;
 
           if (invokeAttempts >= this.maxUnsuccessfulInvokeAttempts) {
+            clearInterval(stateCheckerId);
             reject('timeout');
           }
         }

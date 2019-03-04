@@ -41,7 +41,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 offsetRange *= offsetReductionRate;
             }
 
-            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(ConverToByteArray(heightmapData));
+            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
 
             return new HeightmapDto
             {
@@ -50,21 +50,6 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 HeightmapFloatArray = heightmapData,
                 HeightmapByteArray = heightmapByteArray
             };
-        }
-
-        private byte[,] ConverToByteArray(float[,] heightmapFloatData)
-        {
-            byte[,] heightmapByteData = new byte[heightmapFloatData.GetLength(0), heightmapFloatData.GetLength(1)];
-
-            for (int x = 0; x < heightmapByteData.GetLength(0); x++)
-            {
-                for (int y = 0; y < heightmapByteData.GetLength(1); y++)
-                {
-                    heightmapByteData[x, y] = (byte)heightmapFloatData[x, y];
-                }
-            }
-
-            return heightmapByteData;
         }
 
         private float[,] GenerateInitialHeightmapData(int size)

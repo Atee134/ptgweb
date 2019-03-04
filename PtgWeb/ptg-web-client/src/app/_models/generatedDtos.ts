@@ -76,9 +76,9 @@ export interface IHeightmapDto {
 }
 
 export class PlayerDto implements IPlayerDto {
-    id!: number;
     name?: string | null;
     sessionId!: string;
+    signalRConnectionId?: string | null;
 
     constructor(data?: IPlayerDto) {
         if (data) {
@@ -91,9 +91,9 @@ export class PlayerDto implements IPlayerDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
             this.name = data["Name"] !== undefined ? data["Name"] : <any>null;
             this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.signalRConnectionId = data["SignalRConnectionId"] !== undefined ? data["SignalRConnectionId"] : <any>null;
         }
     }
 
@@ -106,9 +106,9 @@ export class PlayerDto implements IPlayerDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["Id"] = this.id !== undefined ? this.id : <any>null;
         data["Name"] = this.name !== undefined ? this.name : <any>null;
         data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["SignalRConnectionId"] = this.signalRConnectionId !== undefined ? this.signalRConnectionId : <any>null;
         return data; 
     }
 
@@ -121,9 +121,9 @@ export class PlayerDto implements IPlayerDto {
 }
 
 export interface IPlayerDto {
-    id: number;
     name?: string | null;
     sessionId: string;
+    signalRConnectionId?: string | null;
 }
 
 export class CreateGameSessionRequestDto implements ICreateGameSessionRequestDto {
@@ -276,7 +276,7 @@ export interface IFaultHeightmapRequestDto {
 }
 
 export class JoinGameSessionRequestDto implements IJoinGameSessionRequestDto {
-    sessionId!: string;
+    sessionId?: string | null;
     playerName?: string | null;
 
     constructor(data?: IJoinGameSessionRequestDto) {
@@ -318,7 +318,7 @@ export class JoinGameSessionRequestDto implements IJoinGameSessionRequestDto {
 }
 
 export interface IJoinGameSessionRequestDto {
-    sessionId: string;
+    sessionId?: string | null;
     playerName?: string | null;
 }
 
@@ -416,6 +416,53 @@ export interface IStartGameSesionRequestDto {
     terrainDataId: string;
 }
 
+export class JoinGameSessionMessage implements IJoinGameSessionMessage {
+    sessionId?: string | null;
+    playerName?: string | null;
+
+    constructor(data?: IJoinGameSessionMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.playerName = data["PlayerName"] !== undefined ? data["PlayerName"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): JoinGameSessionMessage {
+        data = typeof data === 'object' ? data : {};
+        let result = new JoinGameSessionMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["PlayerName"] = this.playerName !== undefined ? this.playerName : <any>null;
+        return data; 
+    }
+
+    clone(): JoinGameSessionMessage {
+        const json = this.toJSON();
+        let result = new JoinGameSessionMessage();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IJoinGameSessionMessage {
+    sessionId?: string | null;
+    playerName?: string | null;
+}
+
 export class SplatmapDto implements ISplatmapDto {
     id!: string;
     width!: number;
@@ -471,49 +518,8 @@ export interface ISplatmapDto {
     splatmapByteArray?: string | null;
 }
 
-export class JoinGameSessionMessage implements IJoinGameSessionMessage {
-    sessionId?: string | null;
-    playerName?: string | null;
-
-    constructor(data?: IJoinGameSessionMessage) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
-            this.playerName = data["PlayerName"] !== undefined ? data["PlayerName"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): JoinGameSessionMessage {
-        data = typeof data === 'object' ? data : {};
-        let result = new JoinGameSessionMessage();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
-        data["PlayerName"] = this.playerName !== undefined ? this.playerName : <any>null;
-        return data; 
-    }
-
-    clone(): JoinGameSessionMessage {
-        const json = this.toJSON();
-        let result = new JoinGameSessionMessage();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IJoinGameSessionMessage {
-    sessionId?: string | null;
-    playerName?: string | null;
+export enum HeightmapType {
+    Fault = "Fault", 
+    DiamondSquare = "DiamondSquare", 
+    PerlinNoise = "PerlinNoise", 
 }

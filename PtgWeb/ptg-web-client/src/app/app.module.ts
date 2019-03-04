@@ -10,12 +10,14 @@ import { MenuComponent } from './menu/menu.component';
 import { LobbyComponent } from './lobby/lobby.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
+import { LobbySettingsComponent } from './lobby-settings/lobby-settings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MenuComponent,
     LobbyComponent,
+    LobbySettingsComponent,
   ],
   imports: [
     BrowserModule,

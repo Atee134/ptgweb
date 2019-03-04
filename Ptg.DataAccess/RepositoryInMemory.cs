@@ -98,7 +98,7 @@ namespace Ptg.DataAccess
         {
             var player = players.FirstOrDefault(p => p.SessionId == sessionId && p.Name == playerName);
 
-            if (player == null) throw new PtgNotFoundException("Player not found");
+            if (player == null) return null;
 
             return new PlayerDto
             {
@@ -112,7 +112,7 @@ namespace Ptg.DataAccess
         {
             var player = players.FirstOrDefault(p => p.SignalRConnectionId == signalrConnectionId);
 
-            if (player == null) throw new PtgNotFoundException("Player not found");
+            if (player == null) return null;
 
             return new PlayerDto
             {

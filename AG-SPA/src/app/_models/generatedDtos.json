@@ -43,20 +43,18 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "Id",
         "SessionId"
       ],
       "properties": {
-        "Id": {
-          "type": "integer",
-          "format": "int32"
-        },
         "Name": {
           "type": "string"
         },
         "SessionId": {
           "type": "string",
           "format": "guid"
+        },
+        "SignalRConnectionId": {
+          "type": "string"
         }
       }
     },
@@ -125,13 +123,9 @@
     "JoinGameSessionRequestDto": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "SessionId"
-      ],
       "properties": {
         "SessionId": {
-          "type": "string",
-          "format": "guid"
+          "type": "string"
         },
         "PlayerName": {
           "type": "string"
@@ -174,6 +168,18 @@
         }
       }
     },
+    "JoinGameSessionMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SessionId": {
+          "type": "string"
+        },
+        "PlayerName": {
+          "type": "string"
+        }
+      }
+    },
     "SplatmapDto": {
       "type": "object",
       "additionalProperties": false,
@@ -201,17 +207,19 @@
         }
       }
     },
-    "JoinGameSessionMessage": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "SessionId": {
-          "type": "string"
-        },
-        "PlayerName": {
-          "type": "string"
-        }
-      }
+    "HeightmapType": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Fault",
+        "DiamondSquare",
+        "PerlinNoise"
+      ],
+      "enum": [
+        "Fault",
+        "DiamondSquare",
+        "PerlinNoise"
+      ]
     }
   }
 }

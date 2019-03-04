@@ -4,15 +4,17 @@
   "swaggerGenerator": {
     "typesToSwagger": {
       "classNames": [
+        "Ptg.Common.Dtos.HeightmapDto",
+        "Ptg.Common.Dtos.PlayerDto",
         "Ptg.Common.Dtos.Request.CreateGameSessionRequestDto",
         "Ptg.Common.Dtos.Request.DiamondSquareHeightmapRequestDto",
         "Ptg.Common.Dtos.Request.FaultHeightmapRequestDto",
         "Ptg.Common.Dtos.Request.JoinGameSessionRequestDto",
         "Ptg.Common.Dtos.Request.RandomHeightmapRequestDto",
-        "Ptg.Common.Dtos.HeightmapDto",
+        "Ptg.Common.Dtos.Request.StartGameSesionRequestDto",
         "Ptg.Common.Dtos.SplatmapDto",
-        "Ptg.Common.Dtos.PlayerDto",
-        "Ptg.Common.Dtos.Request.StartGameSesionRequestDto"
+        "Ptg.Common.Enums.HeightmapType",
+        "Ptg.Common.Dtos.Signalr.JoinGameSessionMessage"
       ],
       "defaultPropertyNameHandling": "Default",
       "defaultReferenceTypeNullHandling": "Null",
