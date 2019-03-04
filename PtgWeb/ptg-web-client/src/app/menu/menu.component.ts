@@ -3,6 +3,7 @@ import { SignalRService } from '../_services/signalr.service';
 import { SessionService } from '../_services/session.service';
 import { CreateGameSessionRequestDto, JoinGameSessionRequestDto } from '../_models/generatedDtos';
 import { Router } from '@angular/router';
+import { AlertifyService } from '../_services/alertify.service';
 
 @Component({
   selector: 'app-menu',
@@ -11,10 +12,14 @@ import { Router } from '@angular/router';
 })
 export class MenuComponent implements OnInit {
 
+  public joinMode: boolean;
   public playerName: string;
   public gameSessionId: string;
 
-  constructor(private sessionService: SessionService, private signalrService: SignalRService, private router: Router) { }
+  constructor(
+    private sessionService: SessionService,
+    private router: Router,
+    private alertify: AlertifyService) { }
 
   ngOnInit() {
   }
@@ -25,6 +30,7 @@ export class MenuComponent implements OnInit {
     });
 
     this.sessionService.createSession(requestDto).subscribe(resp => {
+      sessionStorage.setItem('SessionCreator', 'true');
       this.router.navigate([`/lobby/${resp}/${this.playerName}`]);
     });
   }
@@ -36,10 +42,14 @@ export class MenuComponent implements OnInit {
     });
 
     this.sessionService.joinSession(requestDto).subscribe(resp => {
+      sessionStorage.setItem('SessionCreator', 'false');
       this.router.navigate([`/lobby/${resp}/${this.playerName}`]);
+    }, error => {
+      this.alertify.error(error);
     });
   }
 
-  // TODO observe a terrainDataId subject, when a receiveTerrainDataId function is called by back end through signalr
-  // just route to game component from here, and pass it the terrainDataID, which it then uses to build a mesh and texture
+  changeJoinMode(value: boolean) {
+    this.joinMode = value;
+  }
 }

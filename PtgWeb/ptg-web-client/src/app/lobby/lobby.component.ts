@@ -11,6 +11,7 @@ import { HeightmapService } from '../_services/heightmap.service';
   styleUrls: ['./lobby.component.css']
 })
 export class LobbyComponent implements OnInit {
+  public isCreator: boolean;
   public ownName: string;
   public gameSessionId: string;
   public players: string[];
@@ -24,6 +25,7 @@ export class LobbyComponent implements OnInit {
   ngOnInit() {
     this.gameSessionId = this.route.snapshot.paramMap.get('sessionId');
     this.ownName = this.route.snapshot.paramMap.get('playerName');
+    this.isCreator = sessionStorage.getItem('SessionCreator') === 'true';
     this.getPlayers(this.gameSessionId);
     this.subscribeToSignalrEvents();
     this.onJoinedLobby();

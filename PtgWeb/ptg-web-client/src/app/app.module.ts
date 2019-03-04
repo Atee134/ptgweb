@@ -9,6 +9,7 @@ import { GameModule } from './game/game.module';
 import { MenuComponent } from './menu/menu.component';
 import { LobbyComponent } from './lobby/lobby.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ErrorInterceptorProvider } from './_services/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { AppRoutingModule } from './app-routing.module';
     GameModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [ErrorInterceptorProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

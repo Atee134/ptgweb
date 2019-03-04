@@ -1,25 +1,36 @@
 <div class="container">
-  <h1 class="text-center mt-4">Login</h1>
+  <h3 class="text-center mt-4">Procedural terrain generation</h3>
   <hr>
-  <form (ngSubmit)="onCreateSession()" #createForm="ngForm">
-    <div class="form-group">
-      <label for="playerName">Player name:</label>
-      <input type="text" class="form-control" id="playerName"
-            required
-            [(ngModel)]="playerName" name="playerName">
+  <div class="row">
+    <div class="col-lg-4 col-sm-12"></div>
+    <div class="col-lg-4 col-sm-12">
+      <div [hidden]="joinMode">
+        <form (ngSubmit)="onCreateSession()" #createForm="ngForm">
+          <div class="form-group">
+            <label for="playerName">Player name:</label>
+            <input type="text" class="form-control" id="playerName"
+                  required
+                  [(ngModel)]="playerName" name="playerName">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="!createForm.form.valid">Create lobby</button>
+          <button type="button" class="float-right btn btn-success btn-sm" [disabled]="!createForm.form.valid" (click)="changeJoinMode(true)">Join lobby</button>
+        </form>
+      </div>
+      
+      <div [hidden]="!joinMode">
+        <form (ngSubmit)="onJoinSession()" #joinForm="ngForm">
+          <div class="form-group">
+            <label for="sessionId">Game lobby ID:</label>
+            <input type="text" class="form-control" id="sessionId"
+                  required
+                  [(ngModel)]="gameSessionId" name="sessionId">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="!createForm.form.valid || !joinForm.form.valid">Join</button>
+          <button type="button" class="float-right btn btn-secondary btn-sm" [disabled]="!createForm.form.valid" (click)="changeJoinMode(false)">Back</button>
+        </form>
+      </div>
     </div>
-
-    <button type="submit" class="btn btn-primary btn-lg" [disabled]="!createForm.form.valid">Create lobby</button>
-  </form>
-
-  <form (ngSubmit)="onJoinSession()" #joinForm="ngForm">
-    <div class="form-group">
-      <label for="sessionId">Game lobby ID:</label>
-      <input type="text" class="form-control" id="sessionId"
-            required
-            [(ngModel)]="gameSessionId" name="sessionId">
-    </div>
-
-    <button type="submit" class="float-right btn btn-primary btn-lg" [disabled]="!createForm.form.valid || !joinForm.form.valid">Join lobby</button>
-  </form>
+    <div class="col-lg-4 col-sm-12"></div>
+  </div>  
 </div>

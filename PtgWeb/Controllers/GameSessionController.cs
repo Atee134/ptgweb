@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Ptg.Common.Dtos.Request;
+using Ptg.Common.Exceptions;
 using Ptg.DataAccess;
 using Ptg.Services.Interfaces;
 using PtgWeb.Hubs;
@@ -48,16 +49,21 @@ namespace PtgWeb.Controllers
         {
             if (HttpContext.Session.GetString("SessionId") != null)
             {
-                return NoContent();
+                throw new PtgInvalidActionException("You are already in a lobby.");
             }
 
-            int playerId = gameManagerService.AddPlayer(requestDto.SessionId, requestDto.PlayerName); // TODO add error handling middleware, if session is not found return 404 to client
+            if (!Guid.TryParse(requestDto.SessionId, out Guid sessionGuid))
+            {
+                throw new PtgInvalidActionException("The provided Game Lobby ID is not valid.");
+            }
+
+            int playerId = gameManagerService.AddPlayer(sessionGuid, requestDto.PlayerName); // TODO add error handling middleware, if session is not found return 404 to client
 
             HttpContext.Session.SetString("SessionId", requestDto.SessionId.ToString());
             HttpContext.Session.SetInt32("PlayerId", playerId);
             HttpContext.Session.SetString("SessionCreator", "false");
 
-            return Ok(requestDto.SessionId);
+            return Ok(sessionGuid);
         }
 
         [HttpPost("start")]

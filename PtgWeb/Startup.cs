@@ -9,6 +9,7 @@ using Ptg.Services.Services;
 using Ptg.SplatmapGenerator.Interfaces;
 using Ptg.SplatmapGenerator.SplatmapGenerators;
 using PtgWeb.Hubs;
+using PtgWeb.MiddleWares;
 using System;
 
 namespace PtgWeb
@@ -53,7 +54,7 @@ namespace PtgWeb
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseCors("AllowAll");
             app.UseSignalR(options =>
             {

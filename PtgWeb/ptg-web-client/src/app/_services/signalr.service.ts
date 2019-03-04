@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@aspnet/signalr';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { JoinGameSessionMessage } from '../_models/generatedDtos';
@@ -9,6 +9,7 @@ import { JoinGameSessionMessage } from '../_models/generatedDtos';
   providedIn: 'root'
 })
 export class SignalRService {
+  private maxUnsuccessfulInvokeAttempts: 100;
   private hubConnection: HubConnection;
 
   public playerJoined = new Subject<string>();
@@ -20,8 +21,30 @@ export class SignalRService {
     this.startConnection();
   }
 
-  public sendJoinSession(message: JoinGameSessionMessage) {
-    this.hubConnection.invoke('JoinSession', message);
+  public sendJoinSession(message: JoinGameSessionMessage): Promise<any> {
+    return this.invokeIfConnected('JoinSession', message);
+  }
+
+  private invokeIfConnected(methodName: string, message: any): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
+      let invokeAttempts = 0;
+      const stateCheckerId = setInterval(() => {
+        console.log('checked');
+        if (this.hubConnection.state === HubConnectionState.Connected) {
+          this.hubConnection.invoke(methodName, message);
+          clearInterval(stateCheckerId);
+          resolve('ok');
+        } else {
+          invokeAttempts++;
+
+          if (invokeAttempts >= this.maxUnsuccessfulInvokeAttempts) {
+            reject('timeout');
+          }
+        }
+      }, 100);
+    });
+
+    return promise;
   }
 
   private createConnection() {
@@ -30,7 +53,7 @@ export class SignalRService {
     .build();
   }
 
-  private startConnection() {
+  private async startConnection() {
     this.hubConnection.start().then(() => {
       console.log('Hub connection started');
     });
