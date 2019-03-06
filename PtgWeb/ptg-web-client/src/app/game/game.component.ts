@@ -1,8 +1,15 @@
+
+/// <reference types="babylonjs"/>
+// tslint:disable-next-line:no-reference
+/// <reference path="./extensions/babylon.dynamicTerrain.d.ts"/>
+
+import './extensions/babylon.dynamicTerrain.js';
+
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Scene, Engine, Vector3, Color4, DirectionalLight, UniversalCamera } from 'babylonjs';
 import { HeightmapService } from '../_services/heightmap.service';
 import { DiamondSquareHeightmapRequestDto } from '../_models/generatedDtos';
 import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-game',
@@ -12,15 +19,15 @@ import { ActivatedRoute } from '@angular/router';
 export class GameComponent implements OnInit {
   @ViewChild('viewport') viewPort: any;
   private canvas: HTMLCanvasElement;
-  private engine: Engine;
-  private scene: Scene;
+  private engine: BABYLON.Engine;
+  private scene: BABYLON.Scene;
   private sceneSettings = {
-    gravity: new Vector3(0, -0.2, 0),
-    color: new Color4(0.275, 0.82, 1, 1),
-    lightDirection: new Vector3(0, -1, 0),
+    gravity: new BABYLON.Vector3(0, -0.2, 0),
+    color: new BABYLON.Color4(0.275, 0.82, 1, 1),
+    lightDirection: new BABYLON.Vector3(0, -1, 0),
     lightIntensity: 0.5,
-    cameraStartPosition: new Vector3(0, 50, -10),
-    cameraSize: new Vector3(1, 1, 1)
+    cameraStartPosition: new BABYLON.Vector3(0, 50, -10),
+    cameraSize: new BABYLON.Vector3(1, 1, 1)
   };
 
   private cameraControls = {
@@ -52,26 +59,79 @@ export class GameComponent implements OnInit {
     return canvas;
   }
 
-  private initializeEngine(canvas: HTMLCanvasElement): Engine {
-    const engine = new Engine(canvas, true);
+  private initializeEngine(canvas: HTMLCanvasElement): BABYLON.Engine {
+    const engine = new BABYLON.Engine(canvas, true);
     return engine;
   }
 
-  private initializeScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
-    const scene = new Scene(engine);
+  private initializeScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
+    const scene = new BABYLON.Scene(engine);
     scene.gravity = this.sceneSettings.gravity;
     scene.collisionsEnabled = true;
     scene.clearColor = this.sceneSettings.color;
-    const light = new DirectionalLight('DirectionalLight', this.sceneSettings.lightDirection, scene);
+    const light = new BABYLON.DirectionalLight('DirectionalLight', this.sceneSettings.lightDirection, scene);
     light.intensity = this.sceneSettings.lightIntensity;
 
     this.initializeCamera(scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, canvas);
 
+
+    // TODO Dynamic
+    this.initDynamicTerrain(scene);
+
     return scene;
   }
 
-  private initializeCamera(scene: Scene, startPosition: Vector3, cameraSize: Vector3, canvas: HTMLCanvasElement) {
-    const camera = new UniversalCamera('universalCamera', startPosition, scene);
+  private initDynamicTerrain(scene: any) {
+    var mapSubX = 1000;             // point number on X axis
+var mapSubZ = 800;              // point number on Z axis
+var elevationScale = 6.0;
+var mapData = new Float32Array(mapSubX * mapSubZ * 3); // 3 float values per point : x, y and z
+
+var paths = [];                             // array for the ribbon model
+for (var l = 0; l < mapSubZ; l++) {
+    var path = [];                          // only for the ribbon
+    for (var w = 0; w < mapSubX; w++) {
+        var x = (w - mapSubX * 0.5) * 2.0;
+        var z = (l - mapSubZ * 0.5) * 2.0;
+        var y = Math.random();
+        y *= (0.5 + y) * (Math.random()*5) * elevationScale;   // let's increase a bit the noise computed altitude
+                
+        mapData[3 *(l * mapSubX + w)] = x;
+        mapData[3 * (l * mapSubX + w) + 1] = y;
+        mapData[3 * (l * mapSubX + w) + 2] = z;
+        
+        path.push(new BABYLON.Vector3(x, y, z));
+    }
+    paths.push(path);
+}
+
+var map = BABYLON.MeshBuilder.CreateRibbon("m", {pathArray: paths, sideOrientation: 2}, scene);
+map.position.y = -1.0;
+var mapMaterial = new BABYLON.StandardMaterial("mm", scene);
+mapMaterial.wireframe = true;
+mapMaterial.alpha = 0.5;
+map.material = mapMaterial;
+
+// wait for dynamic terrain extension to be loaded
+// Dynamic Terrain
+// ===============
+var terrainSub = 100;               // 100 terrain subdivisions
+var params = {
+    mapData: mapData,               // data map declaration : what data to use ?
+    mapSubX: mapSubX,               // how are these data stored by rows and columns
+    mapSubZ: mapSubZ,
+    terrainSub: terrainSub          // how many terrain subdivisions wanted
+}
+var terrain = new BABYLON.DynamicTerrain("t", params, <any>scene);
+var terrainMaterial = new BABYLON.StandardMaterial("tm", scene);
+terrainMaterial.diffuseColor = BABYLON.Color3.Green();
+//terrainMaterial.alpha = 0.8;
+terrainMaterial.wireframe = true;
+terrain.mesh.material = <any>terrainMaterial;
+  }
+
+  private initializeCamera(scene: BABYLON.Scene, startPosition: BABYLON.Vector3, cameraSize: BABYLON.Vector3, canvas: HTMLCanvasElement) {
+    const camera = new BABYLON.UniversalCamera('universalCamera', startPosition, scene);
     camera.attachControl(canvas);
     camera.ellipsoid = cameraSize;
     camera.checkCollisions = true;
@@ -97,7 +157,7 @@ export class GameComponent implements OnInit {
   }
 
   private buildTerrain() {
-    this.heightmapService.createGround(this.terrainDataId, null, this.scene);
+   // this.heightmapService.createGround(this.terrainDataId, null, this.scene);
   }
 
   private startRendering() {
