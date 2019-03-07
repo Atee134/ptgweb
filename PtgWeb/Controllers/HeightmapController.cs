@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ptg.Common.Dtos.Request;
+using Ptg.Common.Dtos.Response;
 using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.Interfaces;
 using Ptg.Services.Interfaces;
@@ -56,7 +57,15 @@ namespace PtgWeb.Controllers
         {
             var result = repository.GetHeightmap(id);
 
-            return File(result.HeightmapByteArray, "image/bmp");
+            var response = new HeightmapResponseDto
+            {
+                Id = result.Id,
+                Width = result.Width,
+                Height = result.Height,
+                HeightmapCoords = result.HeightmapCoords
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("~/api/splatmap/{id}")]

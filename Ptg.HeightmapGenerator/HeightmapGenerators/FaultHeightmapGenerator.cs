@@ -28,14 +28,12 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 RecalculateHeightmapData(heightmapData, offsetPerIteration, linePoints.start, linePoints.end);
             }
 
-            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
-
             return new HeightmapDto
             {
                 Width = width,
                 Height = height,
-                HeightmapByteArray = heightmapByteArray,
-                HeightmapFloatArray = heightmapData
+                HeightmapOriginalArray = heightmapData,
+                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(heightmapData)
             };
         }
 

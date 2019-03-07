@@ -13,7 +13,7 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
         {
             float transitionPercent = 1 - (lowPercent + midPercent + highPercent);
 
-            var allValues = heightmapDto.HeightmapFloatArray.Cast<float>();
+            var allValues = heightmapDto.HeightmapCoords.Cast<float>();
             float minHeight = allValues.Min();
             float maxHeight = allValues.Max();
 
@@ -42,7 +42,7 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
             {
                 for (int y = 0; y < heightmapDto.Height; y++)
                 {
-                    float value = heightmapDto.HeightmapFloatArray[x, y];
+                    float value = heightmapDto.HeightmapOriginalArray[x, y];
 
                     if (value >= lowMinValue && value < lowMaxValue)
                     {
@@ -77,8 +77,6 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
 
             return new SplatmapDto
             {
-                Width = heightmapDto.Width,
-                Height = heightmapDto.Height,
                 SplatmapByteArray = splatmapByteArray
             };
         }
@@ -88,16 +86,14 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
             int width = heightmapDto.Width;
             int height = heightmapDto.Height;
 
-            float[,] steepnessMap = GetSteepnessMap(heightmapDto.HeightmapFloatArray);
-
-            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(steepnessMap);
+            float[,] steepnessMap = GetSteepnessMap(heightmapDto.HeightmapOriginalArray);
 
             return new HeightmapDto
             {
                 Width = width,
                 Height = height,
-                HeightmapByteArray = heightmapByteArray,
-                HeightmapFloatArray = steepnessMap
+                HeightmapOriginalArray = steepnessMap,
+                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(steepnessMap)
             };
         }
 

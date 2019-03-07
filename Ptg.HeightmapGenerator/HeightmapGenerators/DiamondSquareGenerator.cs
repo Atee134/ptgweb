@@ -41,14 +41,12 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 offsetRange *= offsetReductionRate;
             }
 
-            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
-
             return new HeightmapDto
             {
                 Width = size,
                 Height = size,
-                HeightmapFloatArray = heightmapData,
-                HeightmapByteArray = heightmapByteArray
+                HeightmapOriginalArray = heightmapData,
+                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(heightmapData),
             };
         }
 

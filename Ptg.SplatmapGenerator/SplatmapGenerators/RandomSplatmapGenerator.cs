@@ -18,8 +18,6 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
 
             return new SplatmapDto
             {
-                Width = heightmapDto.Width,
-                Height = heightmapDto.Height,
                 SplatmapByteArray = splatmapByteArray
             };
         }

@@ -26,16 +26,19 @@
           "type": "integer",
           "format": "int32"
         },
-        "HeightmapFloatArray": {
+        "HeightmapOriginalArray": {
           "type": "array",
           "items": {
             "type": "number",
             "format": "double"
           }
         },
-        "HeightmapByteArray": {
-          "type": "string",
-          "format": "byte"
+        "HeightmapCoords": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
         }
       }
     },
@@ -115,8 +118,8 @@
           "format": "int32"
         },
         "OffsetPerIteration": {
-          "type": "integer",
-          "format": "int32"
+          "type": "number",
+          "format": "double"
         }
       }
     },
@@ -184,22 +187,12 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "Id",
-        "Width",
-        "Height"
+        "Id"
       ],
       "properties": {
         "Id": {
           "type": "string",
           "format": "guid"
-        },
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
-          "type": "integer",
-          "format": "int32"
         },
         "SplatmapByteArray": {
           "type": "string",
@@ -220,6 +213,36 @@
         "DiamondSquare",
         "PerlinNoise"
       ]
+    },
+    "HeightmapResponseDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "HeightmapCoords": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      }
     }
   }
 }

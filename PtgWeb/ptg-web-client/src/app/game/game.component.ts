@@ -48,7 +48,7 @@ export class GameComponent implements OnInit {
     this.canvas = this.initializeCanvas(this.resolution);
     this.engine = this.initializeEngine(this.canvas);
     this.scene = this.initializeScene(this.engine, this.canvas);
-    this.buildTerrain();
+    this.initDynamicTerrain(this.scene, this.terrainDataId);
     this.startRendering();
   }
 
@@ -75,59 +75,27 @@ export class GameComponent implements OnInit {
 
     this.initializeCamera(scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, canvas);
 
-
-    // TODO Dynamic
-    this.initDynamicTerrain(scene);
-
     return scene;
   }
 
-  private initDynamicTerrain(scene: any) {
-    const mapSubX = 1000;             // point number on X axis
-    const mapSubZ = 800;              // point number on Z axis
-    const elevationScale = 6.0;
-    const mapData = new Float32Array(mapSubX * mapSubZ * 3); // 3 float values per point : x, y and z
+  private initDynamicTerrain(scene: any, terrainDataId: string) {
+    this.heightmapService.getHeightmap(terrainDataId).subscribe(heightmapDto => {
+      const terrainMaterial = new TerrainMaterial('terrainMaterial', scene);
+      terrainMaterial.diffuseColor = BABYLON.Color3.Green();
+      terrainMaterial.wireframe = true;
 
-    const paths = [];                             // array for the ribbon model
-    for (let l = 0; l < mapSubZ; l++) {
-      const path = [];                          // only for the ribbon
-      for (let w = 0; w < mapSubX; w++) {
-          const x = (w - mapSubX * 0.5) * 2.0;
-          const z = (l - mapSubZ * 0.5) * 2.0;
-          let y = Math.random();
-          y *= (0.5 + y) * (Math.random() * 5) * elevationScale;   // let's increase a bit the noise computed altitude
-
-          mapData[3 * (l * mapSubX + w)] = x;
-          mapData[3 * (l * mapSubX + w) + 1] = y;
-          mapData[3 * (l * mapSubX + w) + 2] = z;
-
-          path.push(new BABYLON.Vector3(x, y, z));
-        }
-      paths.push(path);
-    }
-
-    const map = BABYLON.MeshBuilder.CreateRibbon("m", {pathArray: paths, sideOrientation: 2}, scene);
-    map.position.y = -1.0;
-    const mapMaterial = new BABYLON.StandardMaterial("mm", scene);
-    mapMaterial.wireframe = true;
-    mapMaterial.alpha = 0.5;
-    map.material = mapMaterial;
-
-    // wait for dynamic terrain extension to be loaded
-    // Dynamic Terrain
-    // ===============
-    const terrainSub = 100;               // 100 terrain subdivisions
-    const params = {
-        mapData,               // data map declaration : what data to use ?
-        mapSubX,               // how are these data stored by rows and columns
-        mapSubZ,
-        terrainSub          // how many terrain subdivisions wanted
-    };
-    const terrain = new BABYLON.DynamicTerrain("t", params, <any>scene);
-    const terrainMaterial = new TerrainMaterial("tm", scene);
-    terrainMaterial.diffuseColor = BABYLON.Color3.Green();
-    terrainMaterial.wireframe = true;
-    terrain.mesh.material = <any>terrainMaterial;
+      const params = {
+          mapData : heightmapDto.heightmapCoords,
+          mapSubX : heightmapDto.width,
+          mapSubZ : heightmapDto.height,
+          terrainSub : 100
+      };
+      const terrain = new BABYLON.DynamicTerrain('terrain', params, scene);
+      terrain.mesh.material = terrainMaterial;
+      terrain.subToleranceX = 8;
+      terrain.subToleranceZ = 8;
+      terrain.LODLimits = [4, 3, 2, 1, 1];
+    });
   }
 
   private initializeCamera(scene: BABYLON.Scene, startPosition: BABYLON.Vector3, cameraSize: BABYLON.Vector3, canvas: HTMLCanvasElement) {
@@ -154,10 +122,6 @@ export class GameComponent implements OnInit {
     }
 
     return camera;
-  }
-
-  private buildTerrain() {
-   // this.heightmapService.createGround(this.terrainDataId, null, this.scene);
   }
 
   private startRendering() {

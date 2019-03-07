@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Ptg.DataAccess.Models
+namespace Ptg.Common.Dtos.Response
 {
-    public class Heightmap
+    public class HeightmapResponseDto
     {
         public Guid Id { get; set; }
 
@@ -10,6 +10,6 @@ namespace Ptg.DataAccess.Models
 
         public int Height { get; set; }
 
-        public float[] HeightmapFloatArray { get; set; }
+        public float[] HeightmapCoords { get; set; }
     }
 }

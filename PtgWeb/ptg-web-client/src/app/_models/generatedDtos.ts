@@ -12,8 +12,8 @@ export class HeightmapDto implements IHeightmapDto {
     id!: string;
     width!: number;
     height!: number;
-    heightmapFloatArray?: number[] | null;
-    heightmapByteArray?: string | null;
+    heightmapOriginalArray?: number[] | null;
+    heightmapCoords?: number[] | null;
 
     constructor(data?: IHeightmapDto) {
         if (data) {
@@ -29,12 +29,16 @@ export class HeightmapDto implements IHeightmapDto {
             this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
             this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
             this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
-            if (data["HeightmapFloatArray"] && data["HeightmapFloatArray"].constructor === Array) {
-                this.heightmapFloatArray = [] as any;
-                for (let item of data["HeightmapFloatArray"])
-                    this.heightmapFloatArray!.push(item);
+            if (data["HeightmapOriginalArray"] && data["HeightmapOriginalArray"].constructor === Array) {
+                this.heightmapOriginalArray = [] as any;
+                for (let item of data["HeightmapOriginalArray"])
+                    this.heightmapOriginalArray!.push(item);
             }
-            this.heightmapByteArray = data["HeightmapByteArray"] !== undefined ? data["HeightmapByteArray"] : <any>null;
+            if (data["HeightmapCoords"] && data["HeightmapCoords"].constructor === Array) {
+                this.heightmapCoords = [] as any;
+                for (let item of data["HeightmapCoords"])
+                    this.heightmapCoords!.push(item);
+            }
         }
     }
 
@@ -50,12 +54,16 @@ export class HeightmapDto implements IHeightmapDto {
         data["Id"] = this.id !== undefined ? this.id : <any>null;
         data["Width"] = this.width !== undefined ? this.width : <any>null;
         data["Height"] = this.height !== undefined ? this.height : <any>null;
-        if (this.heightmapFloatArray && this.heightmapFloatArray.constructor === Array) {
-            data["HeightmapFloatArray"] = [];
-            for (let item of this.heightmapFloatArray)
-                data["HeightmapFloatArray"].push(item);
+        if (this.heightmapOriginalArray && this.heightmapOriginalArray.constructor === Array) {
+            data["HeightmapOriginalArray"] = [];
+            for (let item of this.heightmapOriginalArray)
+                data["HeightmapOriginalArray"].push(item);
         }
-        data["HeightmapByteArray"] = this.heightmapByteArray !== undefined ? this.heightmapByteArray : <any>null;
+        if (this.heightmapCoords && this.heightmapCoords.constructor === Array) {
+            data["HeightmapCoords"] = [];
+            for (let item of this.heightmapCoords)
+                data["HeightmapCoords"].push(item);
+        }
         return data; 
     }
 
@@ -71,8 +79,8 @@ export interface IHeightmapDto {
     id: string;
     width: number;
     height: number;
-    heightmapFloatArray?: number[] | null;
-    heightmapByteArray?: string | null;
+    heightmapOriginalArray?: number[] | null;
+    heightmapCoords?: number[] | null;
 }
 
 export class PlayerDto implements IPlayerDto {
@@ -465,8 +473,6 @@ export interface IJoinGameSessionMessage {
 
 export class SplatmapDto implements ISplatmapDto {
     id!: string;
-    width!: number;
-    height!: number;
     splatmapByteArray?: string | null;
 
     constructor(data?: ISplatmapDto) {
@@ -481,8 +487,6 @@ export class SplatmapDto implements ISplatmapDto {
     init(data?: any) {
         if (data) {
             this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
-            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
-            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
             this.splatmapByteArray = data["SplatmapByteArray"] !== undefined ? data["SplatmapByteArray"] : <any>null;
         }
     }
@@ -497,8 +501,6 @@ export class SplatmapDto implements ISplatmapDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["Id"] = this.id !== undefined ? this.id : <any>null;
-        data["Width"] = this.width !== undefined ? this.width : <any>null;
-        data["Height"] = this.height !== undefined ? this.height : <any>null;
         data["SplatmapByteArray"] = this.splatmapByteArray !== undefined ? this.splatmapByteArray : <any>null;
         return data; 
     }
@@ -513,8 +515,6 @@ export class SplatmapDto implements ISplatmapDto {
 
 export interface ISplatmapDto {
     id: string;
-    width: number;
-    height: number;
     splatmapByteArray?: string | null;
 }
 
@@ -522,4 +522,67 @@ export enum HeightmapType {
     Fault = "Fault", 
     DiamondSquare = "DiamondSquare", 
     PerlinNoise = "PerlinNoise", 
+}
+
+export class HeightmapResponseDto implements IHeightmapResponseDto {
+    id!: string;
+    width!: number;
+    height!: number;
+    heightmapCoords?: number[] | null;
+
+    constructor(data?: IHeightmapResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            if (data["HeightmapCoords"] && data["HeightmapCoords"].constructor === Array) {
+                this.heightmapCoords = [] as any;
+                for (let item of data["HeightmapCoords"])
+                    this.heightmapCoords!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): HeightmapResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new HeightmapResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        if (this.heightmapCoords && this.heightmapCoords.constructor === Array) {
+            data["HeightmapCoords"] = [];
+            for (let item of this.heightmapCoords)
+                data["HeightmapCoords"].push(item);
+        }
+        return data; 
+    }
+
+    clone(): HeightmapResponseDto {
+        const json = this.toJSON();
+        let result = new HeightmapResponseDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IHeightmapResponseDto {
+    id: string;
+    width: number;
+    height: number;
+    heightmapCoords?: number[] | null;
 }

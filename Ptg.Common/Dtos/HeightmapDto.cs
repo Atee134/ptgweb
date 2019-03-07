@@ -10,8 +10,8 @@ namespace Ptg.Common.Dtos
 
         public int Height { get; set; }
 
-        public float[,] HeightmapFloatArray { get; set; }
+        public float[,] HeightmapOriginalArray { get; set; }
 
-        public byte[] HeightmapByteArray { get; set; }
+        public float[] HeightmapCoords { get; set; }
     }
 }

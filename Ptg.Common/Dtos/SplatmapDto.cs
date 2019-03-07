@@ -6,10 +6,6 @@ namespace Ptg.Common.Dtos
     {
         public Guid Id { get; set; }
 
-        public int Width { get; set; }
-
-        public int Height { get; set; }
-
         public byte[] SplatmapByteArray { get; set; }
     }
 }

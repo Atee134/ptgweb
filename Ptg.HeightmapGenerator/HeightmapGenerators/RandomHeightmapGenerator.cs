@@ -16,27 +16,26 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 
         public HeightmapDto GenerateHeightmap(int width, int height)
         {
-            byte[,] heightMapData = Generate(width, height);
-
-            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(heightMapData);
+            float[,] heightmapData = Generate(width, height);
 
             return new HeightmapDto
             {
                 Width = width,
                 Height = height,
-                HeightmapByteArray = heightmapByteArray
+                HeightmapOriginalArray = heightmapData,
+                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(heightmapData)
             };
         }
 
-        private byte[,] Generate(int width, int height)
+        private float[,] Generate(int width, int height)
         {
-            byte[,] heightMapData = new byte[width, height];
+            float[,] heightMapData = new float[width, height];
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    heightMapData[x, y] = (byte)random.Next(0, 256);
+                    heightMapData[x, y] = random.Next(0, 256);
                 }
             }
 

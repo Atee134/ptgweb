@@ -31,8 +31,7 @@ namespace Ptg.DataAccess
                 Id = heightmapDto.Id,
                 Width = heightmapDto.Width,
                 Height = heightmapDto.Height,
-                HeightmapFloatArray = heightmapDto.HeightmapFloatArray,
-                HeightmapByteArray = heightmapDto.HeightmapByteArray
+                HeightmapFloatArray = heightmapDto.HeightmapCoords,
             };
 
             heightmaps.Add(heightmapDto.Id, heightmap);
@@ -43,8 +42,6 @@ namespace Ptg.DataAccess
             var splatmap = new Splatmap
             {
                 Id = splatmapDto.Id,
-                Width = splatmapDto.Width,
-                Height = splatmapDto.Height,
                 SplatmapByteArray = splatmapDto.SplatmapByteArray
             };
 
@@ -131,8 +128,7 @@ namespace Ptg.DataAccess
                 Id = heightmap.Id,
                 Width = heightmap.Width,
                 Height = heightmap.Height,
-                HeightmapFloatArray = heightmap.HeightmapFloatArray,
-                HeightmapByteArray = heightmap.HeightmapByteArray
+                HeightmapCoords = heightmap.HeightmapFloatArray,
             };
         }
 
@@ -143,8 +139,6 @@ namespace Ptg.DataAccess
             return new SplatmapDto
             {
                 Id = splatmap.Id,
-                Width = splatmap.Width,
-                Height = splatmap.Height,
                 SplatmapByteArray = splatmap.SplatmapByteArray
             };
         }
