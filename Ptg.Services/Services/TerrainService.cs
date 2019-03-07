@@ -31,6 +31,8 @@ namespace Ptg.Services.Services
         {
             var heightmapDto = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
 
+            heightmapDto = heightBasedSplatmapGenerator.GetTestSteepnessMap(heightmapDto);
+
             return CreateHeightmap(heightmapDto);
         }
 

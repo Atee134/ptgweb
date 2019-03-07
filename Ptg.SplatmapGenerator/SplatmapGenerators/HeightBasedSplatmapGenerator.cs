@@ -1,6 +1,7 @@
 ﻿using Ptg.Common;
 using Ptg.Common.Dtos;
 using Ptg.SplatmapGenerator.Interfaces;
+using System;
 using System.Drawing;
 using System.Linq;
 
@@ -80,6 +81,75 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
                 Height = heightmapDto.Height,
                 SplatmapByteArray = splatmapByteArray
             };
+        }
+
+        public HeightmapDto GetTestSteepnessMap(HeightmapDto heightmapDto)
+        {
+            int width = heightmapDto.Width;
+            int height = heightmapDto.Height;
+
+            float[,] steepnessMap = GetSteepnessMap(heightmapDto.HeightmapFloatArray);
+
+            byte[] heightmapByteArray = BitmapHelper.WriteToByteArray(steepnessMap);
+
+            return new HeightmapDto
+            {
+                Width = width,
+                Height = height,
+                HeightmapByteArray = heightmapByteArray,
+                HeightmapFloatArray = steepnessMap
+            };
+        }
+
+        private float[,] GetSteepnessMap(float[,] heightmap)
+        {
+            int width = heightmap.GetLength(0);
+            int height = heightmap.GetLength(1);
+
+            float[,] steepnessMap = new float[width, height];
+            float maxSteepness = 0f;
+            float steepnessSum = 0f;
+            for (int x = 0; x < width - 1; x++)
+            {
+                for (int y = 0; y < height - 1; y++)
+                {
+                    float currentValue = heightmap[x, y];
+
+                    // Compute the differentials by stepping over 1 in both directions.
+                    // TODO: Ensure these are inside the heightmap before sampling.
+                    float dx = heightmap[x + 1, y] - currentValue;
+                    float dy = heightmap[x, y + 1] - currentValue;
+
+                    // The "steepness" is the magnitude of the gradient vector
+                    // For a faster but not as accurate computation, you can just use abs(dx) + abs(dy)
+                    float steepness = Convert.ToSingle(Math.Sqrt(dx * dx + dy * dy));
+                    steepnessMap[x, y] = steepness;
+
+                    if (steepness > maxSteepness)
+                    {
+                        maxSteepness = steepness;
+                    }
+                    steepnessSum += steepness;
+                }
+            }
+
+            float averageSteepness = steepnessSum / (width * height);
+            float maxSteepnessRatio = 255 / maxSteepness;
+
+            for (int x = 0; x < width - 1; x++)
+            {
+                for (int y = 0; y < height - 1; y++)
+                {
+                    float currentSteepness = steepnessMap[x, y];
+
+                    if (currentSteepness > averageSteepness * 1.5)
+                    {
+                        steepnessMap[x, y] = currentSteepness * maxSteepnessRatio;
+                    }
+                }
+            }
+
+            return steepnessMap;
         }
     }
 }
