@@ -9,6 +9,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { HeightmapService } from '../_services/heightmap.service';
 import { DiamondSquareHeightmapRequestDto } from '../_models/generatedDtos';
 import { ActivatedRoute } from '@angular/router';
+import { TerrainMaterial } from 'babylonjs-materials';
 
 
 @Component({
@@ -82,52 +83,51 @@ export class GameComponent implements OnInit {
   }
 
   private initDynamicTerrain(scene: any) {
-    var mapSubX = 1000;             // point number on X axis
-var mapSubZ = 800;              // point number on Z axis
-var elevationScale = 6.0;
-var mapData = new Float32Array(mapSubX * mapSubZ * 3); // 3 float values per point : x, y and z
+    const mapSubX = 1000;             // point number on X axis
+    const mapSubZ = 800;              // point number on Z axis
+    const elevationScale = 6.0;
+    const mapData = new Float32Array(mapSubX * mapSubZ * 3); // 3 float values per point : x, y and z
 
-var paths = [];                             // array for the ribbon model
-for (var l = 0; l < mapSubZ; l++) {
-    var path = [];                          // only for the ribbon
-    for (var w = 0; w < mapSubX; w++) {
-        var x = (w - mapSubX * 0.5) * 2.0;
-        var z = (l - mapSubZ * 0.5) * 2.0;
-        var y = Math.random();
-        y *= (0.5 + y) * (Math.random()*5) * elevationScale;   // let's increase a bit the noise computed altitude
-                
-        mapData[3 *(l * mapSubX + w)] = x;
-        mapData[3 * (l * mapSubX + w) + 1] = y;
-        mapData[3 * (l * mapSubX + w) + 2] = z;
-        
-        path.push(new BABYLON.Vector3(x, y, z));
+    const paths = [];                             // array for the ribbon model
+    for (let l = 0; l < mapSubZ; l++) {
+      const path = [];                          // only for the ribbon
+      for (let w = 0; w < mapSubX; w++) {
+          const x = (w - mapSubX * 0.5) * 2.0;
+          const z = (l - mapSubZ * 0.5) * 2.0;
+          let y = Math.random();
+          y *= (0.5 + y) * (Math.random() * 5) * elevationScale;   // let's increase a bit the noise computed altitude
+
+          mapData[3 * (l * mapSubX + w)] = x;
+          mapData[3 * (l * mapSubX + w) + 1] = y;
+          mapData[3 * (l * mapSubX + w) + 2] = z;
+
+          path.push(new BABYLON.Vector3(x, y, z));
+        }
+      paths.push(path);
     }
-    paths.push(path);
-}
 
-var map = BABYLON.MeshBuilder.CreateRibbon("m", {pathArray: paths, sideOrientation: 2}, scene);
-map.position.y = -1.0;
-var mapMaterial = new BABYLON.StandardMaterial("mm", scene);
-mapMaterial.wireframe = true;
-mapMaterial.alpha = 0.5;
-map.material = mapMaterial;
+    const map = BABYLON.MeshBuilder.CreateRibbon("m", {pathArray: paths, sideOrientation: 2}, scene);
+    map.position.y = -1.0;
+    const mapMaterial = new BABYLON.StandardMaterial("mm", scene);
+    mapMaterial.wireframe = true;
+    mapMaterial.alpha = 0.5;
+    map.material = mapMaterial;
 
-// wait for dynamic terrain extension to be loaded
-// Dynamic Terrain
-// ===============
-var terrainSub = 100;               // 100 terrain subdivisions
-var params = {
-    mapData: mapData,               // data map declaration : what data to use ?
-    mapSubX: mapSubX,               // how are these data stored by rows and columns
-    mapSubZ: mapSubZ,
-    terrainSub: terrainSub          // how many terrain subdivisions wanted
-}
-var terrain = new BABYLON.DynamicTerrain("t", params, <any>scene);
-var terrainMaterial = new BABYLON.StandardMaterial("tm", scene);
-terrainMaterial.diffuseColor = BABYLON.Color3.Green();
-//terrainMaterial.alpha = 0.8;
-terrainMaterial.wireframe = true;
-terrain.mesh.material = <any>terrainMaterial;
+    // wait for dynamic terrain extension to be loaded
+    // Dynamic Terrain
+    // ===============
+    const terrainSub = 100;               // 100 terrain subdivisions
+    const params = {
+        mapData,               // data map declaration : what data to use ?
+        mapSubX,               // how are these data stored by rows and columns
+        mapSubZ,
+        terrainSub          // how many terrain subdivisions wanted
+    };
+    const terrain = new BABYLON.DynamicTerrain("t", params, <any>scene);
+    const terrainMaterial = new TerrainMaterial("tm", scene);
+    terrainMaterial.diffuseColor = BABYLON.Color3.Green();
+    terrainMaterial.wireframe = true;
+    terrain.mesh.material = <any>terrainMaterial;
   }
 
   private initializeCamera(scene: BABYLON.Scene, startPosition: BABYLON.Vector3, cameraSize: BABYLON.Vector3, canvas: HTMLCanvasElement) {
