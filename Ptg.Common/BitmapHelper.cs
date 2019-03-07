@@ -44,7 +44,7 @@ namespace Ptg.Common
                     }
                 }
 
-                bitmap.Save(stream, ImageFormat.Bmp);
+                bitmap.Save(stream, ImageFormat.Png);
                 content = stream.ToArray();
             }
 
@@ -68,7 +68,7 @@ namespace Ptg.Common
                     }
                 }
 
-                bitmap.Save(stream, ImageFormat.Bmp);
+                bitmap.Save(stream, ImageFormat.Png);
                 content = stream.ToArray();
             }
 

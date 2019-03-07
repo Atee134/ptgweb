@@ -1,35 +1,37 @@
 ﻿using System;
+using System.Linq;
 
 namespace Ptg.Common
 {
     public static class ArrayHelper
     {
-        private static readonly int DISTANCE_BETWEEN_POINTS = 10;
+        private static readonly float DISTANCE_BETWEEN_POINTS = 2f;
+        private static readonly float HEIGHT_MULTIPLIER = 0.8f;
 
-        public static float[] ConvertToFlatCoordsArray(float[,] array)
+        public static float[] ConvertToFlatCoordsArray(float[,] heightmapData)
         {
-            int width = array.GetLength(0);
-            int height = array.GetLength(1);
+            int width = heightmapData.GetLength(0);
+            int height = heightmapData.GetLength(1);
 
-            float[] flattenedArray = new float[width * height * 3];
+            float[] coordsArray = new float[width * height * 3];
 
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
-                for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
                 {
                     float xCoord = Convert.ToSingle(x - width * 0.5) * DISTANCE_BETWEEN_POINTS;
                     float zCoord = Convert.ToSingle(y - height * 0.5) * DISTANCE_BETWEEN_POINTS;
-                    float noiseValue = array[x,y];
+                    float yValue = heightmapData[x, y] * HEIGHT_MULTIPLIER;
 
                     int currentIdx = 3 * (y * width + x);
 
-                    flattenedArray[currentIdx] = xCoord;
-                    flattenedArray[currentIdx + 1] = noiseValue;
-                    flattenedArray[currentIdx + 2] = zCoord;
+                    coordsArray[currentIdx] = xCoord;
+                    coordsArray[currentIdx + 1] = yValue;
+                    coordsArray[currentIdx + 2] = zCoord;
                 }
             }
 
-            return flattenedArray;
+            return coordsArray;
         }
     }
 }

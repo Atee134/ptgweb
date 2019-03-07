@@ -1,4 +1,5 @@
-﻿using Ptg.Common.Dtos.Request;
+﻿using Ptg.Common.Dtos;
+using Ptg.Common.Dtos.Request;
 using System;
 
 namespace Ptg.Services.Interfaces
@@ -8,5 +9,6 @@ namespace Ptg.Services.Interfaces
         Guid Generate(DiamondSquareHeightmapRequestDto requestDto);
         Guid Generate(FaultHeightmapRequestDto requestDto);
         Guid Generate(RandomHeightmapRequestDto requestDto);
+        HeightmapDto GenerateTEST(DiamondSquareHeightmapRequestDto requestDto);
     }
 }

@@ -27,8 +27,8 @@ export class HeightmapService {
     return this.http.get<HeightmapDto>(`${environment.baseUrl}api/heightmap/${terrainDataId}`);
   }
 
-  getSplatmap(terrainDataId: string): Observable<SplatmapDto> {
-    return this.http.get<SplatmapDto>(`${environment.baseUrl}api/splatmap/${terrainDataId}`);
+  getSplatmapUrl(terrainDataId: string): string {
+    return `${environment.baseUrl}api/splatmap/${terrainDataId}`;
   }
 
   generateDiamondSquareHeightmap(requestDto: DiamondSquareHeightmapRequestDto): Observable<string> {

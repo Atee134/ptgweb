@@ -2,6 +2,7 @@
 using Ptg.Common.Dtos;
 using Ptg.HeightmapGenerator.Interfaces;
 using System;
+using System.Linq;
 
 namespace Ptg.HeightmapGenerator.HeightmapGenerators
 {

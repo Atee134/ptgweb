@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Ptg.Common;
 using Ptg.Common.Dtos.Request;
 using Ptg.Common.Dtos.Response;
 using Ptg.DataAccess;
@@ -47,9 +48,11 @@ namespace PtgWeb.Controllers
         [HttpPost("diamondSquare")]
         public IActionResult CreateDiamondSquareHeightmap([FromBody] DiamondSquareHeightmapRequestDto requestDto)
         {
-            var result = terrainService.Generate(requestDto);
+            //var result = terrainService.Generate(requestDto);
 
-            return Ok(result);
+            var result = terrainService.GenerateTEST(requestDto);
+
+            return File(BitmapHelper.WriteToByteArray(result.HeightmapOriginalArray), "image/bmp");
         }
 
         [HttpGet("{id}")]
