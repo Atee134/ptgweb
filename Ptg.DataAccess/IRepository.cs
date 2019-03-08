@@ -9,10 +9,14 @@ namespace Ptg.DataAccess
         void AddHeightmap(HeightmapDto heightmapDto);
         void AddSplatmap(SplatmapDto splatmapDto);
         void AddPlayer(PlayerDto playerDto);
+        void AddPlayerLocation(string signalrConnectionId, LocationDto location);
+        void SetPlayerLoaded(string signalrConnectionId, bool loaded);
         void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId);
         void RemovePlayer(Guid sessionId, string playerName);
+        int PlayersInSessionNotReady(Guid sessionId);
         PlayerDto GetPlayer(Guid sessionId, string playerName);
         PlayerDto GetPlayer(string signalrConnectionId);
+        List<LocationDto> GetLocationsInSession(Guid sessionId);
         void AddSession(Guid sessionId);
         byte[] GetHeightmap(Guid id);
         HeightmapInfoDto GetHeightmapInfo(Guid id);

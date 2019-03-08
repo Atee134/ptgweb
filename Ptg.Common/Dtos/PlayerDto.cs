@@ -9,5 +9,7 @@ namespace Ptg.Common.Dtos
         public Guid SessionId { get; set; }
 
         public string SignalRConnectionId { get; set; }
+
+        public LocationDto Location { get; set; }
     }
 }

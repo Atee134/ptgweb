@@ -15,5 +15,9 @@ namespace Ptg.DataAccess.Models
         public Guid SessionId { get; set; }
 
         public string SignalRConnectionId { get; set; }
+
+        public bool Loaded { get; set; }
+
+        public Location Location { get; set; }
     }
 }

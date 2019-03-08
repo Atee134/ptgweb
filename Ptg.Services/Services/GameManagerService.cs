@@ -44,9 +44,24 @@ namespace Ptg.Services.Services
             repository.SaveChanges();
         }
 
+        public void PlayerLoadedMap(string signalrConnectionId, LocationDto location)
+        {
+            repository.AddPlayerLocation(signalrConnectionId, location);
+            repository.SetPlayerLoaded(signalrConnectionId, true);
+
+            repository.SaveChanges();
+        }
+
         public void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId)
         {
             repository.AddSignalrConnectionIdToPlayer(sessionId, playerName, connectionId);
+
+            repository.SaveChanges();
+        }
+
+        public bool IsEveryoneReadyInSession(Guid sessionId)
+        {
+            return repository.PlayersInSessionNotReady(sessionId) == 0;
         }
 
         public void RemovePlayer(Guid sessionId, string playerName)
@@ -67,6 +82,11 @@ namespace Ptg.Services.Services
         public PlayerDto GetPlayer(string signalrConnectionId)
         {
             return repository.GetPlayer(signalrConnectionId);
+        }
+
+        public List<LocationDto> GetLocationsInSession(Guid sessionId)
+        {
+            return repository.GetLocationsInSession(sessionId);
         }
 
         public List<string> GetPlayerNamesInSession(Guid sessionId)

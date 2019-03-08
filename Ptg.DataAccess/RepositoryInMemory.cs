@@ -57,10 +57,34 @@ namespace Ptg.DataAccess
             {
                 Id = playerId,
                 Name = playerDto.Name,
-                SessionId = playerDto.SessionId
+                SessionId = playerDto.SessionId,
+                Loaded = false
             };
 
             players.Add(player);
+        }
+
+        public void AddPlayerLocation(string signalrConnectionId, LocationDto location)
+        {
+            var player = players.FirstOrDefault(p => p.SignalRConnectionId == signalrConnectionId);
+
+            player.Location = new Location
+            {
+                PlayerId = player.Id,
+                PositionX = location.PositionX,
+                PositionY = location.PositionY,
+                PositionZ = location.PositionZ,
+                RotationX = location.RotationX,
+                RotationY = location.RotationY,
+                RotationZ = location.RotationZ
+            };
+        }
+
+        public void SetPlayerLoaded(string signalrConnectionId, bool loaded)
+        {
+            var player = players.FirstOrDefault(p => p.SignalRConnectionId == signalrConnectionId);
+
+            player.Loaded = loaded;
         }
 
         public void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId)
@@ -91,6 +115,11 @@ namespace Ptg.DataAccess
             }
         }
 
+        public int PlayersInSessionNotReady(Guid sessionId)
+        {
+            return players.Count(p => p.SessionId == sessionId && !p.Loaded);
+        }
+
         public PlayerDto GetPlayer(Guid sessionId, string playerName)
         {
             var player = players.FirstOrDefault(p => p.SessionId == sessionId && p.Name == playerName);
@@ -117,6 +146,28 @@ namespace Ptg.DataAccess
                 SessionId = player.SessionId,
                 SignalRConnectionId = player.SignalRConnectionId
             };
+        }
+
+        public List<LocationDto> GetLocationsInSession(Guid sessionId)
+        {
+            var locations = players.Where(p => p.SessionId == sessionId).Select(p => p.Location);
+
+            List<LocationDto> locationDtos = new List<LocationDto>();
+            foreach (var location in locations)
+            {
+                locationDtos.Add(new LocationDto
+                {
+                    PlayerId = location.PlayerId,
+                    PositionX = location.PositionX,
+                    PositionY = location.PositionY,
+                    PositionZ = location.PositionZ,
+                    RotationX = location.RotationX,
+                    RotationY = location.RotationY,
+                    RotationZ = location.RotationZ,
+                });
+            }
+
+            return locationDtos;
         }
 
         public byte[] GetHeightmap(Guid id)

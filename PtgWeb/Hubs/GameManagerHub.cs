@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Ptg.Common.Dtos;
 using Ptg.Common.Dtos.Signalr;
-using Ptg.Common.Exceptions;
-using Ptg.DataAccess;
 using Ptg.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -39,6 +38,19 @@ namespace PtgWeb.Hubs
             gameManagerService.AddSignalrConnectionIdToPlayer(Guid.Parse(message.SessionId), message.PlayerName, Context.ConnectionId);
             await Clients.Group(message.SessionId).SendAsync("playerJoined", message.PlayerName);
             await Groups.AddToGroupAsync(Context.ConnectionId, message.SessionId);
+        }
+
+        public async Task MapLoaded(Guid sessionId, LocationDto location)
+        {
+            gameManagerService.PlayerLoadedMap(Context.ConnectionId, location);
+            var player = gameManagerService.GetPlayer(Context.ConnectionId);
+
+            await Clients.User(Context.ConnectionId).SendAsync("receivePlayerId", player.Location.PlayerId);
+
+            if (gameManagerService.IsEveryoneReadyInSession(sessionId))
+            {
+                await Clients.Group(sessionId.ToString()).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
+            }
         }
 
         public async Task SendTerrainDataIdToSession(Guid terrainDataId, Guid sessionId)
