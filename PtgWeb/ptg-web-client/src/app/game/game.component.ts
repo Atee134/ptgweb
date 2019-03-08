@@ -87,7 +87,7 @@ export class GameComponent implements OnInit {
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
-}
+  }
 
   private createTerrainMaterial(scene: BABYLON.Scene, splatmapUrl: string): TerrainMaterial {
     // Create terrain material
@@ -107,15 +107,17 @@ export class GameComponent implements OnInit {
   terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
 
   return terrainMaterial;
-}
+  }
 
   private initDynamicTerrain(scene: any, terrainDataId: string) {
       this.heightmapService.getHeightmapInfo(terrainDataId).subscribe(heightmapInfo => {
         const heightmapUrl = this.heightmapService.getHeightmapUrl(terrainDataId);
         const heightmapOptions = {
-                width: heightmapInfo.width, height: heightmapInfo.height,          // map size in the World
-                subX: heightmapInfo.width, subZ: heightmapInfo.height,              // number of points on map width and height
-                onReady: this.createTerrain.bind(this),              // callback function declaration
+                width: heightmapInfo.width, height: heightmapInfo.height,
+                subX: heightmapInfo.width, subZ: heightmapInfo.height,
+                onReady: this.createTerrain.bind(this),
+                minHeight: 0,
+                maxHeight: 20
         };
         const mapData = new Float32Array(heightmapInfo.width * heightmapInfo.height * 3);
         BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, scene);
@@ -124,15 +126,16 @@ export class GameComponent implements OnInit {
 
   private createTerrain(mapData: number[], mapSubX: number, mapSubZ: number): void {
     const options = {
-      terrainSub: 100,  // 100 x 100 quads
-      mapData, // the generated data received
-      mapSubX, mapSubZ // the map number of points per dimension
+      terrainSub: 200,
+      mapData,
+      mapSubX,
+      mapSubZ
     };
     const terrainMaterial = this.createTerrainMaterial(this.scene, this.heightmapService.getSplatmapUrl(this.terrainDataId));
     const terrain = new BABYLON.DynamicTerrain('terrain', options, this.scene);
     terrain.mesh.material = terrainMaterial;
-    terrain.subToleranceX = 8;
-    terrain.subToleranceZ = 8;
+    terrain.subToleranceX = 16;
+    terrain.subToleranceZ = 16;
     terrain.LODLimits = [4, 3, 2, 1, 1];
     terrain.createUVMap();
 
@@ -168,7 +171,7 @@ export class GameComponent implements OnInit {
   }
 
   private setCameraHeight(camera: BABYLON.Camera, terrain: BABYLON.DynamicTerrain) {
-    const camAltitude = terrain.getHeightFromMap(camera.position.x, camera.position.z) + 20;
+    const camAltitude = terrain.getHeightFromMap(camera.position.x, camera.position.z) + 3;
     camera.position.y = camAltitude;
   }
 
