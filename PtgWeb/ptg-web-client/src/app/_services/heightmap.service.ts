@@ -6,8 +6,8 @@ import { environment } from 'src/environments/environment';
 import { DiamondSquareHeightmapRequestDto,
   SplatmapDto,
   FaultHeightmapRequestDto,
-  HeightmapDto,
-  HeightmapResponseDto } from '../_models/generatedDtos';
+  HeightmapInfoResponseDto,
+} from '../_models/generatedDtos';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +23,13 @@ export class HeightmapService {
   //   return ground;
   // }
 
-  getHeightmap(terrainDataId: string): Observable<HeightmapResponseDto> {
-    return this.http.get<HeightmapDto>(`${environment.baseUrl}api/heightmap/${terrainDataId}`);
+
+  getHeightmapInfo(terrainDataId: string): Observable<HeightmapInfoResponseDto> {
+    return this.http.get<HeightmapInfoResponseDto>(`${environment.baseUrl}api/heightmap/${terrainDataId}/info`);
+  }
+
+  getHeightmapUrl(terrainDataId: string): string {
+    return `${environment.baseUrl}api/heightmap/${terrainDataId}`;
   }
 
   getSplatmapUrl(terrainDataId: string): string {

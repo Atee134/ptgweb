@@ -5,43 +5,6 @@
     "version": "1.0.0"
   },
   "definitions": {
-    "HeightmapDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "Id",
-        "Width",
-        "Height"
-      ],
-      "properties": {
-        "Id": {
-          "type": "string",
-          "format": "guid"
-        },
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "HeightmapOriginalArray": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "HeightmapCoords": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      }
-    },
     "PlayerDto": {
       "type": "object",
       "additionalProperties": false,
@@ -214,7 +177,7 @@
         "PerlinNoise"
       ]
     },
-    "HeightmapResponseDto": {
+    "HeightmapInfoResponseDto": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -234,13 +197,6 @@
         "Height": {
           "type": "integer",
           "format": "int32"
-        },
-        "HeightmapCoords": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "format": "double"
-          }
         }
       }
     }

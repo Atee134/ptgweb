@@ -7,7 +7,6 @@ import './extensions/babylon.dynamicTerrain.js';
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HeightmapService } from '../_services/heightmap.service';
-import { DiamondSquareHeightmapRequestDto } from '../_models/generatedDtos';
 import { ActivatedRoute } from '@angular/router';
 import { TerrainMaterial } from 'babylonjs-materials';
 
@@ -51,10 +50,7 @@ export class GameComponent implements OnInit {
     this.scene = this.initializeScene(this.engine);
     this.camera = this.initializeCamera(this.scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, this.canvas);
     this.createSkyBox(this.scene);
-    const terrainMaterial = this.createTerrainMaterial(this.scene, this.heightmapService.getSplatmapUrl(this.terrainDataId));
-    this.initDynamicTerrain(this.scene, this.terrainDataId, terrainMaterial).then(terrain => {
-      this.scene.registerBeforeRender(() => this.setCameraHeight(this.camera, terrain));
-    });
+    this.initDynamicTerrain(this.scene, this.terrainDataId);
     this.startRendering();
   }
 
@@ -113,24 +109,34 @@ export class GameComponent implements OnInit {
   return terrainMaterial;
 }
 
-  private initDynamicTerrain(scene: any, terrainDataId: string, terrainMaterial: TerrainMaterial): Promise<BABYLON.DynamicTerrain> {
-    return new Promise<BABYLON.DynamicTerrain>((resolve) => {
-      this.heightmapService.getHeightmap(terrainDataId).subscribe(heightmapDto => {
-        const params = {
-            mapData : heightmapDto.heightmapCoords,
-            mapSubX : heightmapDto.width,
-            mapSubZ : heightmapDto.height,
-            terrainSub : 100
+  private initDynamicTerrain(scene: any, terrainDataId: string) {
+      this.heightmapService.getHeightmapInfo(terrainDataId).subscribe(heightmapInfo => {
+        const heightmapUrl = this.heightmapService.getHeightmapUrl(terrainDataId);
+        const heightmapOptions = {
+                width: heightmapInfo.width, height: heightmapInfo.height,          // map size in the World
+                subX: heightmapInfo.width, subZ: heightmapInfo.height,              // number of points on map width and height
+                onReady: this.createTerrain.bind(this),              // callback function declaration
         };
-        const terrain = new BABYLON.DynamicTerrain('terrain', params, scene);
-        terrain.mesh.material = terrainMaterial;
-        terrain.subToleranceX = 8;
-        terrain.subToleranceZ = 8;
-        terrain.LODLimits = [4, 3, 2, 1, 1];
-
-        resolve(terrain);
+        const mapData = new Float32Array(heightmapInfo.width * heightmapInfo.height * 3);
+        BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, scene);
       });
-    });
+  }
+
+  private createTerrain(mapData: number[], mapSubX: number, mapSubZ: number): void {
+    const options = {
+      terrainSub: 100,  // 100 x 100 quads
+      mapData, // the generated data received
+      mapSubX, mapSubZ // the map number of points per dimension
+    };
+    const terrainMaterial = this.createTerrainMaterial(this.scene, this.heightmapService.getSplatmapUrl(this.terrainDataId));
+    const terrain = new BABYLON.DynamicTerrain('terrain', options, this.scene);
+    terrain.mesh.material = terrainMaterial;
+    terrain.subToleranceX = 8;
+    terrain.subToleranceZ = 8;
+    terrain.LODLimits = [4, 3, 2, 1, 1];
+    terrain.createUVMap();
+
+    this.scene.registerBeforeRender(() => this.setCameraHeight(this.camera, terrain));
   }
 
   private initializeCamera(scene: BABYLON.Scene,
