@@ -34,13 +34,6 @@ namespace Ptg.Services.Services
             return CreateHeightmap(heightmapDto);
         }
 
-        public HeightmapDto GenerateTEST(DiamondSquareHeightmapRequestDto requestDto)
-        {
-            var heightmapDto = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
-
-            return heightmapDto;
-        }
-
         public Guid Generate(FaultHeightmapRequestDto requestDto)
         {
             var heightmapDto = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
@@ -71,7 +64,7 @@ namespace Ptg.Services.Services
 
         private void GenerateSplatmap(HeightmapDto heightmapDto)
         {
-            var splatmap = heightBasedSplatmapGenerator.Generate(heightmapDto, 0.3f, 0.17f, 0.16f);
+            var splatmap = heightBasedSplatmapGenerator.Generate(heightmapDto.HeightmapOriginalArray, 0.3f, 0.17f, 0.16f);
             splatmap.Id = heightmapDto.Id;
 
             repository.AddSplatmap(splatmap);

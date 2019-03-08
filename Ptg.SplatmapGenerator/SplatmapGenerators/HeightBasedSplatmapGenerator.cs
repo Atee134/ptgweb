@@ -9,11 +9,11 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
 {
     public class HeightBasedSplatmapGenerator : IHeightBasedSplatmapGenerator
     {
-        public SplatmapDto Generate(HeightmapDto heightmapDto, float lowPercent, float midPercent, float highPercent)
+        public SplatmapDto Generate(float[,] heightmap, float lowPercent, float midPercent, float highPercent)
         {
             float transitionPercent = 1 - (lowPercent + midPercent + highPercent);
 
-            var allValues = heightmapDto.HeightmapCoords.Cast<float>();
+            var allValues = heightmap.Cast<float>();
             float minHeight = allValues.Min();
             float maxHeight = allValues.Max();
 
@@ -36,13 +36,16 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
             float highMinValue = midHighTransitionMaxValue;
             float highMaxValue = midHighTransitionMaxValue + totalValueRange * highPercent;
 
-            Color[,] colors = new Color[heightmapDto.Width, heightmapDto.Height];
+            int width = heightmap.GetLength(0);
+            int height = heightmap.GetLength(1);
 
-            for (int x = 0; x < heightmapDto.Width; x++)
+            Color[,] colors = new Color[width, height];
+
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < heightmapDto.Height; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    float value = heightmapDto.HeightmapOriginalArray[x, y];
+                    float value = heightmap[x, y];
 
                     if (value >= lowMinValue && value < lowMaxValue)
                     {
@@ -93,7 +96,7 @@ namespace Ptg.SplatmapGenerator.SplatmapGenerators
                 Width = width,
                 Height = height,
                 HeightmapOriginalArray = steepnessMap,
-                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(steepnessMap)
+                HeightmapByteArray = BitmapHelper.WriteToByteArray(steepnessMap)
             };
         }
 

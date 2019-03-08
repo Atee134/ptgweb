@@ -31,7 +31,7 @@ namespace Ptg.DataAccess
                 Id = heightmapDto.Id,
                 Width = heightmapDto.Width,
                 Height = heightmapDto.Height,
-                HeightmapFloatArray = heightmapDto.HeightmapCoords,
+                HeightmapByteArray = heightmapDto.HeightmapByteArray,
             };
 
             heightmaps.Add(heightmapDto.Id, heightmap);
@@ -119,16 +119,22 @@ namespace Ptg.DataAccess
             };
         }
 
-        public HeightmapDto GetHeightmap(Guid id)
+        public byte[] GetHeightmap(Guid id)
         {
             var heightmap = heightmaps[id];
 
-            return new HeightmapDto
+            return heightmap.HeightmapByteArray;
+        }
+
+        public HeightmapInfoDto GetHeightmapInfo(Guid id)
+        {
+            var heightmap = heightmaps[id];
+
+            return new HeightmapInfoDto
             {
                 Id = heightmap.Id,
                 Width = heightmap.Width,
-                Height = heightmap.Height,
-                HeightmapCoords = heightmap.HeightmapFloatArray,
+                Height = heightmap.Height
             };
         }
 
@@ -197,7 +203,5 @@ namespace Ptg.DataAccess
         {
             return;
         }
-
-
     }
 }

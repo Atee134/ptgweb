@@ -9,11 +9,6 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
     {
         private static readonly Random random = new Random();
 
-        public RandomHeightmapGenerator()
-        {
-
-        }
-
         public HeightmapDto GenerateHeightmap(int width, int height)
         {
             float[,] heightmapData = Generate(width, height);
@@ -23,7 +18,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 Width = width,
                 Height = height,
                 HeightmapOriginalArray = heightmapData,
-                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(heightmapData)
+                HeightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData)
             };
         }
 

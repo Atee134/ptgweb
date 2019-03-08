@@ -48,11 +48,9 @@ namespace PtgWeb.Controllers
         [HttpPost("diamondSquare")]
         public IActionResult CreateDiamondSquareHeightmap([FromBody] DiamondSquareHeightmapRequestDto requestDto)
         {
-            //var result = terrainService.Generate(requestDto);
+            var result = terrainService.Generate(requestDto);
 
-            var result = terrainService.GenerateTEST(requestDto);
-
-            return File(BitmapHelper.WriteToByteArray(result.HeightmapOriginalArray), "image/bmp");
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -60,12 +58,19 @@ namespace PtgWeb.Controllers
         {
             var result = repository.GetHeightmap(id);
 
-            var response = new HeightmapResponseDto
+            return File(result, "image/bmp");
+        }
+
+        [HttpGet("{id}/info")]
+        public IActionResult GetHeightmapInfo(Guid id)
+        {
+            var result = repository.GetHeightmapInfo(id);
+
+            var response = new HeightmapInfoResponseDto
             {
                 Id = result.Id,
                 Width = result.Width,
                 Height = result.Height,
-                HeightmapCoords = result.HeightmapCoords
             };
 
             return Ok(response);

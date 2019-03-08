@@ -14,7 +14,8 @@ namespace Ptg.DataAccess
         PlayerDto GetPlayer(Guid sessionId, string playerName);
         PlayerDto GetPlayer(string signalrConnectionId);
         void AddSession(Guid sessionId);
-        HeightmapDto GetHeightmap(Guid id);
+        byte[] GetHeightmap(Guid id);
+        HeightmapInfoDto GetHeightmapInfo(Guid id);
         SplatmapDto Getsplatmap(Guid id);
         List<PlayerDto> GetPlayers(Guid sessionId);
         bool HeightmapExists(Guid id);

@@ -10,6 +10,6 @@ namespace Ptg.DataAccess.Models
 
         public int Height { get; set; }
 
-        public float[] HeightmapFloatArray { get; set; }
+        public byte[] HeightmapByteArray { get; set; }
     }
 }

@@ -47,7 +47,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                 Width = size,
                 Height = size,
                 HeightmapOriginalArray = heightmapData,
-                HeightmapCoords = ArrayHelper.ConvertToFlatCoordsArray(heightmapData),
+                HeightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData)
             };
         }
 
