@@ -80,8 +80,7 @@ export class GameInitializerService {
     skybox.material = skyboxMaterial;
 }
 
-  private createTerrainMaterial(scene: BABYLON.Scene, splatmapUrl: string): TerrainMaterial {
-    // Create terrain material
+  private createTerrainMaterial(scene: BABYLON.Scene, splatmapUrl: string, width: number, height: number): TerrainMaterial {
   const terrainMaterial = new TerrainMaterial('terrainMaterial', scene);
   terrainMaterial.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
   terrainMaterial.specularPower = 64;
@@ -93,9 +92,11 @@ export class GameInitializerService {
   terrainMaterial.diffuseTexture2 = new BABYLON.Texture('assets/textures/ground/rock.jpg', scene);
   terrainMaterial.diffuseTexture3 = new BABYLON.Texture('assets/textures/ground/snow.jpg', scene);
 
-  terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 30;
-  terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 20;
-  terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 20;
+  const size = width < height ? width : height;
+
+  terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = size / 10;
+  terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = size / 8;
+  terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = size / 8;
 
   return terrainMaterial;
   }
@@ -122,13 +123,19 @@ export class GameInitializerService {
       mapSubX,
       mapSubZ
     };
-    const terrainMaterial = this.createTerrainMaterial(this.scene, this.heightmapService.getSplatmapUrl(this.terrainDataId));
+    const terrainMaterial = this.createTerrainMaterial(
+      this.scene,
+      this.heightmapService.getSplatmapUrl(this.terrainDataId),
+      mapSubX,
+      mapSubZ);
+
     const terrain = new BABYLON.DynamicTerrain('terrain', options, this.scene);
     terrain.mesh.material = terrainMaterial;
     terrain.subToleranceX = 16;
     terrain.subToleranceZ = 16;
-    terrain.LODLimits = [4, 3, 2, 1, 1];
+    terrain.LODLimits = [32, 16, 8, 4, 2, 1];
     terrain.createUVMap();
+    terrain.update(true);
 
     this.scene.registerBeforeRender(() => this.setCameraHeight(this.camera, terrain));
   }
