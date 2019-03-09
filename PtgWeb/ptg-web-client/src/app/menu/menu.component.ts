@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SignalRService } from '../_services/signalr.service';
 import { SessionService } from '../_services/session.service';
 import { CreateGameSessionRequestDto, JoinGameSessionRequestDto } from '../_models/generatedDtos';
 import { Router } from '@angular/router';

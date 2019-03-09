@@ -1,7 +1,7 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GameInitializerService } from './game-initializer.service.js';
+import { GameManagerService } from './game-manager.service.js';
 
 
 @Component({
@@ -13,12 +13,12 @@ export class GameComponent implements OnInit {
   @ViewChild('viewport') viewPort: any;
 
   constructor(
-    private route: ActivatedRoute,
-    private gameInitializerService: GameInitializerService) { }
+    private gameManagerService: GameManagerService) { }
 
   ngOnInit() {
-    const terrainDataId = this.route.snapshot.paramMap.get('terrainDataId');
+    const terrainDataId = sessionStorage.getItem('terrainDataId');
+    const sessionId = sessionStorage.getItem('sessionId');
     const canvas = this.viewPort.nativeElement as HTMLCanvasElement;
-    this.gameInitializerService.initializeGame(terrainDataId, canvas); // TODO add settings inside initializer to this constructor
+    this.gameManagerService.startGame(sessionId, terrainDataId, canvas); // TODO add settings inside initializer to this constructor
   }
 }

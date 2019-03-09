@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@aspnet/signalr';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
-import { JoinGameSessionMessage } from '../_models/generatedDtos';
+import { JoinGameSessionMessage, MapLoadedMessage } from '../_models/generatedDtos';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,8 @@ export class SignalRService {
 
   public playerJoined = new Subject<string>();
   public playerLeft = new Subject<string>();
-  public receiveTerrainDataIdReceived = new Subject<string>();
+  public terrainDataIdReceived = new Subject<string>();
+  public playerIdReceived = new Subject<number>();
 
   constructor() {
     this.createConnection();
@@ -24,6 +25,11 @@ export class SignalRService {
 
   public sendJoinSession(message: JoinGameSessionMessage): Promise<any> {
     return this.invokeIfConnected('JoinSession', message);
+  }
+
+  // MapLoaded(Guid sessionId, LocationDto location)
+  public sendMapLoaded(message: MapLoadedMessage): Promise<any> {
+    return this.invokeIfConnected('MapLoaded', message);
   }
 
   private invokeIfConnected(methodName: string, message: any): Promise<any> {
@@ -60,7 +66,6 @@ export class SignalRService {
     });
   }
 
-  // TODO register event for receiveTerrainDataGuid
   private registerOnServerEvents(): void {
     this.hubConnection.on('playerJoined', (player: string) => {
       this.playerJoined.next(player);
@@ -70,8 +75,12 @@ export class SignalRService {
       this.playerLeft.next(player);
     });
 
-    this.hubConnection.on('receiveTerrainDataId', (receiveTerrainDataId: string) => {
-      this.receiveTerrainDataIdReceived.next(receiveTerrainDataId);
+    this.hubConnection.on('receiveTerrainDataId', (terrainDataId: string) => {
+      this.terrainDataIdReceived.next(terrainDataId);
+    });
+
+    this.hubConnection.on('receivePlayerId', (playerId: number) => {
+      this.playerIdReceived.next(playerId);
     });
   }
 }

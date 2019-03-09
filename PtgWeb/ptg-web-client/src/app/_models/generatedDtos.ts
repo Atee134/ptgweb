@@ -8,10 +8,78 @@
 
 
 
+export class HeightmapDto implements IHeightmapDto {
+    id!: string;
+    width!: number;
+    height!: number;
+    heightmapByteArray?: string | null;
+    heightmapOriginalArray?: number[] | null;
+
+    constructor(data?: IHeightmapDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            this.heightmapByteArray = data["HeightmapByteArray"] !== undefined ? data["HeightmapByteArray"] : <any>null;
+            if (data["HeightmapOriginalArray"] && data["HeightmapOriginalArray"].constructor === Array) {
+                this.heightmapOriginalArray = [] as any;
+                for (let item of data["HeightmapOriginalArray"])
+                    this.heightmapOriginalArray!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): HeightmapDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new HeightmapDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        data["HeightmapByteArray"] = this.heightmapByteArray !== undefined ? this.heightmapByteArray : <any>null;
+        if (this.heightmapOriginalArray && this.heightmapOriginalArray.constructor === Array) {
+            data["HeightmapOriginalArray"] = [];
+            for (let item of this.heightmapOriginalArray)
+                data["HeightmapOriginalArray"].push(item);
+        }
+        return data; 
+    }
+
+    clone(): HeightmapDto {
+        const json = this.toJSON();
+        let result = new HeightmapDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IHeightmapDto {
+    id: string;
+    width: number;
+    height: number;
+    heightmapByteArray?: string | null;
+    heightmapOriginalArray?: number[] | null;
+}
+
 export class PlayerDto implements IPlayerDto {
     name?: string | null;
     sessionId!: string;
     signalRConnectionId?: string | null;
+    location?: LocationDto | null;
 
     constructor(data?: IPlayerDto) {
         if (data) {
@@ -27,6 +95,7 @@ export class PlayerDto implements IPlayerDto {
             this.name = data["Name"] !== undefined ? data["Name"] : <any>null;
             this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
             this.signalRConnectionId = data["SignalRConnectionId"] !== undefined ? data["SignalRConnectionId"] : <any>null;
+            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
         }
     }
 
@@ -42,6 +111,7 @@ export class PlayerDto implements IPlayerDto {
         data["Name"] = this.name !== undefined ? this.name : <any>null;
         data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
         data["SignalRConnectionId"] = this.signalRConnectionId !== undefined ? this.signalRConnectionId : <any>null;
+        data["Location"] = this.location ? this.location.toJSON() : <any>null;
         return data; 
     }
 
@@ -57,6 +127,74 @@ export interface IPlayerDto {
     name?: string | null;
     sessionId: string;
     signalRConnectionId?: string | null;
+    location?: LocationDto | null;
+}
+
+export class LocationDto implements ILocationDto {
+    playerId!: number;
+    positionX!: number;
+    positionY!: number;
+    positionZ!: number;
+    rotationX!: number;
+    rotationY!: number;
+    rotationZ!: number;
+
+    constructor(data?: ILocationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.playerId = data["PlayerId"] !== undefined ? data["PlayerId"] : <any>null;
+            this.positionX = data["PositionX"] !== undefined ? data["PositionX"] : <any>null;
+            this.positionY = data["PositionY"] !== undefined ? data["PositionY"] : <any>null;
+            this.positionZ = data["PositionZ"] !== undefined ? data["PositionZ"] : <any>null;
+            this.rotationX = data["RotationX"] !== undefined ? data["RotationX"] : <any>null;
+            this.rotationY = data["RotationY"] !== undefined ? data["RotationY"] : <any>null;
+            this.rotationZ = data["RotationZ"] !== undefined ? data["RotationZ"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LocationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LocationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["PlayerId"] = this.playerId !== undefined ? this.playerId : <any>null;
+        data["PositionX"] = this.positionX !== undefined ? this.positionX : <any>null;
+        data["PositionY"] = this.positionY !== undefined ? this.positionY : <any>null;
+        data["PositionZ"] = this.positionZ !== undefined ? this.positionZ : <any>null;
+        data["RotationX"] = this.rotationX !== undefined ? this.rotationX : <any>null;
+        data["RotationY"] = this.rotationY !== undefined ? this.rotationY : <any>null;
+        data["RotationZ"] = this.rotationZ !== undefined ? this.rotationZ : <any>null;
+        return data; 
+    }
+
+    clone(): LocationDto {
+        const json = this.toJSON();
+        let result = new LocationDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ILocationDto {
+    playerId: number;
+    positionX: number;
+    positionY: number;
+    positionZ: number;
+    rotationX: number;
+    rotationY: number;
+    rotationZ: number;
 }
 
 export class CreateGameSessionRequestDto implements ICreateGameSessionRequestDto {
@@ -449,6 +587,57 @@ export enum HeightmapType {
     PerlinNoise = "PerlinNoise", 
 }
 
+export class HeightmapInfoDto implements IHeightmapInfoDto {
+    id!: string;
+    width!: number;
+    height!: number;
+
+    constructor(data?: IHeightmapInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): HeightmapInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new HeightmapInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        return data; 
+    }
+
+    clone(): HeightmapInfoDto {
+        const json = this.toJSON();
+        let result = new HeightmapInfoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IHeightmapInfoDto {
+    id: string;
+    width: number;
+    height: number;
+}
+
 export class HeightmapInfoResponseDto implements IHeightmapInfoResponseDto {
     id!: string;
     width!: number;
@@ -498,4 +687,51 @@ export interface IHeightmapInfoResponseDto {
     id: string;
     width: number;
     height: number;
+}
+
+export class MapLoadedMessage implements IMapLoadedMessage {
+    sessionId?: string | null;
+    location?: LocationDto | null;
+
+    constructor(data?: IMapLoadedMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MapLoadedMessage {
+        data = typeof data === 'object' ? data : {};
+        let result = new MapLoadedMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["Location"] = this.location ? this.location.toJSON() : <any>null;
+        return data; 
+    }
+
+    clone(): MapLoadedMessage {
+        const json = this.toJSON();
+        let result = new MapLoadedMessage();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMapLoadedMessage {
+    sessionId?: string | null;
+    location?: LocationDto | null;
 }

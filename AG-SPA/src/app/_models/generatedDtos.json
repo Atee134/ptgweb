@@ -5,6 +5,40 @@
     "version": "1.0.0"
   },
   "definitions": {
+    "HeightmapDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "HeightmapByteArray": {
+          "type": "string",
+          "format": "byte"
+        },
+        "HeightmapOriginalArray": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      }
+    },
     "PlayerDto": {
       "type": "object",
       "additionalProperties": false,
@@ -21,6 +55,52 @@
         },
         "SignalRConnectionId": {
           "type": "string"
+        },
+        "Location": {
+          "$ref": "#/definitions/LocationDto"
+        }
+      }
+    },
+    "LocationDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "PlayerId",
+        "PositionX",
+        "PositionY",
+        "PositionZ",
+        "RotationX",
+        "RotationY",
+        "RotationZ"
+      ],
+      "properties": {
+        "PlayerId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "PositionX": {
+          "type": "number",
+          "format": "double"
+        },
+        "PositionY": {
+          "type": "number",
+          "format": "double"
+        },
+        "PositionZ": {
+          "type": "number",
+          "format": "double"
+        },
+        "RotationX": {
+          "type": "number",
+          "format": "double"
+        },
+        "RotationY": {
+          "type": "number",
+          "format": "double"
+        },
+        "RotationZ": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
@@ -177,6 +257,29 @@
         "PerlinNoise"
       ]
     },
+    "HeightmapInfoDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "HeightmapInfoResponseDto": {
       "type": "object",
       "additionalProperties": false,
@@ -197,6 +300,18 @@
         "Height": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "MapLoadedMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SessionId": {
+          "type": "string"
+        },
+        "Location": {
+          "$ref": "#/definitions/LocationDto"
         }
       }
     }

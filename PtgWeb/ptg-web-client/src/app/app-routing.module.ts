@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/menu', pathMatch: 'full' },
   { path: 'menu', component: MenuComponent },
   { path: 'lobby/:sessionId/:playerName', component: LobbyComponent },
-  { path: 'game/:terrainDataId', component: GameComponent },
+  { path: 'game', component: GameComponent },
 ];
 
 @NgModule({

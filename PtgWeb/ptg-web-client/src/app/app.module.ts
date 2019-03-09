@@ -11,6 +11,7 @@ import { LobbyComponent } from './lobby/lobby.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { LobbySettingsComponent } from './lobby-settings/lobby-settings.component';
+import { SignalRService } from './_services/signalr.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +25,9 @@ import { LobbySettingsComponent } from './lobby-settings/lobby-settings.componen
     HttpClientModule,
     FormsModule,
     ButtonsModule.forRoot(),
-    GameModule,
     AppRoutingModule,
   ],
-  providers: [ErrorInterceptorProvider],
+  providers: [ErrorInterceptorProvider, SignalRService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

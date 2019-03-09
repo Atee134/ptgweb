@@ -1,4 +1,6 @@
-﻿namespace Ptg.Common.Dtos.Signalr
+﻿using System;
+
+namespace Ptg.Common.Dtos.Signalr
 {
     public class JoinGameSessionMessage
     {

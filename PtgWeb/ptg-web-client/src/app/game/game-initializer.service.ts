@@ -36,16 +36,24 @@ export class GameInitializerService {
 
   constructor(private heightmapService: HeightmapService) { }
 
-  public initializeGame(terrainDataId: string, canvas: HTMLCanvasElement) {
+  public initializeGame(terrainDataId: string, canvas: HTMLCanvasElement): Game {
     this.terrainDataId = terrainDataId;
     this.setCanvasResolution(canvas, this.resolution);
     const engine = this.initializeEngine(canvas);
     const scene = this.initializeScene(engine);
     this.scene = scene;
-    this.camera = this.initializeCamera(scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, canvas);
+    const camera = this.initializeCamera(scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, canvas);
+    this.camera = camera;
     this.createSkyBox(scene);
     this.initDynamicTerrain(scene, terrainDataId);
-    this.startRendering(engine, scene);
+
+    const game: Game = {
+      engine,
+      scene,
+      camera,
+    };
+
+    return game;
   }
 
   private setCanvasResolution(canvas: HTMLCanvasElement, resolution: any): void {
@@ -101,19 +109,19 @@ export class GameInitializerService {
   return terrainMaterial;
   }
 
-  private initDynamicTerrain(scene: any, terrainDataId: string) {
-      this.heightmapService.getHeightmapInfo(terrainDataId).subscribe(heightmapInfo => {
-        const heightmapUrl = this.heightmapService.getHeightmapUrl(terrainDataId);
-        const heightmapOptions = {
-                width: heightmapInfo.width, height: heightmapInfo.height,
-                subX: heightmapInfo.width, subZ: heightmapInfo.height,
-                onReady: this.createTerrain.bind(this),
-                minHeight: 0,
-                maxHeight: 20
-        };
-        const mapData = new Float32Array(heightmapInfo.width * heightmapInfo.height * 3);
-        BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, scene);
-      });
+  private initDynamicTerrain(scene: BABYLON.Scene, terrainDataId: string): void {
+    this.heightmapService.getHeightmapInfo(terrainDataId).subscribe(heightmapInfo => {
+      const heightmapUrl = this.heightmapService.getHeightmapUrl(terrainDataId);
+      const heightmapOptions = {
+              width: heightmapInfo.width, height: heightmapInfo.height,
+              subX: heightmapInfo.width, subZ: heightmapInfo.height,
+              onReady: this.createTerrain.bind(this),
+              minHeight: 0,
+              maxHeight: 20
+      };
+      const mapData = new Float32Array(heightmapInfo.width * heightmapInfo.height * 3);
+      BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, scene);
+    });
   }
 
   private createTerrain(mapData: number[], mapSubX: number, mapSubZ: number): void {
@@ -137,7 +145,7 @@ export class GameInitializerService {
     terrain.createUVMap();
     terrain.update(true);
 
-    this.scene.registerBeforeRender(() => this.setCameraHeight(this.camera, terrain));
+    this.registerCameraSetter(this.scene, this.camera, terrain);
   }
 
   private initializeCamera(scene: BABYLON.Scene,
@@ -168,16 +176,10 @@ export class GameInitializerService {
     return camera;
   }
 
-  // TODO put these 2 methods into a new, game-manager service
-
-  private setCameraHeight(camera: BABYLON.Camera, terrain: BABYLON.DynamicTerrain) {
-    const camAltitude = terrain.getHeightFromMap(camera.position.x, camera.position.z) + 3;
-    camera.position.y = camAltitude;
-  }
-
-  private startRendering(engine: BABYLON.Engine, scene: BABYLON.Scene) {
-    engine.runRenderLoop(() => {
-      scene.render();
+  private registerCameraSetter(scene: BABYLON.Scene, camera: BABYLON.Camera, terrain: BABYLON.DynamicTerrain): void {
+    scene.registerBeforeRender(() => {
+      const camAltitude = terrain.getHeightFromMap(camera.position.x, camera.position.z) + 3;
+      camera.position.y = camAltitude;
     });
   }
 }

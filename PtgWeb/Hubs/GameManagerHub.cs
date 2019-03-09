@@ -40,22 +40,19 @@ namespace PtgWeb.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, message.SessionId);
         }
 
-        public async Task MapLoaded(Guid sessionId, LocationDto location)
+        public async Task MapLoaded(MapLoadedMessage message)
         {
-            gameManagerService.PlayerLoadedMap(Context.ConnectionId, location);
+            gameManagerService.PlayerLoadedMap(Context.ConnectionId, message.Location);
             var player = gameManagerService.GetPlayer(Context.ConnectionId);
 
             await Clients.User(Context.ConnectionId).SendAsync("receivePlayerId", player.Location.PlayerId);
 
+            Guid sessionId = Guid.Parse(message.SessionId);
+
             if (gameManagerService.IsEveryoneReadyInSession(sessionId))
             {
-                await Clients.Group(sessionId.ToString()).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
+                await Clients.Group(message.SessionId).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
             }
-        }
-
-        public async Task SendTerrainDataIdToSession(Guid terrainDataId, Guid sessionId)
-        {
-            await Clients.Group(sessionId.ToString()).SendAsync("receiveTerrainDataGuid", terrainDataId);
         }
     }
 }

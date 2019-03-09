@@ -46,8 +46,10 @@ export class LobbyComponent implements OnInit {
       this.players = this.players.filter(p => p !== player);
     });
 
-    this.signalrService.receiveTerrainDataIdReceived.subscribe(terrainDataId => {
-      this.router.navigate([`/game/${terrainDataId}`]);
+    this.signalrService.terrainDataIdReceived.subscribe(terrainDataId => {
+      sessionStorage.setItem('terrainDataId', terrainDataId);
+      sessionStorage.setItem('sessionId', this.gameSessionId);
+      this.router.navigate([`/game`]);
     });
   }
 
