@@ -1,11 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { HeightmapService } from '../_services/heightmap.service';
-import {
-  DiamondSquareHeightmapRequestDto,
+import { DiamondSquareHeightmapRequestDto,
   FaultHeightmapRequestDto,
   HeightmapType,
-  StartGameSesionRequestDto } from '../_models/generatedDtos';
-import { SessionService } from '../_services/session.service';
+  StartGameSesionRequestDto } from 'src/app/_models/generatedDtos';
+import { HeightmapService } from 'src/app/_services/heightmap.service';
+import { SessionService } from 'src/app/_services/session.service';
 
 @Component({
   selector: 'app-lobby-settings',

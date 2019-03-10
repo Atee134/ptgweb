@@ -1,15 +1,11 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { GameComponent } from './game.component';
-import { SignalRService } from '../_services/signalr.service';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [GameComponent],
   imports: [
-    CommonModule,
-  ],
-  exports: [
-    GameComponent
+    SharedModule
   ]
 })
 export class GameModule { }

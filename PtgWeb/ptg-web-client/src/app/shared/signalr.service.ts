@@ -5,9 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { JoinGameSessionMessage, MapLoadedMessage } from '../_models/generatedDtos';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SignalRService {
   private maxUnsuccessfulInvokeAttempts: 100;
   private hubConnection: HubConnection;
@@ -27,7 +25,6 @@ export class SignalRService {
     return this.invokeIfConnected('JoinSession', message);
   }
 
-  // MapLoaded(Guid sessionId, LocationDto location)
   public sendMapLoaded(message: MapLoadedMessage): Promise<any> {
     return this.invokeIfConnected('MapLoaded', message);
   }

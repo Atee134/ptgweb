@@ -6,7 +6,7 @@ import './extensions/babylon.dynamicTerrain.js';
 
 import { Injectable } from '@angular/core';
 import { GameInitializerService } from './game-initializer.service';
-import { SignalRService } from '../_services/signalr.service.js';
+import { SignalRService } from 'src/app/shared/signalr.service';
 import { MapLoadedMessage, LocationDto } from '../_models/generatedDtos.js';
 
 @Injectable({

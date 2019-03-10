@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { JoinGameSessionMessage, DiamondSquareHeightmapRequestDto, StartGameSesionRequestDto } from '../_models/generatedDtos';
-import { SessionService } from '../_services/session.service';
-import { SignalRService } from '../_services/signalr.service';
-import { HeightmapService } from '../_services/heightmap.service';
+import { SessionService } from 'src/app/_services/session.service';
+import { JoinGameSessionMessage } from 'src/app/_models/generatedDtos';
+import { SignalRService } from 'src/app/shared/signalr.service';
 
 @Component({
   selector: 'app-lobby',

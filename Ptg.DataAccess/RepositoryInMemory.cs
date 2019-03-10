@@ -128,6 +128,7 @@ namespace Ptg.DataAccess
 
             return new PlayerDto
             {
+                Id = player.Id,
                 Name = player.Name,
                 SessionId = player.SessionId,
                 SignalRConnectionId = player.SignalRConnectionId
@@ -142,6 +143,7 @@ namespace Ptg.DataAccess
 
             return new PlayerDto
             {
+                Id = player.Id,
                 Name = player.Name,
                 SessionId = player.SessionId,
                 SignalRConnectionId = player.SignalRConnectionId
@@ -209,6 +211,7 @@ namespace Ptg.DataAccess
             {
                 playerDtos.Add(new PlayerDto
                 {
+                    Id = player.Id,
                     Name = player.Name,
                     SessionId = player.SessionId
                 });

@@ -45,7 +45,7 @@ namespace PtgWeb.Hubs
             gameManagerService.PlayerLoadedMap(Context.ConnectionId, message.Location);
             var player = gameManagerService.GetPlayer(Context.ConnectionId);
 
-            await Clients.User(Context.ConnectionId).SendAsync("receivePlayerId", player.Location.PlayerId);
+            await Clients.User(Context.ConnectionId).SendAsync("receivePlayerId", player.Id);
 
             Guid sessionId = Guid.Parse(message.SessionId);
 

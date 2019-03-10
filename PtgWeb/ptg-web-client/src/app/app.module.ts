@@ -5,20 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { ButtonsModule } from 'ngx-bootstrap';
 
 import { AppComponent } from './app.component';
-import { GameModule } from './game/game.module';
 import { MenuComponent } from './menu/menu.component';
-import { LobbyComponent } from './lobby/lobby.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
-import { LobbySettingsComponent } from './lobby-settings/lobby-settings.component';
-import { SignalRService } from './_services/signalr.service';
+import { SharedModule } from './shared/shared.module';
+import { GameModule } from './game/game.module';
+import { MenuModule } from './menu/menu.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MenuComponent,
-    LobbyComponent,
-    LobbySettingsComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,8 +22,11 @@ import { SignalRService } from './_services/signalr.service';
     FormsModule,
     ButtonsModule.forRoot(),
     AppRoutingModule,
+    SharedModule.forRoot(),
+    GameModule,
+    MenuModule
   ],
-  providers: [ErrorInterceptorProvider, SignalRService],
+  providers: [ErrorInterceptorProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
