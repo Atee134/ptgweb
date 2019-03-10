@@ -75,13 +75,12 @@ export interface IHeightmapDto {
     heightmapOriginalArray?: number[] | null;
 }
 
-export class PlayerDto implements IPlayerDto {
-    name?: string | null;
-    sessionId!: string;
-    signalRConnectionId?: string | null;
-    location?: LocationDto | null;
+export class HeightmapInfoDto implements IHeightmapInfoDto {
+    id!: string;
+    width!: number;
+    height!: number;
 
-    constructor(data?: IPlayerDto) {
+    constructor(data?: IHeightmapInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -92,42 +91,39 @@ export class PlayerDto implements IPlayerDto {
 
     init(data?: any) {
         if (data) {
-            this.name = data["Name"] !== undefined ? data["Name"] : <any>null;
-            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
-            this.signalRConnectionId = data["SignalRConnectionId"] !== undefined ? data["SignalRConnectionId"] : <any>null;
-            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
         }
     }
 
-    static fromJS(data: any): PlayerDto {
+    static fromJS(data: any): HeightmapInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PlayerDto();
+        let result = new HeightmapInfoDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["Name"] = this.name !== undefined ? this.name : <any>null;
-        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
-        data["SignalRConnectionId"] = this.signalRConnectionId !== undefined ? this.signalRConnectionId : <any>null;
-        data["Location"] = this.location ? this.location.toJSON() : <any>null;
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
         return data; 
     }
 
-    clone(): PlayerDto {
+    clone(): HeightmapInfoDto {
         const json = this.toJSON();
-        let result = new PlayerDto();
+        let result = new HeightmapInfoDto();
         result.init(json);
         return result;
     }
 }
 
-export interface IPlayerDto {
-    name?: string | null;
-    sessionId: string;
-    signalRConnectionId?: string | null;
-    location?: LocationDto | null;
+export interface IHeightmapInfoDto {
+    id: string;
+    width: number;
+    height: number;
 }
 
 export class LocationDto implements ILocationDto {
@@ -195,6 +191,65 @@ export interface ILocationDto {
     rotationX: number;
     rotationY: number;
     rotationZ: number;
+}
+
+export class PlayerDto implements IPlayerDto {
+    id!: number;
+    name?: string | null;
+    sessionId!: string;
+    signalRConnectionId?: string | null;
+    location?: LocationDto | null;
+
+    constructor(data?: IPlayerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.name = data["Name"] !== undefined ? data["Name"] : <any>null;
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.signalRConnectionId = data["SignalRConnectionId"] !== undefined ? data["SignalRConnectionId"] : <any>null;
+            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PlayerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlayerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Name"] = this.name !== undefined ? this.name : <any>null;
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["SignalRConnectionId"] = this.signalRConnectionId !== undefined ? this.signalRConnectionId : <any>null;
+        data["Location"] = this.location ? this.location.toJSON() : <any>null;
+        return data; 
+    }
+
+    clone(): PlayerDto {
+        const json = this.toJSON();
+        let result = new PlayerDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IPlayerDto {
+    id: number;
+    name?: string | null;
+    sessionId: string;
+    signalRConnectionId?: string | null;
+    location?: LocationDto | null;
 }
 
 export class CreateGameSessionRequestDto implements ICreateGameSessionRequestDto {
@@ -487,6 +542,57 @@ export interface IStartGameSesionRequestDto {
     terrainDataId: string;
 }
 
+export class HeightmapInfoResponseDto implements IHeightmapInfoResponseDto {
+    id!: string;
+    width!: number;
+    height!: number;
+
+    constructor(data?: IHeightmapInfoResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): HeightmapInfoResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new HeightmapInfoResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Id"] = this.id !== undefined ? this.id : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        return data; 
+    }
+
+    clone(): HeightmapInfoResponseDto {
+        const json = this.toJSON();
+        let result = new HeightmapInfoResponseDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IHeightmapInfoResponseDto {
+    id: string;
+    width: number;
+    height: number;
+}
+
 export class JoinGameSessionMessage implements IJoinGameSessionMessage {
     sessionId?: string | null;
     playerName?: string | null;
@@ -532,6 +638,53 @@ export class JoinGameSessionMessage implements IJoinGameSessionMessage {
 export interface IJoinGameSessionMessage {
     sessionId?: string | null;
     playerName?: string | null;
+}
+
+export class MapLoadedMessage implements IMapLoadedMessage {
+    sessionId?: string | null;
+    location?: LocationDto | null;
+
+    constructor(data?: IMapLoadedMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): MapLoadedMessage {
+        data = typeof data === 'object' ? data : {};
+        let result = new MapLoadedMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["Location"] = this.location ? this.location.toJSON() : <any>null;
+        return data; 
+    }
+
+    clone(): MapLoadedMessage {
+        const json = this.toJSON();
+        let result = new MapLoadedMessage();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMapLoadedMessage {
+    sessionId?: string | null;
+    location?: LocationDto | null;
 }
 
 export class SplatmapDto implements ISplatmapDto {
@@ -587,113 +740,11 @@ export enum HeightmapType {
     PerlinNoise = "PerlinNoise", 
 }
 
-export class HeightmapInfoDto implements IHeightmapInfoDto {
-    id!: string;
-    width!: number;
-    height!: number;
-
-    constructor(data?: IHeightmapInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
-            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
-            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): HeightmapInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new HeightmapInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Id"] = this.id !== undefined ? this.id : <any>null;
-        data["Width"] = this.width !== undefined ? this.width : <any>null;
-        data["Height"] = this.height !== undefined ? this.height : <any>null;
-        return data; 
-    }
-
-    clone(): HeightmapInfoDto {
-        const json = this.toJSON();
-        let result = new HeightmapInfoDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IHeightmapInfoDto {
-    id: string;
-    width: number;
-    height: number;
-}
-
-export class HeightmapInfoResponseDto implements IHeightmapInfoResponseDto {
-    id!: string;
-    width!: number;
-    height!: number;
-
-    constructor(data?: IHeightmapInfoResponseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
-            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
-            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): HeightmapInfoResponseDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new HeightmapInfoResponseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Id"] = this.id !== undefined ? this.id : <any>null;
-        data["Width"] = this.width !== undefined ? this.width : <any>null;
-        data["Height"] = this.height !== undefined ? this.height : <any>null;
-        return data; 
-    }
-
-    clone(): HeightmapInfoResponseDto {
-        const json = this.toJSON();
-        let result = new HeightmapInfoResponseDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IHeightmapInfoResponseDto {
-    id: string;
-    width: number;
-    height: number;
-}
-
-export class MapLoadedMessage implements IMapLoadedMessage {
+export class LocationChangedMessage implements ILocationChangedMessage {
     sessionId?: string | null;
     location?: LocationDto | null;
 
-    constructor(data?: IMapLoadedMessage) {
+    constructor(data?: ILocationChangedMessage) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -709,9 +760,9 @@ export class MapLoadedMessage implements IMapLoadedMessage {
         }
     }
 
-    static fromJS(data: any): MapLoadedMessage {
+    static fromJS(data: any): LocationChangedMessage {
         data = typeof data === 'object' ? data : {};
-        let result = new MapLoadedMessage();
+        let result = new LocationChangedMessage();
         result.init(data);
         return result;
     }
@@ -723,15 +774,15 @@ export class MapLoadedMessage implements IMapLoadedMessage {
         return data; 
     }
 
-    clone(): MapLoadedMessage {
+    clone(): LocationChangedMessage {
         const json = this.toJSON();
-        let result = new MapLoadedMessage();
+        let result = new LocationChangedMessage();
         result.init(json);
         return result;
     }
 }
 
-export interface IMapLoadedMessage {
+export interface ILocationChangedMessage {
     sessionId?: string | null;
     location?: LocationDto | null;
 }

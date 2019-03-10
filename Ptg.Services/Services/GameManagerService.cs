@@ -52,6 +52,13 @@ namespace Ptg.Services.Services
             repository.SaveChanges();
         }
 
+        public void PlayerChangedLocation(string signalrConnectionId, LocationDto location)
+        {
+            repository.UpdatePlayerLocation(signalrConnectionId, location);
+
+            repository.SaveChanges();
+        }
+
         public void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId)
         {
             repository.AddSignalrConnectionIdToPlayer(sessionId, playerName, connectionId);

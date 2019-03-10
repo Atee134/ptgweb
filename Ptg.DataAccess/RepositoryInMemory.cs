@@ -51,7 +51,7 @@ namespace Ptg.DataAccess
         public void AddPlayer(PlayerDto playerDto)
         {
             var playersInSession = players.Where(p => p.SessionId == playerDto.SessionId).ToList();
-            int playerId = playersInSession.Count == 0 ? 1 : playersInSession.Max(p => p.Id);
+            int playerId = playersInSession.Count == 0 ? 1 : playersInSession.Max(p => p.Id) + 1;
 
             var player = new Player
             {
@@ -78,6 +78,18 @@ namespace Ptg.DataAccess
                 RotationY = location.RotationY,
                 RotationZ = location.RotationZ
             };
+        }
+
+        public void UpdatePlayerLocation(string signalrConnectionId, LocationDto location)
+        {
+            var player = players.FirstOrDefault(p => p.SignalRConnectionId == signalrConnectionId);
+
+            player.Location.PositionX = location.PositionX;
+            player.Location.PositionY = location.PositionY;
+            player.Location.PositionZ = location.PositionZ;
+            player.Location.RotationX = location.RotationX;
+            player.Location.RotationY = location.RotationY;
+            player.Location.RotationZ = location.RotationZ;
         }
 
         public void SetPlayerLoaded(string signalrConnectionId, bool loaded)

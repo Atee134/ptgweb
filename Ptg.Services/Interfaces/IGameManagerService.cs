@@ -13,6 +13,7 @@ namespace Ptg.Services.Interfaces
         PlayerDto GetPlayer(string signalrConnectionId);
         List<LocationDto> GetLocationsInSession(Guid sessionId);
         void PlayerLoadedMap(string signalrConnectionId, LocationDto location);
+        void PlayerChangedLocation(string signalrConnectionId, LocationDto location);
         bool IsEveryoneReadyInSession(Guid sessionId);
         void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId);
         List<string> GetPlayerNamesInSession(Guid sessionId);

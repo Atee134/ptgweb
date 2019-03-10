@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Ptg.Common.Dtos;
 using Ptg.Common.Dtos.Signalr;
 using Ptg.Services.Interfaces;
 using System;
@@ -45,13 +44,24 @@ namespace PtgWeb.Hubs
             gameManagerService.PlayerLoadedMap(Context.ConnectionId, message.Location);
             var player = gameManagerService.GetPlayer(Context.ConnectionId);
 
-            await Clients.User(Context.ConnectionId).SendAsync("receivePlayerId", player.Id);
+            await Clients.Client(Context.ConnectionId).SendAsync("receivePlayerId", player.Id);
 
             Guid sessionId = Guid.Parse(message.SessionId);
 
             if (gameManagerService.IsEveryoneReadyInSession(sessionId))
             {
                 await Clients.Group(message.SessionId).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
+            }
+        }
+
+        public async Task LocationChanged(LocationChangedMessage message)
+        {
+            gameManagerService.PlayerChangedLocation(Context.ConnectionId, message.Location);
+
+            // TODO move this code to a hostedservice? or some service which sends refreshes to clients at a constant tick rate
+            if (gameManagerService.IsEveryoneReadyInSession(Guid.Parse(message.SessionId)))
+            {
+                await Clients.OthersInGroup(message.SessionId).SendAsync("locationsChanged", gameManagerService.GetLocationsInSession(Guid.Parse(message.SessionId)));
             }
         }
     }

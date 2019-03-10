@@ -10,6 +10,7 @@ namespace Ptg.DataAccess
         void AddSplatmap(SplatmapDto splatmapDto);
         void AddPlayer(PlayerDto playerDto);
         void AddPlayerLocation(string signalrConnectionId, LocationDto location);
+        void UpdatePlayerLocation(string signalrConnectionId, LocationDto location);
         void SetPlayerLoaded(string signalrConnectionId, bool loaded);
         void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId);
         void RemovePlayer(Guid sessionId, string playerName);

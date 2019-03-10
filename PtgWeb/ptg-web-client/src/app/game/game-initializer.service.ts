@@ -7,14 +7,19 @@ import './extensions/babylon.dynamicTerrain.js';
 import { Injectable } from '@angular/core';
 import { TerrainMaterial } from 'babylonjs-materials';
 import { HeightmapService } from '../_services/heightmap.service';
+import { Subject } from 'rxjs';
+import { LocationDto } from '../_models/generatedDtos.js';
+import { Player } from './interfaces/player.js';
+import { Game } from './interfaces/game.js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameInitializerService {
 
+  public terrainLoaded = new Subject<BABYLON.DynamicTerrain>();
+
   private scene: BABYLON.Scene;
-  private camera: BABYLON.Camera;
   private terrainDataId: string;
   private sceneSettings = {
     gravity: new BABYLON.Vector3(0, -0.2, 0),
@@ -43,7 +48,6 @@ export class GameInitializerService {
     const scene = this.initializeScene(engine);
     this.scene = scene;
     const camera = this.initializeCamera(scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, canvas);
-    this.camera = camera;
     this.createSkyBox(scene);
     this.initDynamicTerrain(scene, terrainDataId);
 
@@ -54,6 +58,25 @@ export class GameInitializerService {
     };
 
     return game;
+  }
+
+  public initializePlayerModels(locations: LocationDto[]): Player[] {
+    const players: Player[] = [];
+    for (const loc of locations) {
+      const mesh = BABYLON.MeshBuilder.CreateBox(`player${loc.playerId}`, {height: 4}, this.scene);
+      mesh.position.x = loc.positionX;
+      mesh.position.y = loc.positionY;
+      mesh.position.z = loc.positionZ;
+
+      const player: Player = {
+        Mesh: mesh,
+        Location: loc
+      };
+
+      players.push(player);
+    }
+
+    return players;
   }
 
   private setCanvasResolution(canvas: HTMLCanvasElement, resolution: any): void {
@@ -145,7 +168,7 @@ export class GameInitializerService {
     terrain.createUVMap();
     terrain.update(true);
 
-    this.registerCameraSetter(this.scene, this.camera, terrain);
+    this.terrainLoaded.next(terrain);
   }
 
   private initializeCamera(scene: BABYLON.Scene,
@@ -174,12 +197,5 @@ export class GameInitializerService {
     }
 
     return camera;
-  }
-
-  private registerCameraSetter(scene: BABYLON.Scene, camera: BABYLON.Camera, terrain: BABYLON.DynamicTerrain): void {
-    scene.registerBeforeRender(() => {
-      const camAltitude = terrain.getHeightFromMap(camera.position.x, camera.position.z) + 3;
-      camera.position.y = camAltitude;
-    });
   }
 }

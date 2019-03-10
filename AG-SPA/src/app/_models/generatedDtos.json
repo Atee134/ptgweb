@@ -39,25 +39,26 @@
         }
       }
     },
-    "PlayerDto": {
+    "HeightmapInfoDto": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "SessionId"
+        "Id",
+        "Width",
+        "Height"
       ],
       "properties": {
-        "Name": {
-          "type": "string"
-        },
-        "SessionId": {
+        "Id": {
           "type": "string",
           "format": "guid"
         },
-        "SignalRConnectionId": {
-          "type": "string"
+        "Width": {
+          "type": "integer",
+          "format": "int32"
         },
-        "Location": {
-          "$ref": "#/definitions/LocationDto"
+        "Height": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -101,6 +102,33 @@
         "RotationZ": {
           "type": "number",
           "format": "double"
+        }
+      }
+    },
+    "PlayerDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "SessionId"
+      ],
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "SessionId": {
+          "type": "string",
+          "format": "guid"
+        },
+        "SignalRConnectionId": {
+          "type": "string"
+        },
+        "Location": {
+          "$ref": "#/definitions/LocationDto"
         }
       }
     },
@@ -214,6 +242,29 @@
         }
       }
     },
+    "HeightmapInfoResponseDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "JoinGameSessionMessage": {
       "type": "object",
       "additionalProperties": false,
@@ -223,6 +274,18 @@
         },
         "PlayerName": {
           "type": "string"
+        }
+      }
+    },
+    "MapLoadedMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SessionId": {
+          "type": "string"
+        },
+        "Location": {
+          "$ref": "#/definitions/LocationDto"
         }
       }
     },
@@ -257,53 +320,7 @@
         "PerlinNoise"
       ]
     },
-    "HeightmapInfoDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "Id",
-        "Width",
-        "Height"
-      ],
-      "properties": {
-        "Id": {
-          "type": "string",
-          "format": "guid"
-        },
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "HeightmapInfoResponseDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "Id",
-        "Width",
-        "Height"
-      ],
-      "properties": {
-        "Id": {
-          "type": "string",
-          "format": "guid"
-        },
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "MapLoadedMessage": {
+    "LocationChangedMessage": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
