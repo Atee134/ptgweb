@@ -28,6 +28,8 @@ namespace Ptg.DataAccess
         bool SessionExists(Guid sessionId);
         int PlayerCountInSession(Guid sessionId);
         void RemoveSession(Guid sessionId);
+        void UpdateSessionState(Guid sessionId, bool inGame);
+        bool IsSessionInGame(Guid sessionId);
         void SaveChanges();
     }
 }

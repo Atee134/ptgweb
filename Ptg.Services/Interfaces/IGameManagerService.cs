@@ -18,5 +18,7 @@ namespace Ptg.Services.Interfaces
         void AddSignalrConnectionIdToPlayer(Guid sessionId, string playerName, string connectionId);
         List<string> GetPlayerNamesInSession(Guid sessionId);
         void ValidateGameSessionStart(Guid sessionId, Guid terrainDataId);
+        void UpdateSessionState(Guid sessionId, bool inGame);
+        bool IsSessionInGame(Guid sessionId);
     }
 }

@@ -12,17 +12,15 @@ namespace Ptg.DataAccess
         private readonly Dictionary<Guid, Heightmap> heightmaps;
         private readonly Dictionary<Guid, Splatmap> splatmaps;
         private readonly List<Player> players;
-        private readonly List<Guid> liveSessions;
+        private readonly List<Session> liveSessions;
 
         public RepositoryInMemory()
         {
             heightmaps = new Dictionary<Guid, Heightmap>();
             splatmaps = new Dictionary<Guid, Splatmap>();
             players = new List<Player>();
-            liveSessions = new List<Guid>();
+            liveSessions = new List<Session>();
         }
-
-        // TODO use automapper
 
         public void AddHeightmap(HeightmapDto heightmapDto)
         {
@@ -244,12 +242,12 @@ namespace Ptg.DataAccess
 
         public void AddSession(Guid sessionId)
         {
-            liveSessions.Add(sessionId);
+            liveSessions.Add(new Session { Id = sessionId, InGame = false});
         }
 
         public bool SessionExists(Guid sessionId)
         {
-            return liveSessions.Contains(sessionId);
+            return liveSessions.FirstOrDefault(s => s.Id == sessionId) != null;
         }
 
         public int PlayerCountInSession(Guid sessionId)
@@ -259,10 +257,38 @@ namespace Ptg.DataAccess
 
         public void RemoveSession(Guid sessionId)
         {
-            if (liveSessions.Contains(sessionId))
+            var session = liveSessions.FirstOrDefault(s => s.Id == sessionId);
+
+            if (session != null)
             {
-                liveSessions.Remove(sessionId);
+                liveSessions.Remove(session);
             }
+        }
+
+        public void UpdateSessionState(Guid sessionId, bool inGame)
+        {
+            var session = liveSessions.FirstOrDefault(s => s.Id == sessionId);
+
+            if (session != null)
+            {
+                session.InGame = inGame;
+            }
+            else
+            {
+                throw new PtgNotFoundException("Session not found");
+            }
+        }
+
+        public bool IsSessionInGame(Guid sessionId)
+        {
+            var session = liveSessions.FirstOrDefault(s => s.Id == sessionId);
+
+            if (session != null)
+            {
+                return session.InGame;
+            }
+
+            throw new PtgNotFoundException("Session not found");
         }
 
         public void SaveChanges()

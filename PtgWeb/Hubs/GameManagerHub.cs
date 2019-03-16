@@ -9,6 +9,7 @@ namespace PtgWeb.Hubs
 {
     public class GameManagerHub : Hub
     {
+        private static readonly object startGameLockObj = new object();
         private readonly IGameManagerService gameManagerService;
         private readonly ILocationChangedBroadcasterService locationChangedBroadcasterService;
 
@@ -51,9 +52,19 @@ namespace PtgWeb.Hubs
 
             Guid sessionId = Guid.Parse(message.SessionId);
 
-            if (gameManagerService.IsEveryoneReadyInSession(sessionId))
+            Task messageTask = null;
+            lock (startGameLockObj)
             {
-                await Clients.Group(message.SessionId).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
+                if (!gameManagerService.IsSessionInGame(sessionId) && gameManagerService.IsEveryoneReadyInSession(sessionId))
+                {
+                    gameManagerService.UpdateSessionState(sessionId, true);
+                    messageTask = Clients.Group(message.SessionId).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
+                }
+            }
+
+            if (messageTask != null)
+            {
+                await messageTask;
                 locationChangedBroadcasterService.StartBroadcasting(sessionId);
             }
         }

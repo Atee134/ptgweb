@@ -26,13 +26,12 @@ export class GameManagerService {
 
   public startGame(sessionId: string, terrainDataId: string, canvas: HTMLCanvasElement) {
     this.sessionId = sessionId;
+    this.subscribeToSignalrEvents();
     this.gameInitializerService.terrainLoaded.subscribe(terrain => this.onTerrainLoaded(terrain));
     const game = this.gameInitializerService.initializeGame(terrainDataId, canvas);
     this.game = game;
-    this.subscribeToSignalrEvents();
 
     window.addEventListener('keypress', (e) => {
-      console.log('keypress event raised');
       if (e.keyCode === 32) {
           console.log(`x: ${this.game.camera.position.x} y: ${this.game.camera.position.y} z: ${this.game.camera.position.z}`);
       }

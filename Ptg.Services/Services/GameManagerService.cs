@@ -110,5 +110,15 @@ namespace Ptg.Services.Services
                 throw new PtgNotFoundException($"Game session not found, or terrain data is not ready yet");
             }
         }
+
+        public void UpdateSessionState(Guid sessionId, bool inGame)
+        {
+            repository.UpdateSessionState(sessionId, inGame);
+        }
+
+        public bool IsSessionInGame(Guid sessionId)
+        {
+            return repository.IsSessionInGame(sessionId);
+        }
     }
 }
