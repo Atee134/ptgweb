@@ -9,6 +9,7 @@ using Ptg.Services.Services;
 using Ptg.SplatmapGenerator.Interfaces;
 using Ptg.SplatmapGenerator.SplatmapGenerators;
 using PtgWeb.Hubs;
+using PtgWeb.HubServices;
 using PtgWeb.MiddleWares;
 using System;
 
@@ -42,6 +43,7 @@ namespace PtgWeb
             services.AddSingleton<IRepository, RepositoryInMemory>(); // TODO remove reference to DataAccess, make separate service init classes in the projects
             services.AddScoped<IRandomSplatmapGenerator, RandomSplatmapGenerator>();
             services.AddScoped<IHeightBasedSplatmapGenerator, HeightBasedSplatmapGenerator>();
+            services.AddSingleton<ILocationChangedBroadcasterService, LocationChangedBroadcasterService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

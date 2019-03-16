@@ -16,10 +16,10 @@
         "Ptg.Common.Dtos.Request.StartGameSesionRequestDto",
         "Ptg.Common.Dtos.Response.HeightmapInfoResponseDto",
         "Ptg.Common.Dtos.Signalr.JoinGameSessionMessage",
+        "Ptg.Common.Dtos.Signalr.LocationChangedMessage",
         "Ptg.Common.Dtos.Signalr.MapLoadedMessage",
         "Ptg.Common.Dtos.SplatmapDto",
-        "Ptg.Common.Enums.HeightmapType",
-        "Ptg.Common.Dtos.Signalr.LocationChangedMessage"
+        "Ptg.Common.Enums.HeightmapType"
       ],
       "defaultPropertyNameHandling": "Default",
       "defaultReferenceTypeNullHandling": "Null",

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Ptg.Common.Dtos.Signalr;
 using Ptg.Services.Interfaces;
+using PtgWeb.HubServices;
 using System;
 using System.Threading.Tasks;
 
@@ -9,10 +10,12 @@ namespace PtgWeb.Hubs
     public class GameManagerHub : Hub
     {
         private readonly IGameManagerService gameManagerService;
+        private readonly ILocationChangedBroadcasterService locationChangedBroadcasterService;
 
-        public GameManagerHub(IGameManagerService gameManagerService)
+        public GameManagerHub(IGameManagerService gameManagerService, ILocationChangedBroadcasterService locationChangedBroadcasterService)
         {
             this.gameManagerService = gameManagerService;
+            this.locationChangedBroadcasterService = locationChangedBroadcasterService;
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -51,18 +54,13 @@ namespace PtgWeb.Hubs
             if (gameManagerService.IsEveryoneReadyInSession(sessionId))
             {
                 await Clients.Group(message.SessionId).SendAsync("startGame", gameManagerService.GetLocationsInSession(sessionId));
+                locationChangedBroadcasterService.StartBroadcasting(sessionId);
             }
         }
 
-        public async Task LocationChanged(LocationChangedMessage message)
+        public void LocationChanged(LocationChangedMessage message)
         {
             gameManagerService.PlayerChangedLocation(Context.ConnectionId, message.Location);
-
-            // TODO move this code to a hostedservice? or some service which sends refreshes to clients at a constant tick rate
-            if (gameManagerService.IsEveryoneReadyInSession(Guid.Parse(message.SessionId)))
-            {
-                await Clients.OthersInGroup(message.SessionId).SendAsync("locationsChanged", gameManagerService.GetLocationsInSession(Guid.Parse(message.SessionId)));
-            }
         }
     }
 }
