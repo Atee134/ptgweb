@@ -19,14 +19,16 @@ namespace PtgWeb.Controllers
         private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
         private readonly IDiamondSquareGenerator diamondSquareGenerator;
+        private readonly IOpenSimplexGenerator openSimplexGenerator;
 
-        public HeightmapController(IRepository repository, ITerrainService terrainService, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
+        public HeightmapController(IRepository repository, ITerrainService terrainService, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator, IOpenSimplexGenerator openSimplexGenerator)
         {
             this.repository = repository;
             this.terrainService = terrainService;
             this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
             this.diamondSquareGenerator = diamondSquareGenerator;
+            this.openSimplexGenerator = openSimplexGenerator;
         }
 
         [HttpPost("random")]
@@ -82,6 +84,14 @@ namespace PtgWeb.Controllers
             var result = repository.Getsplatmap(id);
 
             return File(result.SplatmapByteArray, "image/bmp");
+        }
+
+        [HttpGet("simplex")]
+        public IActionResult GetSimplex()
+        {
+            var result = openSimplexGenerator.Generate();
+
+            return File(result, "image/bmp");
         }
     }
 }
