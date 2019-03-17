@@ -87,9 +87,16 @@ namespace PtgWeb.Controllers
         }
 
         [HttpGet("simplex")]
-        public IActionResult GetSimplex()
+        public IActionResult GetSimplex([FromBody] OpenSimplexRequestDto requestDto)
         {
-            var result = openSimplexGenerator.Generate();
+            var result = openSimplexGenerator.Generate(
+                    requestDto.Width,
+                    requestDto.Height,
+                    requestDto.Scale,
+                    requestDto.Octaves,
+                    requestDto.Persistance,
+                    requestDto.Lacunarity
+                );
 
             return File(result, "image/bmp");
         }

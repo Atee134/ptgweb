@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ptg.HeightmapGenerator.Interfaces
+﻿namespace Ptg.HeightmapGenerator.Interfaces
 {
     public interface IOpenSimplexGenerator
     {
-        byte[] Generate();
+        byte[] Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity);
     }
 }
