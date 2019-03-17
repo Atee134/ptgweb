@@ -63,13 +63,22 @@ export class GameInitializerService {
   public initializePlayerModels(locations: LocationDto[]): Player[] {
     const players: Player[] = [];
     for (const loc of locations) {
-      const mesh = BABYLON.MeshBuilder.CreateBox(`player${loc.playerId}`, {height: 4}, this.scene);
-      mesh.position.x = loc.positionX;
-      mesh.position.y = loc.positionY;
-      mesh.position.z = loc.positionZ;
+      const head = BABYLON.MeshBuilder.CreateSphere('head', {diameter: 0.55}, this.scene);
+      head.position.y = 1.5;
+
+      const body = BABYLON.MeshBuilder.CreateSphere('body', {diameterX: 1, diameterY: 3, diameterZ: 0.6}, this.scene);
+      const backpack = BABYLON.MeshBuilder.CreateBox('backpack', {height: 1.15, width: 0.65, depth: 0.25}, this.scene);
+      backpack.position.z = 0.4;
+      backpack.position.y = 0.25;
+
+      const playerMesh = BABYLON.Mesh.MergeMeshes([head, body, backpack], true);
+
+      playerMesh.position.x = loc.positionX;
+      playerMesh.position.y = loc.positionY;
+      playerMesh.position.z = loc.positionZ;
 
       const player: Player = {
-        Mesh: mesh,
+        Mesh: playerMesh,
         Location: loc
       };
 

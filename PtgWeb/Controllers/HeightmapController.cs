@@ -92,6 +92,7 @@ namespace PtgWeb.Controllers
             var result = openSimplexGenerator.Generate(
                     requestDto.Width,
                     requestDto.Height,
+                    requestDto.Seed,
                     requestDto.Scale,
                     requestDto.Octaves,
                     requestDto.Persistance,

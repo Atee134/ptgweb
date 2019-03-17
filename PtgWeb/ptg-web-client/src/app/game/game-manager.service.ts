@@ -129,7 +129,7 @@ export class GameManagerService {
 
   private updateOwnLocation() {
     this.ownLocation.positionX = this.game.camera.position.x;
-    this.ownLocation.positionY = this.game.camera.position.y;
+    this.ownLocation.positionY = this.game.camera.position.y - (this.cameraAltitudeOffset / 2);
     this.ownLocation.positionZ = this.game.camera.position.z;
   }
 
