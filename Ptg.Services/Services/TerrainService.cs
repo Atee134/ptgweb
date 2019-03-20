@@ -91,7 +91,6 @@ namespace Ptg.Services.Services
         {
             lock (chunkGenerationLockObj)
             {
-                System.Threading.Thread.Sleep(100000);
                 if (repository.IsHeightmapChunkExists(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ))
                 {
                     return repository.GetHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ);
@@ -121,8 +120,8 @@ namespace Ptg.Services.Services
                    baseChunk.Octaves,
                    baseChunk.Persistance,
                    baseChunk.Lacunarity,
-                   offsetX,
-                   offsetZ
+                   baseChunk.Width * offsetX,
+                   baseChunk.Height * offsetZ
                );
 
             heightmapDto.Id = Guid.NewGuid();

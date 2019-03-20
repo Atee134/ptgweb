@@ -9,11 +9,14 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 {
     public class OpenSimplexGenerator : IOpenSimplexGenerator
     {
+        private static readonly int UPSCALE_MULTIPLIER = 80;
+        private static readonly float HEIGHT_OFFSET = 1.5f;
+
         public HeightmapDto Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity, int offsetX = 0, int offsetZ = 0)
         {
             var noise = new OpenSimplexNoise();
 
-            float[,] heightmapData = GenerateHeightmap(width, height, seed, scale, octaves, persistance, lacunarity);
+            float[,] heightmapData = GenerateHeightmap(width, height, seed, scale, octaves, persistance, lacunarity, offsetX, offsetZ);
 
             var heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
 
@@ -26,7 +29,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             };
         }
 
-        public float[,] GenerateHeightmap(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity)
+        public float[,] GenerateHeightmap(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity, int offsetX, int offsetZ)
         {
             var noise = new OpenSimplexNoise(seed);
             System.Random rnd = new System.Random(seed);
@@ -38,10 +41,10 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             Point[] octaveOffsets = new Point[octaves];
             for (int i = 0; i < octaves; i++)
             {
-                int offsetX = rnd.Next(-100000, 100000);
-                int offsetY = rnd.Next(-100000, 100000);
+                int octaveOffsetX = rnd.Next(-100000, 100000) + offsetX;
+                int octaveOffsetY = rnd.Next(-100000, 100000) + offsetZ;
 
-                octaveOffsets[i] = new Point(offsetX, offsetY);
+                octaveOffsets[i] = new Point(octaveOffsetX, octaveOffsetY);
 
                 maxPossibleHeight += amplitude;
                 maxPossibleHeight *= persistance;
@@ -70,7 +73,18 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                         frequency *= lacunarity;
                     }
 
-                    heightmap[x, y] = (noiseValueSum + 1.5f) * 85;
+                    float calculatedValue = (noiseValueSum + HEIGHT_OFFSET) * UPSCALE_MULTIPLIER;
+
+                    if (calculatedValue > byte.MaxValue)
+                    {
+                        calculatedValue = byte.MaxValue;
+                    }
+                    else if (calculatedValue < 0)
+                    {
+                        calculatedValue = 0;
+                    }
+
+                    heightmap[x, y] = calculatedValue;
                 }
             }
 
