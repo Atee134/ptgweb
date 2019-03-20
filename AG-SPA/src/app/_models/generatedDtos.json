@@ -277,6 +277,18 @@
         }
       }
     },
+    "LocationChangedMessage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SessionId": {
+          "type": "string"
+        },
+        "Location": {
+          "$ref": "#/definitions/LocationDto"
+        }
+      }
+    },
     "MapLoadedMessage": {
       "type": "object",
       "additionalProperties": false,
@@ -312,23 +324,58 @@
       "x-enumNames": [
         "Fault",
         "DiamondSquare",
-        "PerlinNoise"
+        "OpenSimplex"
       ],
       "enum": [
         "Fault",
         "DiamondSquare",
-        "PerlinNoise"
+        "OpenSimplex"
       ]
     },
-    "LocationChangedMessage": {
+    "OpenSimplexRequestDto": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "Width",
+        "Height",
+        "Seed",
+        "Scale",
+        "Octaves",
+        "Persistance",
+        "Lacunarity",
+        "Infinite"
+      ],
       "properties": {
-        "SessionId": {
-          "type": "string"
+        "Width": {
+          "type": "integer",
+          "format": "int32"
         },
-        "Location": {
-          "$ref": "#/definitions/LocationDto"
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Seed": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Scale": {
+          "type": "number",
+          "format": "double"
+        },
+        "Octaves": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Persistance": {
+          "type": "number",
+          "format": "double"
+        },
+        "Lacunarity": {
+          "type": "number",
+          "format": "double"
+        },
+        "Infinite": {
+          "type": "boolean"
         }
       }
     }

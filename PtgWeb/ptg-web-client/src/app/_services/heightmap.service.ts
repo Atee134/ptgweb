@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { DiamondSquareHeightmapRequestDto,
   FaultHeightmapRequestDto,
   HeightmapInfoResponseDto,
+  OpenSimplexRequestDto,
 } from '../_models/generatedDtos';
 
 @Injectable({
@@ -31,5 +32,9 @@ export class HeightmapService {
 
   generateFaultHeightmap(requestDto: FaultHeightmapRequestDto): Observable<string> {
     return this.http.post<string>(`${environment.baseUrl}api/heightmap/fault`, requestDto);
+  }
+
+  generateOpenSimplexHeightmap(requestDto: OpenSimplexRequestDto): Observable<string> {
+    return this.http.post<string>(`${environment.baseUrl}api/heightmap/simplex`, requestDto);
   }
 }

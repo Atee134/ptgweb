@@ -2,7 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DiamondSquareHeightmapRequestDto,
   FaultHeightmapRequestDto,
   HeightmapType,
-  StartGameSesionRequestDto } from 'src/app/_models/generatedDtos';
+  StartGameSesionRequestDto, 
+  OpenSimplexRequestDto} from 'src/app/_models/generatedDtos';
 import { HeightmapService } from 'src/app/_services/heightmap.service';
 import { SessionService } from 'src/app/_services/session.service';
 
@@ -24,6 +25,7 @@ export class LobbySettingsComponent implements OnInit {
   ];
   public diamondSquareSizeIndex = 3;
   public faultRequestDto: FaultHeightmapRequestDto;
+  public openSimplexRequestdto: OpenSimplexRequestDto;
 
   public selectedHeightmapType = HeightmapType.Fault;
 
@@ -44,6 +46,16 @@ export class LobbySettingsComponent implements OnInit {
       height: 256,
       iterationCount: 500,
       offsetPerIteration: 5
+    });
+    this.openSimplexRequestdto = new OpenSimplexRequestDto({
+      width: 512,
+      height: 512,
+      seed: 134,
+      scale: 0.02,
+      octaves: 6,
+      persistance: 0.5,
+      lacunarity: 2,
+      infinite: false,
     });
   }
 
@@ -67,8 +79,8 @@ export class LobbySettingsComponent implements OnInit {
       case HeightmapType.DiamondSquare: {
         return 'Diamond square algorithm';
       }
-      case HeightmapType.PerlinNoise: {
-        return 'Perlin noise';
+      case HeightmapType.OpenSimplex: {
+        return 'Open simple noise';
       }
     }
   }
@@ -87,8 +99,10 @@ export class LobbySettingsComponent implements OnInit {
         });
         break;
       }
-      case HeightmapType.PerlinNoise: {
-        // TODO call perlin noise generation here
+      case HeightmapType.OpenSimplex: {
+        this.heightmapService.generateOpenSimplexHeightmap(this.openSimplexRequestdto).subscribe(terrainDataId => {
+          this.sendStartSession(terrainDataId);
+        });
         break;
       }
     }

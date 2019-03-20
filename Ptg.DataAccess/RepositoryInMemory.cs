@@ -9,6 +9,7 @@ namespace Ptg.DataAccess
 {
     public class RepositoryInMemory : IRepository
     {
+        private readonly Dictionary<Guid, BaseHeightmapChunk> baseHeightmapChunks;
         private readonly Dictionary<Guid, Heightmap> heightmaps;
         private readonly Dictionary<Guid, Splatmap> splatmaps;
         private readonly List<Player> players;
@@ -16,6 +17,7 @@ namespace Ptg.DataAccess
 
         public RepositoryInMemory()
         {
+            baseHeightmapChunks = new Dictionary<Guid, BaseHeightmapChunk>();
             heightmaps = new Dictionary<Guid, Heightmap>();
             splatmaps = new Dictionary<Guid, Splatmap>();
             players = new List<Player>();
@@ -33,6 +35,29 @@ namespace Ptg.DataAccess
             };
 
             heightmaps.Add(heightmapDto.Id, heightmap);
+        }
+
+        public void AddBaseHeightmapChunk(BaseHeightmapChunkDto baseChunkDto)
+        {
+            var heightmap = heightmaps[baseChunkDto.Heightmap.Id];
+
+            if (heightmap == null) throw new PtgNotFoundException($"Heightmap with ID: {baseChunkDto.Heightmap.Id} cannot be found");
+
+            var baseHeightmapChunk = new BaseHeightmapChunk
+            {
+                Id = baseChunkDto.Id,
+                Width = baseChunkDto.Width,
+                Height = baseChunkDto.Height,
+                Seed = baseChunkDto.Seed,
+                Scale = baseChunkDto.Scale,
+                Octaves = baseChunkDto.Octaves,
+                Persistance = baseChunkDto.Persistance,
+                Lacunarity = baseChunkDto.Lacunarity,
+                Heightmap = heightmap,
+                ChildChunks = new List<Heightmap>(),
+            };
+
+            baseHeightmapChunks.Add(baseChunkDto.Id, baseHeightmapChunk);
         }
 
         public void AddSplatmap(SplatmapDto splatmapDto)

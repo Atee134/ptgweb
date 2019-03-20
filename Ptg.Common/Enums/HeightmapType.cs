@@ -4,6 +4,6 @@
     {
         Fault,
         DiamondSquare,
-        PerlinNoise
+        OpenSimplex
     }
 }

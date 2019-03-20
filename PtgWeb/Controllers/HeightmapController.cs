@@ -55,6 +55,14 @@ namespace PtgWeb.Controllers
             return Ok(result);
         }
 
+        [HttpPost("simplex")]
+        public IActionResult CreateSimplexHeightmap([FromBody] OpenSimplexRequestDto requestDto)
+        {
+            var result = terrainService.Generate(requestDto);
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetHeightmap(Guid id)
         {
@@ -62,6 +70,14 @@ namespace PtgWeb.Controllers
 
             return File(result, "image/bmp");
         }
+
+        //[HttpGet("{id}")]
+        //public IActionResult GetHeightmap(Guid id)
+        //{
+        //    var result = repository.GetHeightmap(id);
+
+        //    return File(result, "image/bmp");
+        //}
 
         [HttpGet("{id}/info")]
         public IActionResult GetHeightmapInfo(Guid id)
@@ -84,22 +100,6 @@ namespace PtgWeb.Controllers
             var result = repository.Getsplatmap(id);
 
             return File(result.SplatmapByteArray, "image/bmp");
-        }
-
-        [HttpGet("simplex")]
-        public IActionResult GetSimplex([FromBody] OpenSimplexRequestDto requestDto)
-        {
-            var result = openSimplexGenerator.Generate(
-                    requestDto.Width,
-                    requestDto.Height,
-                    requestDto.Seed,
-                    requestDto.Scale,
-                    requestDto.Octaves,
-                    requestDto.Persistance,
-                    requestDto.Lacunarity
-                );
-
-            return File(result, "image/bmp");
         }
     }
 }

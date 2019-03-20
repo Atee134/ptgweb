@@ -7,6 +7,7 @@ namespace Ptg.DataAccess
     public interface IRepository
     {
         void AddHeightmap(HeightmapDto heightmapDto);
+        void AddBaseHeightmapChunk(BaseHeightmapChunkDto baseChunkDto);
         void AddSplatmap(SplatmapDto splatmapDto);
         void AddPlayer(PlayerDto playerDto);
         void AddPlayerLocation(string signalrConnectionId, LocationDto location);

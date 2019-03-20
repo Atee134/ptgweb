@@ -1,4 +1,5 @@
 ﻿using Ptg.Common;
+using Ptg.Common.Dtos;
 using Ptg.HeightmapGenerator.Interfaces;
 using Ptg.HeightmapGenerator.NoiseFunctions;
 using System.Drawing;
@@ -8,15 +9,21 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 {
     public class OpenSimplexGenerator : IOpenSimplexGenerator
     {
-        public byte[] Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity)
+        public HeightmapDto Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity)
         {
             var noise = new OpenSimplexNoise();
 
-            float[,] floatArrayHuh = GenerateHeightmap(width, height, seed, scale, octaves, persistance, lacunarity);
+            float[,] heightmapData = GenerateHeightmap(width, height, seed, scale, octaves, persistance, lacunarity);
 
-            var byteArray = BitmapHelper.WriteToByteArray(floatArrayHuh);
+            var heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
 
-            return byteArray;
+            return new HeightmapDto
+            {
+                Width = width,
+                Height = height,
+                HeightmapOriginalArray = heightmapData,
+                HeightmapByteArray = heightmapByteArray
+            };
         }
 
         public float[,] GenerateHeightmap(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity)

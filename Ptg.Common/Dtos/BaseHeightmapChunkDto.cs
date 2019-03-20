@@ -1,7 +1,12 @@
-﻿namespace Ptg.Common.Dtos.Request
+﻿using System;
+using System.Collections.Generic;
+
+namespace Ptg.Common.Dtos
 {
-    public class OpenSimplexRequestDto
+    public class BaseHeightmapChunkDto
     {
+        public Guid Id { get; set; }
+
         public int Width { get; set; }
         public int Height { get; set; }
         public int Seed { get; set; }
@@ -10,6 +15,8 @@
         public float Persistance { get; set; }
         public float Lacunarity { get; set; }
 
-        public bool Infinite { get; set; }
+        public HeightmapDto Heightmap { get; set; }
+
+        public List<HeightmapDto> ChildChunks { get; set; }
     }
 }

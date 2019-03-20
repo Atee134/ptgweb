@@ -19,7 +19,8 @@
         "Ptg.Common.Dtos.Signalr.LocationChangedMessage",
         "Ptg.Common.Dtos.Signalr.MapLoadedMessage",
         "Ptg.Common.Dtos.SplatmapDto",
-        "Ptg.Common.Enums.HeightmapType"
+        "Ptg.Common.Enums.HeightmapType",
+        "Ptg.Common.Dtos.Request.OpenSimplexRequestDto"
       ],
       "defaultPropertyNameHandling": "Default",
       "defaultReferenceTypeNullHandling": "Null",

@@ -9,5 +9,6 @@ namespace Ptg.Services.Interfaces
         Guid Generate(DiamondSquareHeightmapRequestDto requestDto);
         Guid Generate(FaultHeightmapRequestDto requestDto);
         Guid Generate(RandomHeightmapRequestDto requestDto);
+        Guid Generate(OpenSimplexRequestDto requestDto);
     }
 }

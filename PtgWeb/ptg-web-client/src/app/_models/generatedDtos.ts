@@ -640,6 +640,53 @@ export interface IJoinGameSessionMessage {
     playerName?: string | null;
 }
 
+export class LocationChangedMessage implements ILocationChangedMessage {
+    sessionId?: string | null;
+    location?: LocationDto | null;
+
+    constructor(data?: ILocationChangedMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
+            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LocationChangedMessage {
+        data = typeof data === 'object' ? data : {};
+        let result = new LocationChangedMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
+        data["Location"] = this.location ? this.location.toJSON() : <any>null;
+        return data; 
+    }
+
+    clone(): LocationChangedMessage {
+        const json = this.toJSON();
+        let result = new LocationChangedMessage();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ILocationChangedMessage {
+    sessionId?: string | null;
+    location?: LocationDto | null;
+}
+
 export class MapLoadedMessage implements IMapLoadedMessage {
     sessionId?: string | null;
     location?: LocationDto | null;
@@ -737,14 +784,20 @@ export interface ISplatmapDto {
 export enum HeightmapType {
     Fault = "Fault", 
     DiamondSquare = "DiamondSquare", 
-    PerlinNoise = "PerlinNoise", 
+    OpenSimplex = "OpenSimplex", 
 }
 
-export class LocationChangedMessage implements ILocationChangedMessage {
-    sessionId?: string | null;
-    location?: LocationDto | null;
+export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
+    width!: number;
+    height!: number;
+    seed!: number;
+    scale!: number;
+    octaves!: number;
+    persistance!: number;
+    lacunarity!: number;
+    infinite!: boolean;
 
-    constructor(data?: ILocationChangedMessage) {
+    constructor(data?: IOpenSimplexRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -755,34 +808,52 @@ export class LocationChangedMessage implements ILocationChangedMessage {
 
     init(data?: any) {
         if (data) {
-            this.sessionId = data["SessionId"] !== undefined ? data["SessionId"] : <any>null;
-            this.location = data["Location"] ? LocationDto.fromJS(data["Location"]) : <any>null;
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            this.seed = data["Seed"] !== undefined ? data["Seed"] : <any>null;
+            this.scale = data["Scale"] !== undefined ? data["Scale"] : <any>null;
+            this.octaves = data["Octaves"] !== undefined ? data["Octaves"] : <any>null;
+            this.persistance = data["Persistance"] !== undefined ? data["Persistance"] : <any>null;
+            this.lacunarity = data["Lacunarity"] !== undefined ? data["Lacunarity"] : <any>null;
+            this.infinite = data["Infinite"] !== undefined ? data["Infinite"] : <any>null;
         }
     }
 
-    static fromJS(data: any): LocationChangedMessage {
+    static fromJS(data: any): OpenSimplexRequestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new LocationChangedMessage();
+        let result = new OpenSimplexRequestDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["SessionId"] = this.sessionId !== undefined ? this.sessionId : <any>null;
-        data["Location"] = this.location ? this.location.toJSON() : <any>null;
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        data["Seed"] = this.seed !== undefined ? this.seed : <any>null;
+        data["Scale"] = this.scale !== undefined ? this.scale : <any>null;
+        data["Octaves"] = this.octaves !== undefined ? this.octaves : <any>null;
+        data["Persistance"] = this.persistance !== undefined ? this.persistance : <any>null;
+        data["Lacunarity"] = this.lacunarity !== undefined ? this.lacunarity : <any>null;
+        data["Infinite"] = this.infinite !== undefined ? this.infinite : <any>null;
         return data; 
     }
 
-    clone(): LocationChangedMessage {
+    clone(): OpenSimplexRequestDto {
         const json = this.toJSON();
-        let result = new LocationChangedMessage();
+        let result = new OpenSimplexRequestDto();
         result.init(json);
         return result;
     }
 }
 
-export interface ILocationChangedMessage {
-    sessionId?: string | null;
-    location?: LocationDto | null;
+export interface IOpenSimplexRequestDto {
+    width: number;
+    height: number;
+    seed: number;
+    scale: number;
+    octaves: number;
+    persistance: number;
+    lacunarity: number;
+    infinite: boolean;
 }

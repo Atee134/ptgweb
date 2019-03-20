@@ -16,8 +16,9 @@ namespace Ptg.Services.Services
         private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
         private readonly IDiamondSquareGenerator diamondSquareGenerator;
+        private readonly IOpenSimplexGenerator openSimplexGenerator;
 
-        public TerrainService(IRepository repository, IRandomSplatmapGenerator randomSplatmapGenerator, IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator)
+        public TerrainService(IRepository repository, IRandomSplatmapGenerator randomSplatmapGenerator, IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator, IOpenSimplexGenerator openSimplexGenerator)
         {
             this.repository = repository;
             this.randomSplatmapGenerator = randomSplatmapGenerator;
@@ -25,6 +26,7 @@ namespace Ptg.Services.Services
             this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
             this.diamondSquareGenerator = diamondSquareGenerator;
+            this.openSimplexGenerator = openSimplexGenerator;
         }
 
         public Guid Generate(DiamondSquareHeightmapRequestDto requestDto)
@@ -46,6 +48,41 @@ namespace Ptg.Services.Services
             var heightmapDto = randomHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height);
 
             return CreateHeightmap(heightmapDto);
+        }
+
+        public Guid Generate(OpenSimplexRequestDto requestDto)
+        {
+            var heightmapDto = openSimplexGenerator.Generate(
+                requestDto.Width,
+                requestDto.Height,
+                requestDto.Seed,
+                requestDto.Scale,
+                requestDto.Octaves,
+                requestDto.Persistance,
+                requestDto.Lacunarity
+            );
+
+            var id = CreateHeightmap(heightmapDto);
+
+            if (requestDto.Infinite)
+            {
+                repository.AddBaseHeightmapChunk(new BaseHeightmapChunkDto
+                {
+                    Id = id,
+                    Width = requestDto.Width,
+                    Height = requestDto.Height,
+                    Seed = requestDto.Seed,
+                    Scale = requestDto.Scale,
+                    Octaves = requestDto.Octaves,
+                    Persistance = requestDto.Persistance,
+                    Lacunarity = requestDto.Lacunarity,
+                    Heightmap = heightmapDto
+                });
+
+                repository.SaveChanges();
+            }
+
+            return id;
         }
 
         private Guid CreateHeightmap(HeightmapDto heightmapDto)
