@@ -8,6 +8,8 @@ namespace Ptg.DataAccess
     {
         void AddHeightmap(HeightmapDto heightmapDto);
         void AddBaseHeightmapChunk(BaseHeightmapChunkDto baseChunkDto);
+        void AddHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ, HeightmapDto heightmapDto);
+        bool IsHeightmapChunkExists(Guid baseChunkId, int offsetX, int offsetZ);
         void AddSplatmap(SplatmapDto splatmapDto);
         void AddPlayer(PlayerDto playerDto);
         void AddPlayerLocation(string signalrConnectionId, LocationDto location);
@@ -21,6 +23,8 @@ namespace Ptg.DataAccess
         List<LocationDto> GetLocationsInSession(Guid sessionId);
         void AddSession(Guid sessionId);
         byte[] GetHeightmap(Guid id);
+        BaseHeightmapChunkDto GetBaseHeightmapChunk(Guid id);
+        byte[] GetHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ);
         HeightmapInfoDto GetHeightmapInfo(Guid id);
         SplatmapDto Getsplatmap(Guid id);
         List<PlayerDto> GetPlayers(Guid sessionId);

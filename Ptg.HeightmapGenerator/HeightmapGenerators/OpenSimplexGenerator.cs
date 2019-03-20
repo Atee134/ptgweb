@@ -9,7 +9,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 {
     public class OpenSimplexGenerator : IOpenSimplexGenerator
     {
-        public HeightmapDto Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity)
+        public HeightmapDto Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity, int offsetX = 0, int offsetZ = 0)
         {
             var noise = new OpenSimplexNoise();
 

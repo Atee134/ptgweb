@@ -11,9 +11,5 @@ namespace Ptg.DataAccess.Models
         public int Height { get; set; }
 
         public byte[] HeightmapByteArray { get; set; }
-
-        public int? ChunkOffsetX { get; set; }
-
-        public int? ChunkOffsetZ { get; set; }
     }
 }

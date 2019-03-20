@@ -17,6 +17,6 @@ namespace Ptg.DataAccess.Models
 
         public Heightmap Heightmap { get; set; }
 
-        public List<Heightmap> ChildChunks { get; set; }
+        public List<HeightmapChunk> ChildChunks { get; set; }
     }
 }

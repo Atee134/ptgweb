@@ -10,6 +10,8 @@ namespace Ptg.Services.Services
 {
     public class TerrainService : ITerrainService
     {
+        private readonly static object chunkGenerationLockObj = new object();
+
         private readonly IRepository repository;
         private readonly IRandomSplatmapGenerator randomSplatmapGenerator;
         private readonly IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator;
@@ -83,6 +85,49 @@ namespace Ptg.Services.Services
             }
 
             return id;
+        }
+
+        public byte[] GetHeightmapChunk(HeightmapChunkRequestDto requestDto)
+        {
+            lock (chunkGenerationLockObj)
+            {
+                System.Threading.Thread.Sleep(100000);
+                if (repository.IsHeightmapChunkExists(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ))
+                {
+                    return repository.GetHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ);
+                }
+                else
+                {
+                    var heightmapDto = CreateHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ);
+
+                    repository.AddHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ, heightmapDto);
+
+                    repository.SaveChanges();
+
+                    return heightmapDto.HeightmapByteArray;
+                }
+            }
+        }
+
+        private HeightmapDto CreateHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ)
+        {
+            var baseChunk = repository.GetBaseHeightmapChunk(baseChunkId);
+
+            var heightmapDto = openSimplexGenerator.Generate(
+                   baseChunk.Width,
+                   baseChunk.Height,
+                   baseChunk.Seed,
+                   baseChunk.Scale,
+                   baseChunk.Octaves,
+                   baseChunk.Persistance,
+                   baseChunk.Lacunarity,
+                   offsetX,
+                   offsetZ
+               );
+
+            heightmapDto.Id = Guid.NewGuid();
+
+            return heightmapDto;
         }
 
         private Guid CreateHeightmap(HeightmapDto heightmapDto)

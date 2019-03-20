@@ -71,13 +71,13 @@ namespace PtgWeb.Controllers
             return File(result, "image/bmp");
         }
 
-        //[HttpGet("{id}")]
-        //public IActionResult GetHeightmap(Guid id)
-        //{
-        //    var result = repository.GetHeightmap(id);
+        [HttpGet("chunk")]
+        public IActionResult GetHeightmapChunk([FromQuery] HeightmapChunkRequestDto requestDto)
+        {
+            var result = terrainService.GetHeightmapChunk(requestDto);
 
-        //    return File(result, "image/bmp");
-        //}
+            return File(result, "image/bmp");
+        }
 
         [HttpGet("{id}/info")]
         public IActionResult GetHeightmapInfo(Guid id)

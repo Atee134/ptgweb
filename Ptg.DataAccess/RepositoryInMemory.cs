@@ -10,6 +10,7 @@ namespace Ptg.DataAccess
     public class RepositoryInMemory : IRepository
     {
         private readonly Dictionary<Guid, BaseHeightmapChunk> baseHeightmapChunks;
+        //private readonly Dictionary<Guid, HeightmapChunk> heightmapChunks;
         private readonly Dictionary<Guid, Heightmap> heightmaps;
         private readonly Dictionary<Guid, Splatmap> splatmaps;
         private readonly List<Player> players;
@@ -54,10 +55,43 @@ namespace Ptg.DataAccess
                 Persistance = baseChunkDto.Persistance,
                 Lacunarity = baseChunkDto.Lacunarity,
                 Heightmap = heightmap,
-                ChildChunks = new List<Heightmap>(),
+                ChildChunks = new List<HeightmapChunk>(),
             };
 
             baseHeightmapChunks.Add(baseChunkDto.Id, baseHeightmapChunk);
+        }
+
+        public void AddHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ, HeightmapDto heightmapDto)
+        {
+            var baseChunk = baseHeightmapChunks[baseChunkId];
+
+            if (baseChunk == null) throw new PtgNotFoundException("Chunk not found");
+
+            baseChunk.ChildChunks.Add(new HeightmapChunk
+            {
+                OffsetX = offsetX,
+                OffsetZ = offsetZ,
+                Heightmap = new Heightmap
+                {
+                    Id = heightmapDto.Id,
+                    Width = heightmapDto.Width,
+                    Height = heightmapDto.Height,
+                    HeightmapByteArray = heightmapDto.HeightmapByteArray,
+                }
+            });
+        }
+
+        public bool IsHeightmapChunkExists(Guid baseChunkId, int offsetX, int offsetZ)
+        {
+            var baseChunk = baseHeightmapChunks[baseChunkId];
+
+            if (baseChunk == null) return false;
+
+            var chunk = baseChunk.ChildChunks.FirstOrDefault(ch => ch.OffsetX == offsetX && ch.OffsetZ == offsetZ);
+
+            if (chunk == null) return false;
+
+            return true;
         }
 
         public void AddSplatmap(SplatmapDto splatmapDto)
@@ -212,6 +246,38 @@ namespace Ptg.DataAccess
             var heightmap = heightmaps[id];
 
             return heightmap.HeightmapByteArray;
+        }
+
+        public BaseHeightmapChunkDto GetBaseHeightmapChunk(Guid id)
+        {
+            var baseChunk = baseHeightmapChunks[id];
+
+            if (baseChunk == null) throw new PtgNotFoundException($"Heightmap with ID: {id} cannot be found");
+
+            return new BaseHeightmapChunkDto
+            {
+                Id = baseChunk.Id,
+                Width = baseChunk.Width,
+                Height = baseChunk.Height,
+                Seed = baseChunk.Seed,
+                Scale = baseChunk.Scale,
+                Octaves = baseChunk.Octaves,
+                Persistance = baseChunk.Persistance,
+                Lacunarity = baseChunk.Lacunarity,
+            };
+        }
+
+        public byte[] GetHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ)
+        {
+            var baseChunk = baseHeightmapChunks[baseChunkId];
+
+            if (baseChunk == null) throw new PtgNotFoundException("Chunk not found");
+
+            var chunk = baseChunk.ChildChunks.FirstOrDefault(ch => ch.OffsetX == offsetX && ch.OffsetZ == offsetZ);
+
+            if (chunk == null) throw new PtgNotFoundException("Chunk not found");
+
+            return chunk.Heightmap.HeightmapByteArray;
         }
 
         public HeightmapInfoDto GetHeightmapInfo(Guid id)

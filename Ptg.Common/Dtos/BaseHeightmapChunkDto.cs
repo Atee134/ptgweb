@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Ptg.Common.Dtos
 {
@@ -16,7 +15,5 @@ namespace Ptg.Common.Dtos
         public float Lacunarity { get; set; }
 
         public HeightmapDto Heightmap { get; set; }
-
-        public List<HeightmapDto> ChildChunks { get; set; }
     }
 }
