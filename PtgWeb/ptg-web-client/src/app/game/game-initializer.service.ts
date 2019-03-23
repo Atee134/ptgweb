@@ -151,6 +151,7 @@ export class GameInitializerService {
               minHeight: 0,
               maxHeight: 20
       };
+
       const mapData = new Float32Array(heightmapInfo.width * heightmapInfo.height * 3);
       BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, scene);
     });

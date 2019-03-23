@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DiamondSquareHeightmapRequestDto,
   FaultHeightmapRequestDto,
   HeightmapType,
-  StartGameSesionRequestDto, 
+  StartGameSesionRequestDto,
   OpenSimplexRequestDto} from 'src/app/_models/generatedDtos';
 import { HeightmapService } from 'src/app/_services/heightmap.service';
 import { SessionService } from 'src/app/_services/session.service';
@@ -80,7 +80,7 @@ export class LobbySettingsComponent implements OnInit {
         return 'Diamond square algorithm';
       }
       case HeightmapType.OpenSimplex: {
-        return 'Open simple noise';
+        return 'Open simplex noise';
       }
     }
   }
