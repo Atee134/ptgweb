@@ -8,6 +8,7 @@ namespace Ptg.Common.Dtos
 
         public int Width { get; set; }
         public int Height { get; set; }
+        public int OverlappedSize { get; set; }
         public int Seed { get; set; }
         public float Scale { get; set; }
         public int Octaves { get; set; }

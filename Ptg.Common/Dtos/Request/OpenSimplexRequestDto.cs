@@ -11,5 +11,6 @@
         public float Lacunarity { get; set; }
 
         public bool Infinite { get; set; }
+        public int OverlappedSize { get; set; }
     }
 }

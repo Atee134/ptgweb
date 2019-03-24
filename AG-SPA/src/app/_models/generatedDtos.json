@@ -206,6 +206,53 @@
         }
       }
     },
+    "OpenSimplexRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Width",
+        "Height",
+        "Seed",
+        "Scale",
+        "Octaves",
+        "Persistance",
+        "Lacunarity",
+        "Infinite"
+      ],
+      "properties": {
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Seed": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Scale": {
+          "type": "number",
+          "format": "double"
+        },
+        "Octaves": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Persistance": {
+          "type": "number",
+          "format": "double"
+        },
+        "Lacunarity": {
+          "type": "number",
+          "format": "double"
+        },
+        "Infinite": {
+          "type": "boolean"
+        }
+      }
+    },
     "RandomHeightmapRequestDto": {
       "type": "object",
       "additionalProperties": false,
@@ -332,50 +379,26 @@
         "OpenSimplex"
       ]
     },
-    "OpenSimplexRequestDto": {
+    "HeightmapChunkRequestDto": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "Width",
-        "Height",
-        "Seed",
-        "Scale",
-        "Octaves",
-        "Persistance",
-        "Lacunarity",
-        "Infinite"
+        "BaseHeightmapChunkId",
+        "OffsetX",
+        "OffsetZ"
       ],
       "properties": {
-        "Width": {
+        "BaseHeightmapChunkId": {
+          "type": "string",
+          "format": "guid"
+        },
+        "OffsetX": {
           "type": "integer",
           "format": "int32"
         },
-        "Height": {
+        "OffsetZ": {
           "type": "integer",
           "format": "int32"
-        },
-        "Seed": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Scale": {
-          "type": "number",
-          "format": "double"
-        },
-        "Octaves": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Persistance": {
-          "type": "number",
-          "format": "double"
-        },
-        "Lacunarity": {
-          "type": "number",
-          "format": "double"
-        },
-        "Infinite": {
-          "type": "boolean"
         }
       }
     }

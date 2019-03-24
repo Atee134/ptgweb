@@ -1,15 +1,16 @@
 /// <reference types="babylonjs"/>
 // tslint:disable-next-line:no-reference
-/// <reference path="./extensions/babylon.dynamicTerrain.d.ts"/>
+/// <reference path="../extensions/babylon.dynamicTerrain.d.ts"/>
 
-import './extensions/babylon.dynamicTerrain.js';
+import '../extensions/babylon.dynamicTerrain.js';
 
 import { Injectable } from '@angular/core';
 import { GameInitializerService } from './game-initializer.service';
 import { SignalRService } from 'src/app/shared/signalr.service';
-import { MapLoadedMessage, LocationDto, LocationChangedMessage } from '../_models/generatedDtos.js';
-import { Game } from './interfaces/game.js';
-import { Player } from './interfaces/player.js';
+import { MapLoadedMessage, LocationDto, LocationChangedMessage } from '../../_models/generatedDtos.js';
+import { Game } from '../interfaces/game.js';
+import { Player } from '../interfaces/player.js';
+import { ChunkManagerService } from './chunk-manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,49 +21,37 @@ export class GameManagerService {
   private sessionId: string;
   private game: Game;
   private cameraAltitudeOffset = 3;
+  private terrainDataId: string;
   private terrain: BABYLON.DynamicTerrain;
 
-  private terrainChunkRequestThreshold = 28;
-  private terrainChunkSizeX: number;
-  private terrainChunkSizeZ: number;
-  private terrainChunkHalfSizeX: number;
-  private terrainChunkHalfSizeZ: number;
+  constructor(
+    private gameInitializerService: GameInitializerService,
+    private signalrService: SignalRService,
+    private chunkManagerService: ChunkManagerService) { }
 
-  private currentChunkCoords = new BABYLON.Vector2(0, 0);
-  private requestedChunks: BABYLON.Vector2[] = [];
-
-  constructor(private gameInitializerService: GameInitializerService, private signalrService: SignalRService) { }
-
-  public startGame(sessionId: string, terrainDataId: string, canvas: HTMLCanvasElement) {
+  public startGame(sessionId: string, terrainDataId: string, canvas: HTMLCanvasElement, infinite: boolean) {
     this.sessionId = sessionId;
+    this.terrainDataId = terrainDataId;
     this.subscribeToSignalrEvents();
     this.gameInitializerService.terrainLoaded.subscribe(terrain => this.onTerrainLoaded(terrain));
     const game = this.gameInitializerService.initializeGame(terrainDataId, canvas);
     this.game = game;
 
+
     window.addEventListener('keypress', (e) => {
       if (e.keyCode === 32) {
           console.log(`x: ${this.game.camera.position.x} y: ${this.game.camera.position.y} z: ${this.game.camera.position.z}`);
-          console.log('Chunkcoord X: ' + this.currentChunkCoords.x + '   chunkcoord Z: ' + this.currentChunkCoords.y);
       }
   }, false);
   }
 
   private onTerrainLoaded(terrain: BABYLON.DynamicTerrain) {
     this.terrain = terrain;
-    this.storeTerrainSizes(terrain);
+    this.chunkManagerService.initialize(terrain, this.terrainDataId, this.game.scene);
     this.registerCameraSetter(this.game.scene, this.game.camera, terrain);
     this.setInitialLocation();
     this.sendMapLoaded();
     this.startRendering(this.game.engine, this.game.scene);
-  }
-
-  // TODO this in chunkmanager?
-  private storeTerrainSizes(terrain: BABYLON.DynamicTerrain) {
-    this.terrainChunkSizeX = terrain.mapSubX;
-    this.terrainChunkSizeZ = terrain.mapSubZ;
-    this.terrainChunkHalfSizeX = terrain.mapSubX / 2;
-    this.terrainChunkHalfSizeZ = terrain.mapSubZ / 2;
   }
 
   private subscribeToSignalrEvents() {
@@ -110,72 +99,6 @@ export class GameManagerService {
   private setCameraOnGround(camera: BABYLON.Camera, terrain: BABYLON.DynamicTerrain): void {
     const camAltitude = terrain.getHeightFromMap(camera.position.x, camera.position.z) + this.cameraAltitudeOffset;
     camera.position.y = camAltitude;
-
-    // TODO put this in renderloop \ and a non infinite camera bound
-    this.manageChunks(camera);
-  }
-
-  // TODO some chunk manager service
-  private manageChunks(camera: BABYLON.Camera) {
-    // refresh current coords
-    this.currentChunkCoords.x = Math.floor((camera.position.x + this.terrainChunkHalfSizeX) / this.terrainChunkSizeX);
-    this.currentChunkCoords.y = Math.floor((camera.position.z + this.terrainChunkHalfSizeZ) / this.terrainChunkSizeZ);
-
-    // Check position to request new chunks
-    const chunksNeeded: BABYLON.Vector2[] = [];
-
-    // X direction
-    const positiveXBoundary =
-      this.currentChunkCoords.x * this.terrainChunkSizeX + this.terrainChunkHalfSizeX - this.terrainChunkRequestThreshold;
-
-    if (camera.position.x > positiveXBoundary) {
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x + 1, this.currentChunkCoords.y));
-    }
-
-    const negativeXBoundary =
-      this.currentChunkCoords.x * this.terrainChunkSizeX - this.terrainChunkHalfSizeX + this.terrainChunkRequestThreshold;
-
-    if (camera.position.x < negativeXBoundary) {
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x - 1, this.currentChunkCoords.y));
-    }
-
-    // Z direction
-    const positiveZBoundary =
-      this.currentChunkCoords.y * this.terrainChunkSizeZ + this.terrainChunkHalfSizeZ - this.terrainChunkRequestThreshold;
-
-    if (camera.position.z > positiveZBoundary) {
-      if (chunksNeeded.length > 0) {
-        const xDirection = chunksNeeded[0];
-        chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y + 1));
-      }
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y + 1));
-    }
-
-    const negativeZBoundary =
-     this.currentChunkCoords.y * this.terrainChunkSizeZ - this.terrainChunkHalfSizeZ + this.terrainChunkRequestThreshold;
-
-    if (camera.position.z < negativeZBoundary) {
-      if (chunksNeeded.length > 0) {
-        const xDirection = chunksNeeded[0];
-        chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y - 1));
-      }
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y - 1));
-    }
-
-    for (const chunkNeeded of chunksNeeded) {
-      this.requestChunk(chunkNeeded);
-    }
-  }
-
-  private requestChunk(coords: BABYLON.Vector2) {
-    const requestedChunk = this.requestedChunks.find(ch => ch.x === coords.x && ch.y === coords.y);
-
-    if (!requestedChunk) {
-      // TODO request chunk from server
-      this.requestedChunks.push(coords);
-    }
-
-    // else, chunk has already been requested, nothing to do
   }
 
   // TODO this in init service?
@@ -213,7 +136,7 @@ export class GameManagerService {
         location: this.ownLocation
       }));
 
-      // TODO instruct chunkmanager to do stuff:
+      this.chunkManagerService.manageChunks(this.game.camera.position);
 
       scene.render();
     });

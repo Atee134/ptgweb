@@ -71,10 +71,10 @@ namespace PtgWeb.Controllers
             return File(result, "image/bmp");
         }
 
-        [HttpGet("chunk")]
-        public IActionResult GetHeightmapChunk([FromQuery] HeightmapChunkRequestDto requestDto)
+        [HttpGet("{baseChunkId}/{offsetX}/{offsetZ}")]
+        public IActionResult GetHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ)
         {
-            var result = terrainService.GetHeightmapChunk(requestDto);
+            var result = terrainService.GetHeightmapChunk(baseChunkId, offsetX, offsetZ);
 
             return File(result, "image/bmp");
         }

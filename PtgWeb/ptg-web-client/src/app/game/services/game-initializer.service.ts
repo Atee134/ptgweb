@@ -1,16 +1,16 @@
 /// <reference types="babylonjs"/>
 // tslint:disable-next-line:no-reference
-/// <reference path="./extensions/babylon.dynamicTerrain.d.ts"/>
+/// <reference path="../extensions/babylon.dynamicTerrain.d.ts"/>
 
-import './extensions/babylon.dynamicTerrain.js';
+import '../extensions/babylon.dynamicTerrain.js';
 
 import { Injectable } from '@angular/core';
 import { TerrainMaterial } from 'babylonjs-materials';
-import { HeightmapService } from '../_services/heightmap.service';
+import { HeightmapService } from '../../_services/heightmap.service';
 import { Subject } from 'rxjs';
-import { LocationDto } from '../_models/generatedDtos.js';
-import { Player } from './interfaces/player.js';
-import { Game } from './interfaces/game.js';
+import { LocationDto } from '../../_models/generatedDtos.js';
+import { Player } from '../interfaces/player.js';
+import { Game } from '../interfaces/game.js';
 
 @Injectable({
   providedIn: 'root'

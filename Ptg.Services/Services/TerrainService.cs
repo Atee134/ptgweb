@@ -57,6 +57,7 @@ namespace Ptg.Services.Services
             var heightmapDto = openSimplexGenerator.Generate(
                 requestDto.Width,
                 requestDto.Height,
+                requestDto.OverlappedSize,
                 requestDto.Seed,
                 requestDto.Scale,
                 requestDto.Octaves,
@@ -73,6 +74,7 @@ namespace Ptg.Services.Services
                     Id = id,
                     Width = requestDto.Width,
                     Height = requestDto.Height,
+                    OverlappedSize = requestDto.OverlappedSize,
                     Seed = requestDto.Seed,
                     Scale = requestDto.Scale,
                     Octaves = requestDto.Octaves,
@@ -87,19 +89,19 @@ namespace Ptg.Services.Services
             return id;
         }
 
-        public byte[] GetHeightmapChunk(HeightmapChunkRequestDto requestDto)
+        public byte[] GetHeightmapChunk(Guid baseHeightmapChunkId, int offsetX, int offsetZ)
         {
             lock (chunkGenerationLockObj)
             {
-                if (repository.IsHeightmapChunkExists(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ))
+                if (repository.IsHeightmapChunkExists(baseHeightmapChunkId, offsetX, offsetZ))
                 {
-                    return repository.GetHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ);
+                    return repository.GetHeightmapChunk(baseHeightmapChunkId, offsetX, offsetZ);
                 }
                 else
                 {
-                    var heightmapDto = CreateHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ);
+                    var heightmapDto = CreateHeightmapChunk(baseHeightmapChunkId, offsetX, offsetZ);
 
-                    repository.AddHeightmapChunk(requestDto.BaseHeightmapChunkId, requestDto.OffsetX, requestDto.OffsetZ, heightmapDto);
+                    repository.AddHeightmapChunk(baseHeightmapChunkId, offsetX, offsetZ, heightmapDto);
 
                     repository.SaveChanges();
 
@@ -115,6 +117,7 @@ namespace Ptg.Services.Services
             var heightmapDto = openSimplexGenerator.Generate(
                    baseChunk.Width,
                    baseChunk.Height,
+                   baseChunk.OverlappedSize,
                    baseChunk.Seed,
                    baseChunk.Scale,
                    baseChunk.Octaves,

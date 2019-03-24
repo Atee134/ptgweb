@@ -10,6 +10,6 @@ namespace Ptg.Services.Interfaces
         Guid Generate(FaultHeightmapRequestDto requestDto);
         Guid Generate(RandomHeightmapRequestDto requestDto);
         Guid Generate(OpenSimplexRequestDto requestDto);
-        byte[] GetHeightmapChunk(HeightmapChunkRequestDto requestDto);
+        byte[] GetHeightmapChunk(Guid baseHeightmapChunkId, int offsetX, int offsetZ);
     }
 }

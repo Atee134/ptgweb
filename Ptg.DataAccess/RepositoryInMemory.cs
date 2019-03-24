@@ -49,13 +49,21 @@ namespace Ptg.DataAccess
                 Id = baseChunkDto.Id,
                 Width = baseChunkDto.Width,
                 Height = baseChunkDto.Height,
+                OverlappedSize = baseChunkDto.OverlappedSize,
                 Seed = baseChunkDto.Seed,
                 Scale = baseChunkDto.Scale,
                 Octaves = baseChunkDto.Octaves,
                 Persistance = baseChunkDto.Persistance,
                 Lacunarity = baseChunkDto.Lacunarity,
-                Heightmap = heightmap,
-                ChildChunks = new List<HeightmapChunk>(),
+                ChildChunks = new List<HeightmapChunk>
+                        {
+                              new HeightmapChunk
+                                {
+                                  Heightmap = heightmap,
+                                  OffsetX = 0,
+                                  OffsetZ = 0,
+                                }
+                        },
             };
 
             baseHeightmapChunks.Add(baseChunkDto.Id, baseHeightmapChunk);
@@ -259,6 +267,7 @@ namespace Ptg.DataAccess
                 Id = baseChunk.Id,
                 Width = baseChunk.Width,
                 Height = baseChunk.Height,
+                OverlappedSize = baseChunk.OverlappedSize,
                 Seed = baseChunk.Seed,
                 Scale = baseChunk.Scale,
                 Octaves = baseChunk.Octaves,

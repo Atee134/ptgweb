@@ -6,6 +6,7 @@ import { DiamondSquareHeightmapRequestDto,
   FaultHeightmapRequestDto,
   HeightmapInfoResponseDto,
   OpenSimplexRequestDto,
+  HeightmapChunkRequestDto,
 } from '../_models/generatedDtos';
 
 @Injectable({
@@ -20,6 +21,10 @@ export class HeightmapService {
 
   getHeightmapUrl(terrainDataId: string): string {
     return `${environment.baseUrl}api/heightmap/${terrainDataId}`;
+  }
+
+  getHeightmapChunkUrl(baseChunkId: string, offsetX: number, offsetZ: number): string {
+    return `${environment.baseUrl}api/heightmap/${baseChunkId}/${offsetX}/${offsetZ}`;
   }
 
   getSplatmapUrl(terrainDataId: string): string {

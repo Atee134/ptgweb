@@ -27,7 +27,7 @@ export class LobbySettingsComponent implements OnInit {
   public faultRequestDto: FaultHeightmapRequestDto;
   public openSimplexRequestdto: OpenSimplexRequestDto;
 
-  public selectedHeightmapType = HeightmapType.Fault;
+  public selectedHeightmapType = HeightmapType.OpenSimplex;
 
   constructor(private heightmapService: HeightmapService, private sessionService: SessionService) { }
 
@@ -48,14 +48,14 @@ export class LobbySettingsComponent implements OnInit {
       offsetPerIteration: 5
     });
     this.openSimplexRequestdto = new OpenSimplexRequestDto({
-      width: 512,
-      height: 512,
+      width: 128,
+      height: 128,
       seed: 134,
       scale: 0.02,
       octaves: 6,
       persistance: 0.5,
       lacunarity: 2,
-      infinite: false,
+      infinite: true,
     });
   }
 

@@ -12,6 +12,7 @@
         "Ptg.Common.Dtos.Request.DiamondSquareHeightmapRequestDto",
         "Ptg.Common.Dtos.Request.FaultHeightmapRequestDto",
         "Ptg.Common.Dtos.Request.JoinGameSessionRequestDto",
+        "Ptg.Common.Dtos.Request.OpenSimplexRequestDto",
         "Ptg.Common.Dtos.Request.RandomHeightmapRequestDto",
         "Ptg.Common.Dtos.Request.StartGameSesionRequestDto",
         "Ptg.Common.Dtos.Response.HeightmapInfoResponseDto",
@@ -20,7 +21,7 @@
         "Ptg.Common.Dtos.Signalr.MapLoadedMessage",
         "Ptg.Common.Dtos.SplatmapDto",
         "Ptg.Common.Enums.HeightmapType",
-        "Ptg.Common.Dtos.Request.OpenSimplexRequestDto"
+        "Ptg.Common.Dtos.Request.HeightmapChunkRequestDto"
       ],
       "defaultPropertyNameHandling": "Default",
       "defaultReferenceTypeNullHandling": "Null",

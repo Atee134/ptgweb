@@ -1,6 +1,6 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GameManagerService } from './game-manager.service';
+import { GameManagerService } from './services/game-manager.service';
 
 @Component({
   selector: 'app-game',
@@ -17,7 +17,9 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     const terrainDataId = sessionStorage.getItem('terrainDataId');
     const sessionId = sessionStorage.getItem('sessionId');
+    const infinite = true; // TODO get this from sessionstorage
     const canvas = this.viewPort.nativeElement as HTMLCanvasElement;
-    this.gameManagerService.startGame(sessionId, terrainDataId, canvas); // TODO add settings inside initializer to this constructor
+    // TODO add settings inside initializer to this constructor
+    this.gameManagerService.startGame(sessionId, terrainDataId, canvas, infinite);
   }
 }

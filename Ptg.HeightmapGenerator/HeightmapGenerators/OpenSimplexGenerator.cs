@@ -12,11 +12,11 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
         private static readonly int UPSCALE_MULTIPLIER = 80;
         private static readonly float HEIGHT_OFFSET = 1.5f;
 
-        public HeightmapDto Generate(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity, int offsetX = 0, int offsetZ = 0)
+        public HeightmapDto Generate(int width, int height, int overlappedSize, int seed, float scale, int octaves, float persistance, float lacunarity, int offsetX = 0, int offsetZ = 0)
         {
             var noise = new OpenSimplexNoise();
 
-            float[,] heightmapData = GenerateHeightmap(width, height, seed, scale, octaves, persistance, lacunarity, offsetX, offsetZ);
+            float[,] heightmapData = GenerateHeightmap(width + overlappedSize * 2, height + overlappedSize * 2, seed, scale, octaves, persistance, lacunarity, offsetX - overlappedSize, offsetZ - overlappedSize);
 
             var heightmapByteArray = BitmapHelper.WriteToByteArray(heightmapData);
 

@@ -448,6 +448,77 @@ export interface IJoinGameSessionRequestDto {
     playerName?: string | null;
 }
 
+export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
+    width!: number;
+    height!: number;
+    seed!: number;
+    scale!: number;
+    octaves!: number;
+    persistance!: number;
+    lacunarity!: number;
+    infinite!: boolean;
+
+    constructor(data?: IOpenSimplexRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
+            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            this.seed = data["Seed"] !== undefined ? data["Seed"] : <any>null;
+            this.scale = data["Scale"] !== undefined ? data["Scale"] : <any>null;
+            this.octaves = data["Octaves"] !== undefined ? data["Octaves"] : <any>null;
+            this.persistance = data["Persistance"] !== undefined ? data["Persistance"] : <any>null;
+            this.lacunarity = data["Lacunarity"] !== undefined ? data["Lacunarity"] : <any>null;
+            this.infinite = data["Infinite"] !== undefined ? data["Infinite"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): OpenSimplexRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OpenSimplexRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Width"] = this.width !== undefined ? this.width : <any>null;
+        data["Height"] = this.height !== undefined ? this.height : <any>null;
+        data["Seed"] = this.seed !== undefined ? this.seed : <any>null;
+        data["Scale"] = this.scale !== undefined ? this.scale : <any>null;
+        data["Octaves"] = this.octaves !== undefined ? this.octaves : <any>null;
+        data["Persistance"] = this.persistance !== undefined ? this.persistance : <any>null;
+        data["Lacunarity"] = this.lacunarity !== undefined ? this.lacunarity : <any>null;
+        data["Infinite"] = this.infinite !== undefined ? this.infinite : <any>null;
+        return data; 
+    }
+
+    clone(): OpenSimplexRequestDto {
+        const json = this.toJSON();
+        let result = new OpenSimplexRequestDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IOpenSimplexRequestDto {
+    width: number;
+    height: number;
+    seed: number;
+    scale: number;
+    octaves: number;
+    persistance: number;
+    lacunarity: number;
+    infinite: boolean;
+}
+
 export class RandomHeightmapRequestDto implements IRandomHeightmapRequestDto {
     width!: number;
     height!: number;
@@ -787,17 +858,12 @@ export enum HeightmapType {
     OpenSimplex = "OpenSimplex", 
 }
 
-export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
-    width!: number;
-    height!: number;
-    seed!: number;
-    scale!: number;
-    octaves!: number;
-    persistance!: number;
-    lacunarity!: number;
-    infinite!: boolean;
+export class HeightmapChunkRequestDto implements IHeightmapChunkRequestDto {
+    baseHeightmapChunkId!: string;
+    offsetX!: number;
+    offsetZ!: number;
 
-    constructor(data?: IOpenSimplexRequestDto) {
+    constructor(data?: IHeightmapChunkRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -808,52 +874,37 @@ export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
 
     init(data?: any) {
         if (data) {
-            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
-            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
-            this.seed = data["Seed"] !== undefined ? data["Seed"] : <any>null;
-            this.scale = data["Scale"] !== undefined ? data["Scale"] : <any>null;
-            this.octaves = data["Octaves"] !== undefined ? data["Octaves"] : <any>null;
-            this.persistance = data["Persistance"] !== undefined ? data["Persistance"] : <any>null;
-            this.lacunarity = data["Lacunarity"] !== undefined ? data["Lacunarity"] : <any>null;
-            this.infinite = data["Infinite"] !== undefined ? data["Infinite"] : <any>null;
+            this.baseHeightmapChunkId = data["BaseHeightmapChunkId"] !== undefined ? data["BaseHeightmapChunkId"] : <any>null;
+            this.offsetX = data["OffsetX"] !== undefined ? data["OffsetX"] : <any>null;
+            this.offsetZ = data["OffsetZ"] !== undefined ? data["OffsetZ"] : <any>null;
         }
     }
 
-    static fromJS(data: any): OpenSimplexRequestDto {
+    static fromJS(data: any): HeightmapChunkRequestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new OpenSimplexRequestDto();
+        let result = new HeightmapChunkRequestDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["Width"] = this.width !== undefined ? this.width : <any>null;
-        data["Height"] = this.height !== undefined ? this.height : <any>null;
-        data["Seed"] = this.seed !== undefined ? this.seed : <any>null;
-        data["Scale"] = this.scale !== undefined ? this.scale : <any>null;
-        data["Octaves"] = this.octaves !== undefined ? this.octaves : <any>null;
-        data["Persistance"] = this.persistance !== undefined ? this.persistance : <any>null;
-        data["Lacunarity"] = this.lacunarity !== undefined ? this.lacunarity : <any>null;
-        data["Infinite"] = this.infinite !== undefined ? this.infinite : <any>null;
+        data["BaseHeightmapChunkId"] = this.baseHeightmapChunkId !== undefined ? this.baseHeightmapChunkId : <any>null;
+        data["OffsetX"] = this.offsetX !== undefined ? this.offsetX : <any>null;
+        data["OffsetZ"] = this.offsetZ !== undefined ? this.offsetZ : <any>null;
         return data; 
     }
 
-    clone(): OpenSimplexRequestDto {
+    clone(): HeightmapChunkRequestDto {
         const json = this.toJSON();
-        let result = new OpenSimplexRequestDto();
+        let result = new HeightmapChunkRequestDto();
         result.init(json);
         return result;
     }
 }
 
-export interface IOpenSimplexRequestDto {
-    width: number;
-    height: number;
-    seed: number;
-    scale: number;
-    octaves: number;
-    persistance: number;
-    lacunarity: number;
-    infinite: boolean;
+export interface IHeightmapChunkRequestDto {
+    baseHeightmapChunkId: string;
+    offsetX: number;
+    offsetZ: number;
 }
