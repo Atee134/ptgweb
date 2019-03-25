@@ -1,0 +1,80 @@
+szerver oldalt bmp-ként kell küldeni a heightmapet, mert úgy eszi meg a frontend
+ez szívás, mert .net core-ban nem mûködik olyan faszán a System.Drawing.
+van rá compat cucc, azzal megy, docker image-be alapból nem fordul bele a dependency, így a dockerfile-ba kellett külön beleírni, hogy szedjemále
+GDI+ nem támogatja a 16 bit grayscale image-et, valami más library kell hozzá
+https://stackoverflow.com/questions/19704021/gdi-generic-error-saving-bitmap-created-from-memory-using-lockbits/19706842#19706842
+
+a nagy felbontású domborzat negatív hatással van a teljesítményre, de akkor különösen, amíg a játékos érintkezik vele. sok collision számolás > külön, kisebb felbontású collision mesh esetleg. de lehet, hogy a dynamic terrain ezt is simán megoldja, UPDATE: dynamic terrain-ben a sima collision számolás nagyon durván lelassítja > workaround: nincs fizika, mindig az adott pozícióban lévõ domborzat Y értéke + egy offset-re lesz beállítva a kamera.
+
+Dynamic terrain tökjó extension, ezzel kilehetne kerülni azt, hogy image-ként kelljen küldeni a heightmapet (float arrayt be lehet tolni neki), egyéb hasznos funkciói is vannak. Játékos adott sugarában lévõ terrain szelet megjelenítése, LOD.
+Typescript compiler-nek nem tetszenek a modul definíciók. Nem compliant a module systemmel, így nem lehet beimportálni szépen a modern javascript-es improt syntax-al az alkalmazásba.
+BabylonJS fórumon kértem segítséget, nagynehezen sikerült összehozni, webpack provide pluginnal fordítás idõben belehúzza a dependency-t, valami magic-el egybe hackeli, most mûködik, de eddig ez volt a legnagyobb szívás.
+Eredményképp elég combosan berántja a babylonjs-t, túl is lépi az angular által megszabott 5MB-os korlátot, feljebb kellet húzni, hogy ne dobjon errort a build
+
+babylonjs terrain material (materials library extension):
+3 különbözõ textúrát lehet mixelni, a textúrákhoz kell egy külön mixmap: R G B, ezt szerver oldalt le kell generálni heightmap alapján
+
+heightmap\splatmap-et tárolni kell szerver oldalt (hogy egy generált heightmap példányt több kliensnek is ki lehessen osztani).
+ez in memory történik, de ideálisabb lenne adatbázisban vagy fájlrendszerben tárolni ezeket (repository pattern miatt könnyû lecserélni)
+
+frontend:
+angular lesz a babylonjs körül.
+sokkal egyszerûbb kezelni a szerver paraméterezettségét, illetve a különbözõ game session-ök lobby-jait.
+ebbe simán beleilleszkedik a BabylonJS-es játék egy komponensként
+bootstrap + alertifyjs
+
+NSwag-el generált dto-k
+
+signalr nem látja a session cookie-ban tárolt cuccokat, mivel nem http, külön protokoll az egész. külön üzenetváltás sorozat kell, hogy le legyen kezelve a game session-be belépés, kilépés, többi játékos értesítése a belépésrõl, start stb...
+nem annyira könnyû megcsinálni a több játékos\több session managelését mint gondoltam, fõleg azért mert 2 külön protokoll session-t kell össze hegeszteni adat tárolás szintjén
+
+authentikáció\authorizáció nincs benn
+szerintem felesleges, session hijackelés most így lehetséges, viszont a legrosszabb ami történhet, hogy nem a lobby létrehozója indítja el a játékmenetet
+
+architektúra menyire érdekes?
+szerver oldalt több projektbõl épül fel az alkalmazás, lazán csatolva.
+kliens oldalon komponensekre van osztva az egész angularral, maga a játék is egy külön komponensként jelenik meg benn, lazy loaded modulokkal
+error handling szerver oldalt is 1 osztály kezeli, kliens oldalon is 1 dedikált osztály
+
+logolás legyen benn?
+
+steepness map > sqrt lassabb de jobb
+
+skybox helyett a végtelenség miatt valami más, mert nem lehet elég messze rakni a skyboxot
+
+ha nagy térképet generálok a diamond square algoritmussal, nagyon sík lesz a terep, mivel alacsony a zaj frekvenciája.
+pl.: egy 129x129-es térképen lesz 1 hegy\völgy pár, úgy a 2049x2049-es terepen is ugyanúgy csak egy hegy\völgy pár lesz, csak nagyobb részletességgel.
+
+angular module tök jó dolog, 2 külön modulba tudom osztani, hogy elõször a menüt töltse csak be, az gyorsan elõjön, de amikor indítom a játékot akkor azt lazy loading-al akkor tölti be.
+szép és jó, csak a singleton-nak szánt signalr service-bõl mindegyik modul saját instance-t kap, így újracsatlakozik játék töltõdéskor, új connection ID-t kapva > borul a játékosok nyilvántartása szerver oldalt.
+kell egy külön shared module, ahol definiálva van a signalrService, és azt használja a menu, illetve a game module, így tényleg singleton lesz a service
+
+végtelen pálya generálás:
+backend:
+el kell tárolni, hogy milyen paraméterekkel lett inicializálva a pálya (seed, lacunarity, persistance, stb...) és ennek megfelelõen generálni a többi chunkot.
+arra kell még figyelni, ha egy chunkot már legeneráltunk, akkor azt eltároljuk (ha más játékos ugyanazt kérné), így minden chunkot csak egyszer generál le a szerver.
+Itt felmerül a kérdés, hogy mivan ha 2 player egyszerre próbálja ugyanazt a chunkot lekérni: lock, egyik szál legenerálja, másik csak visszatér az elõzõ szál által legenerált heightmap-el.
+Az egyszerûség miatt a szerver nem foglalkozik a playerek helyzetével, egy endpoint alapján tudja a kliens lekérni a szükséges chunkot.
+Egy chunk generálása kevesebb mint 1 mp, így nem gond, de tovább lehetne úgy fejleszteni, hogy a szerver figyeli a player helyzetét, és elõre generálja azokat a chunkokat, melyekre szükség lehet, így gyorsabban tudna válaszolni
+
+frontend:
+dynamicterrain amennyire megkönnyíti a dolgom meg is nehezíti itt.
+alap koncepciója:
+ - van egy mapData (magasság értékeket tároló float tömb, hatalmas méretben)
+ - van egy terrain mesh, mely a mapData egy adott részét jeleníti meg, a kamerát követve. (gyakorlatilag mint egy négyzet alakú csúszó ablak, ahogy a kamera bejárja a mapData által tárolt koordinátákat, alatta folyton ottvan egy mesh)
+ - a kamera nincs lekorlátolva, akármerre mehet, viszont mindig lesz alatta terrain. Ebbõl az következik, hogy ha a mapData egy véges tömb, akkor a szélét elérve ismétlõdni fognak az értékek.
+
+Az ismétlõdés olyan esetben lehet jó, ha tileable a heightmap, mert akkor seamless az ismétlõdés, viszont nekem nem ilyenek vannak, szóval éles vágások vannak a határvonalakon > megoldás: kamera lekorlátozása, egy adott határnál megfog egy láthatatlan fal, nem tudsz tovább menni. Ez lenne nem végtelen esetben.
+
+Végtelen esetben viszont egy bizonyos határnál nem egy láthatatlan fal lenne, hanem egy api hívás, ami lekéri a következõ chunkot a szervertõl. Az adatokat hozzácsatolva a mapData-hoz, a kamerát követõ terrain mesh megjeleítené azt is.
+
+UPDATE:
+Végtelen generálást a frontendes DynamicTerrain eléggé megnehezíti.
+Elég nagy korlátokat állít, backendre is kihat, hogy hogyan kéne összerakni az egész generálást.
+
+több lehetõség:
+	- mapData egyszerre csak egy chunk adatait tartalmazza, hátrány: chunk határok közeledtével a következõ chunkból is látszódnia kell valamennyinek, így átfedésben kell legyenek a generált chunkok > overhead
+	- mapData folyamatosan tárolja a rendelkezésre álló térképet, hátrány: az adatok egy egydimenziós vektorban vannak [x,y,z,x,y,z...] sorrendben, ha egy meglévõ adathalmazhoz újabbat akarunk hozzácsatolni elég bonyolult tömb mûveleteket kellene végezni. Illetve a textúrákat is össze kéne illeszteni valamilyen módon több darabból, hogy az egész mapData-n lévõ textúra az összes chunk textúrája legyen egyszerre, így nem lenne elcsúszva > túl bonyolult
+	
+utóbbi lehetõséget valamelyest megkönnyítené, hogy nem .png-ben küldöm a heightmap-et, hanem float tömbben. Viszont még így is túl bonyolult egy olyan rendszert írni, ami megbízhatóan bele tudja illeszteni a mapData-ba az új adatokat, illetve ahogy növekedne a bejárt pálya mérete, egy új chunk hozzáadása ezzel arányosan több idõben tellne, míg az elsõ esetben a chunk váltás konstans, csak több memóriát igényel.
+

@@ -122,11 +122,8 @@ export class ChunkManagerService {
   }
 
   private requestChunk(coords: BABYLON.Vector2) {
-    // const requestedChunk = this.requestedChunks.find(ch => ch.x === coords.x && ch.y === coords.y);
 
-    // if (!requestedChunk) {
-    console.log('!!REQUESTED');
-    // TODO request chunk from server
+    console.log('REQUESTED CHUNK: X: ' + coords.x + ' Z: ' + coords.y);
     this.requestedChunks.push(coords);
 
     const heightmapUrl = this.heightmapService.getHeightmapChunkUrl(this.baseChunkId, coords.x, coords.y);
@@ -144,10 +141,10 @@ export class ChunkManagerService {
     const mapData = new Float32Array(this.terrainChunkRealSizeX * this.terrainChunkRealSizeZ * 3);
 
     BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, this.scene);
-    // }
   }
 
   private replaceMapdata(mapData: number[], mapSubX: number, mapSubZ: number): void {
+    this.terrain.precomputeNormalsFromMap = true;  // default = false
     this.terrain.mapData = mapData;
     this.terrain.update(true);
   }

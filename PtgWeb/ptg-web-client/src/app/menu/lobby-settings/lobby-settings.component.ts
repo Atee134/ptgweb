@@ -115,8 +115,8 @@ export class LobbySettingsComponent implements OnInit {
       case HeightmapType.OpenSimplex: {
         if (this.infiniteTerrain) {
           this.openSimplexRequestdto.infinite = true;
-          this.openSimplexRequestdto.width = 128;
-          this.openSimplexRequestdto.height = 128;
+          this.openSimplexRequestdto.width = 256;
+          this.openSimplexRequestdto.height = 256;
           this.openSimplexRequestdto.overlappedSize = 0;
           this.heightmapService.generateOpenSimplexHeightmap(this.openSimplexRequestdto).subscribe(terrainDataId => {
             this.sendStartSession(terrainDataId);
