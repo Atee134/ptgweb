@@ -7,10 +7,11 @@ import '../extensions/babylon.dynamicTerrain.js';
 import { Injectable } from '@angular/core';
 import { GameInitializerService } from './game-initializer.service';
 import { SignalRService } from 'src/app/shared/signalr.service';
-import { MapLoadedMessage, LocationDto, LocationChangedMessage } from '../../_models/generatedDtos.js';
+import { MapLoadedMessage, LocationDto, LocationChangedMessage, HeightmapInfoResponseDto } from '../../_models/generatedDtos.js';
 import { Game } from '../interfaces/game.js';
 import { Player } from '../interfaces/player.js';
 import { ChunkManagerService } from './chunk-manager.service';
+import { TerrainData } from '../interfaces/terrainData.js';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class GameManagerService {
   private cameraAltitudeOffset = 3;
   private terrainDataId: string;
   private terrain: BABYLON.DynamicTerrain;
+  private infinite: boolean;
 
   constructor(
     private gameInitializerService: GameInitializerService,
@@ -32,8 +34,9 @@ export class GameManagerService {
   public startGame(sessionId: string, terrainDataId: string, canvas: HTMLCanvasElement, infinite: boolean) {
     this.sessionId = sessionId;
     this.terrainDataId = terrainDataId;
+    this.infinite = infinite;
     this.subscribeToSignalrEvents();
-    this.gameInitializerService.terrainLoaded.subscribe(terrain => this.onTerrainLoaded(terrain));
+    this.gameInitializerService.terrainLoaded.subscribe(terrainData => this.onTerrainLoaded(terrainData));
     const game = this.gameInitializerService.initializeGame(terrainDataId, canvas);
     this.game = game;
 
@@ -45,11 +48,11 @@ export class GameManagerService {
   }, false);
   }
 
-  private onTerrainLoaded(terrain: BABYLON.DynamicTerrain) {
-    this.terrain = terrain;
-    this.chunkManagerService.initialize(terrain, this.terrainDataId, this.game.scene);
-    this.registerCameraSetter(this.game.scene, this.game.camera, terrain);
-    this.setInitialLocation();
+  private onTerrainLoaded(terrainData: TerrainData) {
+    this.terrain = terrainData.terrain;
+    this.chunkManagerService.initialize(terrainData, this.terrainDataId, this.game.scene);
+    this.registerCameraSetter(this.game.scene, this.game.camera, terrainData.terrain);
+    this.setInitialLocation(terrainData.heightmapInfo);
     this.sendMapLoaded();
     this.startRendering(this.game.engine, this.game.scene);
   }
@@ -102,9 +105,9 @@ export class GameManagerService {
   }
 
   // TODO this in init service?
-  private setInitialLocation() {
-    this.game.camera.position.x = this.getRandom(-this.terrain.mapSubX / 2, this.terrain.mapSubX / 2);
-    this.game.camera.position.z = this.getRandom(-this.terrain.mapSubZ / 2, this.terrain.mapSubZ / 2);
+  private setInitialLocation(heightmapInfo: HeightmapInfoResponseDto) {
+    this.game.camera.position.x = this.getRandom(-heightmapInfo.width / 2, heightmapInfo.width / 2);
+    this.game.camera.position.z = this.getRandom(-heightmapInfo.height / 2, heightmapInfo.height / 2);
     this.setCameraOnGround(this.game.camera, this.terrain);
 
     this.ownLocation = new LocationDto({
@@ -136,7 +139,11 @@ export class GameManagerService {
         location: this.ownLocation
       }));
 
-      this.chunkManagerService.manageChunks(this.game.camera.position);
+      if (this.infinite) {
+        this.chunkManagerService.manageChunks(this.game.camera.position);
+      } else {
+        // TODO add invisible camera wall here
+      }
 
       scene.render();
     });

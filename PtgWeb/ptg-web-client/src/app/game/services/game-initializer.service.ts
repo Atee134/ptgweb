@@ -8,16 +8,18 @@ import { Injectable } from '@angular/core';
 import { TerrainMaterial } from 'babylonjs-materials';
 import { HeightmapService } from '../../_services/heightmap.service';
 import { Subject } from 'rxjs';
-import { LocationDto } from '../../_models/generatedDtos.js';
+import { LocationDto, HeightmapInfoResponseDto } from '../../_models/generatedDtos.js';
 import { Player } from '../interfaces/player.js';
 import { Game } from '../interfaces/game.js';
+import { TerrainData } from '../interfaces/terrainData.js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameInitializerService {
 
-  public terrainLoaded = new Subject<BABYLON.DynamicTerrain>();
+  public terrainLoaded = new Subject<TerrainData>();
+  private heightmapInfo: HeightmapInfoResponseDto;
 
   private scene: BABYLON.Scene;
   private terrainDataId: string;
@@ -143,16 +145,21 @@ export class GameInitializerService {
 
   private initDynamicTerrain(scene: BABYLON.Scene, terrainDataId: string): void {
     this.heightmapService.getHeightmapInfo(terrainDataId).subscribe(heightmapInfo => {
+      this.heightmapInfo = heightmapInfo;
       const heightmapUrl = this.heightmapService.getHeightmapUrl(terrainDataId);
+
+      const actualWidth = heightmapInfo.width + heightmapInfo.overlappedSize * 2;
+      const actualHeight = heightmapInfo.height + heightmapInfo.overlappedSize * 2;
+
       const heightmapOptions = {
-              width: heightmapInfo.width, height: heightmapInfo.height,
-              subX: heightmapInfo.width, subZ: heightmapInfo.height,
+              width: actualWidth, height: actualHeight,
+              subX: actualWidth, subZ: actualHeight,
               onReady: this.createTerrain.bind(this),
               minHeight: 0,
               maxHeight: 20
       };
 
-      const mapData = new Float32Array(heightmapInfo.width * heightmapInfo.height * 3);
+      const mapData = new Float32Array(actualWidth * actualHeight * 3);
       BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, scene);
     });
   }
@@ -178,7 +185,12 @@ export class GameInitializerService {
     terrain.createUVMap();
     terrain.update(true);
 
-    this.terrainLoaded.next(terrain);
+    const terrainData: TerrainData = {
+      terrain,
+      heightmapInfo: this.heightmapInfo
+    };
+
+    this.terrainLoaded.next(terrainData);
   }
 
   private initializeCamera(scene: BABYLON.Scene,

@@ -102,6 +102,7 @@ namespace Ptg.Services.Services
                     var heightmapDto = CreateHeightmapChunk(baseHeightmapChunkId, offsetX, offsetZ);
 
                     repository.AddHeightmapChunk(baseHeightmapChunkId, offsetX, offsetZ, heightmapDto);
+                    // GenerateSplatmap(heightmapDto); // TODO somehow store the splatmap to be accessible the same way as the chunk (baseId + offset coords)
 
                     repository.SaveChanges();
 

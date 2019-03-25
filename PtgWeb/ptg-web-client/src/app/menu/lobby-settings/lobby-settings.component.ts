@@ -14,6 +14,7 @@ import { SessionService } from 'src/app/_services/session.service';
 })
 export class LobbySettingsComponent implements OnInit {
   @Input() gameSessionId: string;
+  public infiniteTerrain = true;
   public diamondSquareRequestDto: DiamondSquareHeightmapRequestDto;
   public diamondSquareSizePossibleValues = [
     65,
@@ -35,6 +36,10 @@ export class LobbySettingsComponent implements OnInit {
     this.initDtosWithDefaults();
   }
 
+  public resetInfinite() {
+    this.infiniteTerrain = false;
+  }
+
   private initDtosWithDefaults() {
     this.diamondSquareRequestDto = new DiamondSquareHeightmapRequestDto({
       size: 257,
@@ -50,12 +55,13 @@ export class LobbySettingsComponent implements OnInit {
     this.openSimplexRequestdto = new OpenSimplexRequestDto({
       width: 128,
       height: 128,
+      overlappedSize: 0,
       seed: 134,
       scale: 0.02,
       octaves: 6,
       persistance: 0.5,
       lacunarity: 2,
-      infinite: true,
+      infinite: false,
     });
   }
 
@@ -86,6 +92,13 @@ export class LobbySettingsComponent implements OnInit {
   }
 
   public onStart() {
+
+    if (this.infiniteTerrain) {
+      sessionStorage.setItem('infinite', 'true');
+    } else {
+      sessionStorage.setItem('infinite', 'false');
+    }
+
     switch (this.selectedHeightmapType) {
       case HeightmapType.Fault: {
         this.heightmapService.generateFaultHeightmap(this.faultRequestDto).subscribe(terrainDataId => {
@@ -100,9 +113,20 @@ export class LobbySettingsComponent implements OnInit {
         break;
       }
       case HeightmapType.OpenSimplex: {
-        this.heightmapService.generateOpenSimplexHeightmap(this.openSimplexRequestdto).subscribe(terrainDataId => {
-          this.sendStartSession(terrainDataId);
-        });
+        if (this.infiniteTerrain) {
+          this.openSimplexRequestdto.infinite = true;
+          this.openSimplexRequestdto.width = 128;
+          this.openSimplexRequestdto.height = 128;
+          this.openSimplexRequestdto.overlappedSize = 0;
+          this.heightmapService.generateOpenSimplexHeightmap(this.openSimplexRequestdto).subscribe(terrainDataId => {
+            this.sendStartSession(terrainDataId);
+          });
+        } else {
+          this.openSimplexRequestdto.infinite = false;
+          this.heightmapService.generateOpenSimplexHeightmap(this.openSimplexRequestdto).subscribe(terrainDataId => {
+            this.sendStartSession(terrainDataId);
+          });
+        }
         break;
       }
     }

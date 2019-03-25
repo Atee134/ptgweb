@@ -79,7 +79,6 @@ namespace PtgWeb.Controllers
                 await gameManagerHubContext.Clients.Group(requestDto.SessionId.ToString()).SendAsync("receiveTerrainDataId", requestDto.TerrainDataId);
             }
             return NoContent();
-            // TODO register event on client for this
         }
 
         private async Task CheckSession()

@@ -6,6 +6,8 @@ import '../extensions/babylon.dynamicTerrain.js';
 
 import { Injectable } from '@angular/core';
 import { HeightmapService } from '../../_services/heightmap.service';
+import { TerrainData } from '../interfaces/terrainData.js';
+import { HeightmapInfoResponseDto } from 'src/app/_models/generatedDtos.js';
 
 @Injectable({
   providedIn: 'root'
@@ -16,26 +18,30 @@ export class ChunkManagerService {
   private baseChunkId: string;
   private terrain: BABYLON.DynamicTerrain;
   private terrainChunkRequestThreshold = 28;
-  private terrainChunkSizeX: number;
-  private terrainChunkSizeZ: number;
-  private terrainChunkHalfSizeX: number;
-  private terrainChunkHalfSizeZ: number;
+  private terrainOverlappedSize: number;
+  private terrainChunkRealSizeX: number;
+  private terrainChunkRealSizeZ: number;
+  private terrainChunkBaseSizeX: number;
+  private terrainChunkBaseSizeZ: number;
+  private terrainChunkHalfBaseSizeX: number;
+  private terrainChunkHalfBaseSizeZ: number;
 
   private currentChunkCoords = new BABYLON.Vector2(0, 0);
   private requestedChunks: BABYLON.Vector2[] = [];
 
   constructor(private heightmapService: HeightmapService) { }
 
-  public initialize(terrain: BABYLON.DynamicTerrain, baseChunkId: string, scene: BABYLON.Scene) {
-    this.terrain = terrain;
+  public initialize(terrainData: TerrainData, baseChunkId: string, scene: BABYLON.Scene) {
+    this.terrain = terrainData.terrain;
     this.baseChunkId = baseChunkId;
     this.scene = scene;
-    this.terrainChunkSizeX = terrain.mapSubX;
-    this.terrainChunkSizeZ = terrain.mapSubZ;
-    this.terrainChunkHalfSizeX = terrain.mapSubX / 2;
-    this.terrainChunkHalfSizeZ = terrain.mapSubZ / 2;
-
-
+    this.terrainOverlappedSize = terrainData.heightmapInfo.overlappedSize;
+    this.terrainChunkBaseSizeX = terrainData.heightmapInfo.width;
+    this.terrainChunkBaseSizeZ = terrainData.heightmapInfo.height;
+    this.terrainChunkRealSizeX = terrainData.heightmapInfo.width + terrainData.heightmapInfo.overlappedSize * 2;
+    this.terrainChunkRealSizeZ = terrainData.heightmapInfo.height + terrainData.heightmapInfo.overlappedSize * 2;
+    this.terrainChunkHalfBaseSizeX = this.terrainChunkBaseSizeX / 2;
+    this.terrainChunkHalfBaseSizeZ = this.terrainChunkBaseSizeZ / 2;
 
     window.addEventListener('keypress', (e) => {
       if (e.keyCode === 32) {
@@ -47,50 +53,52 @@ export class ChunkManagerService {
   public manageChunks(currentPosition: BABYLON.Vector3) {
     this.refreshChunkCoords(currentPosition);
 
-    // Check position to request new chunks
-    const chunksNeeded: BABYLON.Vector2[] = [];
 
-    // X direction
-    const upperXBoundary =
-      this.getBoundaryValue(this.currentChunkCoords.x, this.terrainChunkHalfSizeX, this.terrainChunkHalfSizeX, true);
 
-    if (currentPosition.x > upperXBoundary) {
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x + 1, this.currentChunkCoords.y));
-    }
+    // // Check position to request new chunks
+    // const chunksNeeded: BABYLON.Vector2[] = [];
 
-    const lowerXBoundary =
-      this.getBoundaryValue(this.currentChunkCoords.x, this.terrainChunkHalfSizeX, this.terrainChunkHalfSizeX, false);
+    // // X direction
+    // const upperXBoundary =
+    //   this.getBoundaryValue(this.currentChunkCoords.x, this.terrainChunkHalfSizeX, this.terrainChunkHalfSizeX, true);
 
-    if (currentPosition.x < lowerXBoundary) {
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x - 1, this.currentChunkCoords.y));
-    }
+    // if (currentPosition.x > upperXBoundary) {
+    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x + 1, this.currentChunkCoords.y));
+    // }
 
-    // Z direction
-    const upperZBoundary =
-      this.getBoundaryValue(this.currentChunkCoords.y, this.terrainChunkHalfSizeZ, this.terrainChunkHalfSizeZ, true);
+    // const lowerXBoundary =
+    //   this.getBoundaryValue(this.currentChunkCoords.x, this.terrainChunkHalfSizeX, this.terrainChunkHalfSizeX, false);
 
-    if (currentPosition.z > upperZBoundary) {
-      if (chunksNeeded.length > 0) {
-        const xDirection = chunksNeeded[0];
-        chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y + 1));
-      }
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y + 1));
-    }
+    // if (currentPosition.x < lowerXBoundary) {
+    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x - 1, this.currentChunkCoords.y));
+    // }
 
-    const lowerZBoundary =
-    this.getBoundaryValue(this.currentChunkCoords.y, this.terrainChunkHalfSizeZ, this.terrainChunkHalfSizeZ, false);
+    // // Z direction
+    // const upperZBoundary =
+    //   this.getBoundaryValue(this.currentChunkCoords.y, this.terrainChunkHalfSizeZ, this.terrainChunkHalfSizeZ, true);
 
-    if (currentPosition.z < lowerZBoundary) {
-      if (chunksNeeded.length > 0) {
-        const xDirection = chunksNeeded[0];
-        chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y - 1));
-      }
-      chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y - 1));
-    }
+    // if (currentPosition.z > upperZBoundary) {
+    //   if (chunksNeeded.length > 0) {
+    //     const xDirection = chunksNeeded[0];
+    //     chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y + 1));
+    //   }
+    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y + 1));
+    // }
 
-    for (const chunkNeeded of chunksNeeded) {
-      this.requestChunk(chunkNeeded);
-    }
+    // const lowerZBoundary =
+    // this.getBoundaryValue(this.currentChunkCoords.y, this.terrainChunkHalfSizeZ, this.terrainChunkHalfSizeZ, false);
+
+    // if (currentPosition.z < lowerZBoundary) {
+    //   if (chunksNeeded.length > 0) {
+    //     const xDirection = chunksNeeded[0];
+    //     chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y - 1));
+    //   }
+    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y - 1));
+    // }
+
+    // for (const chunkNeeded of chunksNeeded) {
+    //   this.requestChunk(chunkNeeded);
+    // }
   }
 
   private getBoundaryValue(currentChunkCoord: number, terrainChunkSize: number, terrainChunkHalfSize: number, upper: boolean): number {
@@ -102,42 +110,45 @@ export class ChunkManagerService {
   }
 
   private refreshChunkCoords(currentPosition: BABYLON.Vector3) {
-    this.currentChunkCoords.x = Math.floor((currentPosition.x + this.terrainChunkHalfSizeX) / this.terrainChunkSizeX);
-    this.currentChunkCoords.y = Math.floor((currentPosition.z + this.terrainChunkHalfSizeZ) / this.terrainChunkSizeZ);
-  }
+    const newChunkCoordX = Math.floor((currentPosition.x + this.terrainChunkHalfBaseSizeX) / this.terrainChunkBaseSizeX);
+    const newChunkCoordY = Math.floor((currentPosition.z + this.terrainChunkHalfBaseSizeZ) / this.terrainChunkBaseSizeZ);
 
-  private requestChunk(coords: BABYLON.Vector2) {
-    const requestedChunk = this.requestedChunks.find(ch => ch.x === coords.x && ch.y === coords.y);
+    if (newChunkCoordX !== this.currentChunkCoords.x || newChunkCoordY !== this.currentChunkCoords.y) {
+      this.currentChunkCoords.x = newChunkCoordX;
+      this.currentChunkCoords.y = newChunkCoordY;
 
-    if (!requestedChunk) {
-      console.log('!!REQUESTED');
-      // TODO request chunk from server
-      this.requestedChunks.push(coords);
-
-      const heightmapUrl = this.heightmapService.getHeightmapChunkUrl(this.baseChunkId, coords.x, coords.y);
-
-      const heightmapOptions = {
-        width: this.terrainChunkSizeX, height: this.terrainChunkSizeZ,
-        subX: this.terrainChunkSizeX, subZ: this.terrainChunkSizeZ,
-        onReady: this.attachMapDataToExisting.bind(this),
-        minHeight: 0,
-        maxHeight: 20
-      };
-
-      const mapData = new Float32Array(this.terrainChunkSizeX * this.terrainChunkSizeZ * 3);
-
-      BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, this.scene);
+      this.requestChunk(this.currentChunkCoords);
     }
   }
 
-  private attachMapDataToExisting(mapData: number[], mapSubX: number, mapSubZ: number): void {
+  private requestChunk(coords: BABYLON.Vector2) {
+    // const requestedChunk = this.requestedChunks.find(ch => ch.x === coords.x && ch.y === coords.y);
 
-    const firstLength = mapData.length;
-    const result = new Float32Array(firstLength + this.terrain.mapData.length);
+    // if (!requestedChunk) {
+    console.log('!!REQUESTED');
+    // TODO request chunk from server
+    this.requestedChunks.push(coords);
 
-    result.set(mapData);
-    result.set(this.terrain.mapData, firstLength);
+    const heightmapUrl = this.heightmapService.getHeightmapChunkUrl(this.baseChunkId, coords.x, coords.y);
 
-    this.terrain.mapData = result;
+    const heightmapOptions = {
+      width: this.terrainChunkRealSizeX, height: this.terrainChunkRealSizeZ,
+      subX: this.terrainChunkRealSizeX, subZ: this.terrainChunkRealSizeZ,
+      onReady: this.replaceMapdata.bind(this),
+      minHeight: 0,
+      maxHeight: 20,
+      offsetX: coords.x * this.terrainChunkBaseSizeX,
+      offsetZ: coords.y * this.terrainChunkBaseSizeZ,
+    };
+
+    const mapData = new Float32Array(this.terrainChunkRealSizeX * this.terrainChunkRealSizeZ * 3);
+
+    BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(heightmapUrl, heightmapOptions as any, mapData, this.scene);
+    // }
+  }
+
+  private replaceMapdata(mapData: number[], mapSubX: number, mapSubZ: number): void {
+    this.terrain.mapData = mapData;
+    this.terrain.update(true);
   }
 }

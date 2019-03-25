@@ -1,8 +1,19 @@
 <div class="form-group">
   <label for="heightmapType">Heightmap generation algorithm:</label>
-  <select class="custom-select form-control" [(ngModel)]="selectedHeightmapType" id="heightmapType" name="heightmapType" required>
+  <select
+    class="custom-select form-control"
+    [(ngModel)]="selectedHeightmapType"
+    id="heightmapType"
+    name="heightmapType"
+    required
+    (change)="resetInfinite()">
     <option *ngFor="let heightmapType of heightmapTypes" value="{{heightmapType}}">{{getPrettyName(heightmapType)}}</option>
   </select>
+</div>
+
+<div class="form-group" *ngIf="isSelectedType('OpenSimplex')">
+  <label for="lacunarity">Infinite terrain:</label>
+  <input type="checkbox" class="float-right setting-input" [(ngModel)]="infiniteTerrain">
 </div>
 
 <div *ngIf="isSelectedType('Fault')">
@@ -73,7 +84,7 @@
   </div>
 
   <div *ngIf="isSelectedType('OpenSimplex')">
-    <div class="form-group">
+    <div class="form-group" *ngIf="!infiniteTerrain">
       <label for="width">Width:</label>
       <input type="number" class="float-right setting-input" [(ngModel)]="openSimplexRequestdto.width">
       <input type="range" class="custom-range" id="width" [(ngModel)]="openSimplexRequestdto.width"
@@ -82,7 +93,7 @@
       step="1">
     </div>
   
-    <div class="form-group">
+    <div class="form-group" *ngIf="!infiniteTerrain">
       <label for="height">Height:</label>
       <input type="number" class="float-right setting-input" [(ngModel)]="openSimplexRequestdto.height">
       <input type="range" class="custom-range" id="height" [(ngModel)]="openSimplexRequestdto.height"
@@ -130,11 +141,6 @@
     <div class="form-group">
       <label for="seed">Seed:</label>
       <input id="seed" type="number" class="float-right setting-input" [(ngModel)]="openSimplexRequestdto.seed">
-    </div>
-
-    <div class="form-group">
-      <label for="lacunarity">Infinite:</label>
-      <input type="checkbox" class="float-right setting-input" [(ngModel)]="openSimplexRequestdto.infinite">
     </div>
   </div>
 

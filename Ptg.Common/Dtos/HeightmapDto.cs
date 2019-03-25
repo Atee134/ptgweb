@@ -10,6 +10,8 @@ namespace Ptg.Common.Dtos
 
         public int Height { get; set; }
 
+        public int OverlappedSize { get; set; }
+
         public byte[] HeightmapByteArray { get; set; }
 
         public float[,] HeightmapOriginalArray { get; set; }

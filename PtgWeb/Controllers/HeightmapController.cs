@@ -89,6 +89,7 @@ namespace PtgWeb.Controllers
                 Id = result.Id,
                 Width = result.Width,
                 Height = result.Height,
+                OverlappedSize = result.OverlappedSize
             };
 
             return Ok(response);

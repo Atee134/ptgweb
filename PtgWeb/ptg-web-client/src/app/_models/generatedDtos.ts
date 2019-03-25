@@ -12,6 +12,7 @@ export class HeightmapDto implements IHeightmapDto {
     id!: string;
     width!: number;
     height!: number;
+    overlappedSize!: number;
     heightmapByteArray?: string | null;
     heightmapOriginalArray?: number[] | null;
 
@@ -29,6 +30,7 @@ export class HeightmapDto implements IHeightmapDto {
             this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
             this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
             this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            this.overlappedSize = data["OverlappedSize"] !== undefined ? data["OverlappedSize"] : <any>null;
             this.heightmapByteArray = data["HeightmapByteArray"] !== undefined ? data["HeightmapByteArray"] : <any>null;
             if (data["HeightmapOriginalArray"] && data["HeightmapOriginalArray"].constructor === Array) {
                 this.heightmapOriginalArray = [] as any;
@@ -50,6 +52,7 @@ export class HeightmapDto implements IHeightmapDto {
         data["Id"] = this.id !== undefined ? this.id : <any>null;
         data["Width"] = this.width !== undefined ? this.width : <any>null;
         data["Height"] = this.height !== undefined ? this.height : <any>null;
+        data["OverlappedSize"] = this.overlappedSize !== undefined ? this.overlappedSize : <any>null;
         data["HeightmapByteArray"] = this.heightmapByteArray !== undefined ? this.heightmapByteArray : <any>null;
         if (this.heightmapOriginalArray && this.heightmapOriginalArray.constructor === Array) {
             data["HeightmapOriginalArray"] = [];
@@ -71,59 +74,9 @@ export interface IHeightmapDto {
     id: string;
     width: number;
     height: number;
+    overlappedSize: number;
     heightmapByteArray?: string | null;
     heightmapOriginalArray?: number[] | null;
-}
-
-export class HeightmapInfoDto implements IHeightmapInfoDto {
-    id!: string;
-    width!: number;
-    height!: number;
-
-    constructor(data?: IHeightmapInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
-            this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
-            this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): HeightmapInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new HeightmapInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Id"] = this.id !== undefined ? this.id : <any>null;
-        data["Width"] = this.width !== undefined ? this.width : <any>null;
-        data["Height"] = this.height !== undefined ? this.height : <any>null;
-        return data; 
-    }
-
-    clone(): HeightmapInfoDto {
-        const json = this.toJSON();
-        let result = new HeightmapInfoDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IHeightmapInfoDto {
-    id: string;
-    width: number;
-    height: number;
 }
 
 export class LocationDto implements ILocationDto {
@@ -401,6 +354,57 @@ export interface IFaultHeightmapRequestDto {
     offsetPerIteration: number;
 }
 
+export class HeightmapChunkRequestDto implements IHeightmapChunkRequestDto {
+    baseHeightmapChunkId!: string;
+    offsetX!: number;
+    offsetZ!: number;
+
+    constructor(data?: IHeightmapChunkRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.baseHeightmapChunkId = data["BaseHeightmapChunkId"] !== undefined ? data["BaseHeightmapChunkId"] : <any>null;
+            this.offsetX = data["OffsetX"] !== undefined ? data["OffsetX"] : <any>null;
+            this.offsetZ = data["OffsetZ"] !== undefined ? data["OffsetZ"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): HeightmapChunkRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new HeightmapChunkRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["BaseHeightmapChunkId"] = this.baseHeightmapChunkId !== undefined ? this.baseHeightmapChunkId : <any>null;
+        data["OffsetX"] = this.offsetX !== undefined ? this.offsetX : <any>null;
+        data["OffsetZ"] = this.offsetZ !== undefined ? this.offsetZ : <any>null;
+        return data; 
+    }
+
+    clone(): HeightmapChunkRequestDto {
+        const json = this.toJSON();
+        let result = new HeightmapChunkRequestDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IHeightmapChunkRequestDto {
+    baseHeightmapChunkId: string;
+    offsetX: number;
+    offsetZ: number;
+}
+
 export class JoinGameSessionRequestDto implements IJoinGameSessionRequestDto {
     sessionId?: string | null;
     playerName?: string | null;
@@ -457,6 +461,7 @@ export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
     persistance!: number;
     lacunarity!: number;
     infinite!: boolean;
+    overlappedSize!: number;
 
     constructor(data?: IOpenSimplexRequestDto) {
         if (data) {
@@ -477,6 +482,7 @@ export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
             this.persistance = data["Persistance"] !== undefined ? data["Persistance"] : <any>null;
             this.lacunarity = data["Lacunarity"] !== undefined ? data["Lacunarity"] : <any>null;
             this.infinite = data["Infinite"] !== undefined ? data["Infinite"] : <any>null;
+            this.overlappedSize = data["OverlappedSize"] !== undefined ? data["OverlappedSize"] : <any>null;
         }
     }
 
@@ -497,6 +503,7 @@ export class OpenSimplexRequestDto implements IOpenSimplexRequestDto {
         data["Persistance"] = this.persistance !== undefined ? this.persistance : <any>null;
         data["Lacunarity"] = this.lacunarity !== undefined ? this.lacunarity : <any>null;
         data["Infinite"] = this.infinite !== undefined ? this.infinite : <any>null;
+        data["OverlappedSize"] = this.overlappedSize !== undefined ? this.overlappedSize : <any>null;
         return data; 
     }
 
@@ -517,6 +524,7 @@ export interface IOpenSimplexRequestDto {
     persistance: number;
     lacunarity: number;
     infinite: boolean;
+    overlappedSize: number;
 }
 
 export class RandomHeightmapRequestDto implements IRandomHeightmapRequestDto {
@@ -617,6 +625,7 @@ export class HeightmapInfoResponseDto implements IHeightmapInfoResponseDto {
     id!: string;
     width!: number;
     height!: number;
+    overlappedSize!: number;
 
     constructor(data?: IHeightmapInfoResponseDto) {
         if (data) {
@@ -632,6 +641,7 @@ export class HeightmapInfoResponseDto implements IHeightmapInfoResponseDto {
             this.id = data["Id"] !== undefined ? data["Id"] : <any>null;
             this.width = data["Width"] !== undefined ? data["Width"] : <any>null;
             this.height = data["Height"] !== undefined ? data["Height"] : <any>null;
+            this.overlappedSize = data["OverlappedSize"] !== undefined ? data["OverlappedSize"] : <any>null;
         }
     }
 
@@ -647,6 +657,7 @@ export class HeightmapInfoResponseDto implements IHeightmapInfoResponseDto {
         data["Id"] = this.id !== undefined ? this.id : <any>null;
         data["Width"] = this.width !== undefined ? this.width : <any>null;
         data["Height"] = this.height !== undefined ? this.height : <any>null;
+        data["OverlappedSize"] = this.overlappedSize !== undefined ? this.overlappedSize : <any>null;
         return data; 
     }
 
@@ -662,6 +673,7 @@ export interface IHeightmapInfoResponseDto {
     id: string;
     width: number;
     height: number;
+    overlappedSize: number;
 }
 
 export class JoinGameSessionMessage implements IJoinGameSessionMessage {
@@ -856,55 +868,4 @@ export enum HeightmapType {
     Fault = "Fault", 
     DiamondSquare = "DiamondSquare", 
     OpenSimplex = "OpenSimplex", 
-}
-
-export class HeightmapChunkRequestDto implements IHeightmapChunkRequestDto {
-    baseHeightmapChunkId!: string;
-    offsetX!: number;
-    offsetZ!: number;
-
-    constructor(data?: IHeightmapChunkRequestDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.baseHeightmapChunkId = data["BaseHeightmapChunkId"] !== undefined ? data["BaseHeightmapChunkId"] : <any>null;
-            this.offsetX = data["OffsetX"] !== undefined ? data["OffsetX"] : <any>null;
-            this.offsetZ = data["OffsetZ"] !== undefined ? data["OffsetZ"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): HeightmapChunkRequestDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new HeightmapChunkRequestDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["BaseHeightmapChunkId"] = this.baseHeightmapChunkId !== undefined ? this.baseHeightmapChunkId : <any>null;
-        data["OffsetX"] = this.offsetX !== undefined ? this.offsetX : <any>null;
-        data["OffsetZ"] = this.offsetZ !== undefined ? this.offsetZ : <any>null;
-        return data; 
-    }
-
-    clone(): HeightmapChunkRequestDto {
-        const json = this.toJSON();
-        let result = new HeightmapChunkRequestDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IHeightmapChunkRequestDto {
-    baseHeightmapChunkId: string;
-    offsetX: number;
-    offsetZ: number;
 }

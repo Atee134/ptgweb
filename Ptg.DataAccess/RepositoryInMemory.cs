@@ -32,6 +32,7 @@ namespace Ptg.DataAccess
                 Id = heightmapDto.Id,
                 Width = heightmapDto.Width,
                 Height = heightmapDto.Height,
+                OverlappedSize = heightmapDto.OverlappedSize,
                 HeightmapByteArray = heightmapDto.HeightmapByteArray,
             };
 
@@ -84,6 +85,7 @@ namespace Ptg.DataAccess
                     Id = heightmapDto.Id,
                     Width = heightmapDto.Width,
                     Height = heightmapDto.Height,
+                    OverlappedSize = heightmapDto.OverlappedSize,
                     HeightmapByteArray = heightmapDto.HeightmapByteArray,
                 }
             });
@@ -297,7 +299,8 @@ namespace Ptg.DataAccess
             {
                 Id = heightmap.Id,
                 Width = heightmap.Width,
-                Height = heightmap.Height
+                Height = heightmap.Height,
+                OverlappedSize = heightmap.OverlappedSize
             };
         }
 

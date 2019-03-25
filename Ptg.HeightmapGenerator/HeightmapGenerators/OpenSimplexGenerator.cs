@@ -24,6 +24,7 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             {
                 Width = width,
                 Height = height,
+                OverlappedSize = overlappedSize,
                 HeightmapOriginalArray = heightmapData,
                 HeightmapByteArray = heightmapByteArray
             };
@@ -52,6 +53,10 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 
             float[,] heightmap = new float[width, height];
 
+            //bool testMode = offsetX != -50 || offsetZ != -50;
+            //System.Random trueRnd = new System.Random();
+            //int testRandom = trueRnd.Next(0, 255);
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -74,6 +79,15 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                     }
 
                     float calculatedValue = (noiseValueSum + HEIGHT_OFFSET) * UPSCALE_MULTIPLIER;
+
+                    //if (testMode)
+                    //{
+                    //    calculatedValue = y + x;
+                    //    if (x == 50)
+                    //    {
+                    //        calculatedValue = testRandom;
+                    //    }
+                    //}
 
                     if (calculatedValue > byte.MaxValue)
                     {

@@ -11,7 +11,8 @@
       "required": [
         "Id",
         "Width",
-        "Height"
+        "Height",
+        "OverlappedSize"
       ],
       "properties": {
         "Id": {
@@ -23,6 +24,10 @@
           "format": "int32"
         },
         "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OverlappedSize": {
           "type": "integer",
           "format": "int32"
         },
@@ -36,29 +41,6 @@
             "type": "number",
             "format": "double"
           }
-        }
-      }
-    },
-    "HeightmapInfoDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "Id",
-        "Width",
-        "Height"
-      ],
-      "properties": {
-        "Id": {
-          "type": "string",
-          "format": "guid"
-        },
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },
@@ -194,6 +176,29 @@
         }
       }
     },
+    "HeightmapChunkRequestDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "BaseHeightmapChunkId",
+        "OffsetX",
+        "OffsetZ"
+      ],
+      "properties": {
+        "BaseHeightmapChunkId": {
+          "type": "string",
+          "format": "guid"
+        },
+        "OffsetX": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OffsetZ": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "JoinGameSessionRequestDto": {
       "type": "object",
       "additionalProperties": false,
@@ -217,7 +222,8 @@
         "Octaves",
         "Persistance",
         "Lacunarity",
-        "Infinite"
+        "Infinite",
+        "OverlappedSize"
       ],
       "properties": {
         "Width": {
@@ -250,6 +256,10 @@
         },
         "Infinite": {
           "type": "boolean"
+        },
+        "OverlappedSize": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -295,7 +305,8 @@
       "required": [
         "Id",
         "Width",
-        "Height"
+        "Height",
+        "OverlappedSize"
       ],
       "properties": {
         "Id": {
@@ -307,6 +318,10 @@
           "format": "int32"
         },
         "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OverlappedSize": {
           "type": "integer",
           "format": "int32"
         }
@@ -378,29 +393,6 @@
         "DiamondSquare",
         "OpenSimplex"
       ]
-    },
-    "HeightmapChunkRequestDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "BaseHeightmapChunkId",
-        "OffsetX",
-        "OffsetZ"
-      ],
-      "properties": {
-        "BaseHeightmapChunkId": {
-          "type": "string",
-          "format": "guid"
-        },
-        "OffsetX": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "OffsetZ": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
     }
   }
 }

@@ -10,6 +10,8 @@ namespace Ptg.DataAccess.Models
 
         public int Height { get; set; }
 
+        public int OverlappedSize { get; set; }
+
         public byte[] HeightmapByteArray { get; set; }
     }
 }
