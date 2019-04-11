@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using Ptg.DataAccess;
+using Ptg.Services.Interfaces;
 using Ptg.Services.Models;
 using PtgWeb.Hubs;
 using System;
@@ -15,13 +15,11 @@ namespace PtgWeb.HubServices
         private readonly static int TICK_RATE = 75;
 
         private readonly List<Broadcaster> broadcasters = new List<Broadcaster>();
-        private readonly IRepository repository;
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly IHubContext<GameManagerHub> gameManagerHubContext;
 
-        public LocationChangedBroadcasterService(IRepository repository, IServiceScopeFactory serviceScopeFactory, IHubContext<GameManagerHub> gameManagerHubContext)
+        public LocationChangedBroadcasterService(IServiceScopeFactory serviceScopeFactory, IHubContext<GameManagerHub> gameManagerHubContext)
         {
-            this.repository = repository;
             this.serviceScopeFactory = serviceScopeFactory;
             this.gameManagerHubContext = gameManagerHubContext;
         }
@@ -46,7 +44,12 @@ namespace PtgWeb.HubServices
         {
             while (!token.IsCancellationRequested)
             {
-                gameManagerHubContext.Clients.Group(sessionId.ToString()).SendAsync("locationsChanged", repository.GetLocationsInSession(sessionId));
+                using (var scope = serviceScopeFactory.CreateScope())
+                {
+                    IGameManagerService gameManagerService = scope.ServiceProvider.GetService<IGameManagerService>();
+                    gameManagerHubContext.Clients.Group(sessionId.ToString()).SendAsync("locationsChanged", gameManagerService.GetLocationsInSession(sessionId));
+                }
+
                 await Task.Delay(1000 / TICK_RATE);
             }
         }

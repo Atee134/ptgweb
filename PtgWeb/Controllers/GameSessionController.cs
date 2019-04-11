@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Ptg.Common.Dtos.Request;
 using Ptg.Common.Exceptions;
-using Ptg.DataAccess;
 using Ptg.Services.Interfaces;
 using PtgWeb.Hubs;
 
@@ -15,13 +14,11 @@ namespace PtgWeb.Controllers
     [ApiController]
     public class GameSessionController : ControllerBase
     {
-        private readonly IRepository repository;
         private readonly IGameManagerService gameManagerService;
         private readonly IHubContext<GameManagerHub> gameManagerHubContext;
 
-        public GameSessionController(IRepository repository, IGameManagerService gameManagerService, IHubContext<GameManagerHub> gameManagerHubContext)
+        public GameSessionController(IGameManagerService gameManagerService, IHubContext<GameManagerHub> gameManagerHubContext)
         {
-            this.repository = repository;
             this.gameManagerService = gameManagerService;
             this.gameManagerHubContext = gameManagerHubContext;
         }

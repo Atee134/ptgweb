@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Ptg.Common;
+﻿using Microsoft.AspNetCore.Mvc;
 using Ptg.Common.Dtos.Request;
 using Ptg.Common.Dtos.Response;
-using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.Interfaces;
 using Ptg.Services.Interfaces;
 using System;
@@ -14,29 +11,17 @@ namespace PtgWeb.Controllers
     [ApiController]
     public class HeightmapController : ControllerBase
     {
-        private readonly IRepository repository;
         private readonly ITerrainService terrainService;
-        private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
         private readonly IDiamondSquareGenerator diamondSquareGenerator;
         private readonly IOpenSimplexGenerator openSimplexGenerator;
 
-        public HeightmapController(IRepository repository, ITerrainService terrainService, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator, IOpenSimplexGenerator openSimplexGenerator)
+        public HeightmapController(ITerrainService terrainService, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator, IOpenSimplexGenerator openSimplexGenerator)
         {
-            this.repository = repository;
             this.terrainService = terrainService;
-            this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
             this.diamondSquareGenerator = diamondSquareGenerator;
             this.openSimplexGenerator = openSimplexGenerator;
-        }
-
-        [HttpPost("random")]
-        public IActionResult CreateRandomHeightmap([FromBody] RandomHeightmapRequestDto requestDto)
-        {
-            var result = terrainService.Generate(requestDto);
-
-            return Ok(result);
         }
 
         [HttpPost("fault")]
@@ -66,7 +51,7 @@ namespace PtgWeb.Controllers
         [HttpGet("{id}")]
         public IActionResult GetHeightmap(Guid id)
         {
-            var result = repository.GetHeightmap(id);
+            var result = terrainService.GetHeightmap(id);
 
             return File(result, "image/bmp");
         }
@@ -82,7 +67,7 @@ namespace PtgWeb.Controllers
         [HttpGet("{id}/info")]
         public IActionResult GetHeightmapInfo(Guid id)
         {
-            var result = repository.GetHeightmapInfo(id);
+            var result = terrainService.GetHeightmapInfo(id);
 
             var response = new HeightmapInfoResponseDto
             {
@@ -98,9 +83,9 @@ namespace PtgWeb.Controllers
         [HttpGet("~/api/splatmap/{id}")]
         public IActionResult GetSplatmap(Guid id)
         {
-            var result = repository.Getsplatmap(id);
+            var result = terrainService.GetSplatmap(id);
 
-            return File(result.SplatmapByteArray, "image/bmp");
+            return File(result, "image/bmp");
         }
     }
 }

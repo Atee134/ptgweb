@@ -304,7 +304,7 @@ namespace Ptg.DataAccess
             };
         }
 
-        public SplatmapDto Getsplatmap(Guid id)
+        public SplatmapDto GetSplatmap(Guid id)
         {
             var splatmap = splatmaps[id];
 

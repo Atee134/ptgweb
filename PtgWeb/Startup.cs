@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Ptg.DataAccess;
 using Ptg.HeightmapGenerator.HeightmapGenerators;
 using Ptg.HeightmapGenerator.Interfaces;
+using Ptg.Services;
 using Ptg.Services.Interfaces;
 using Ptg.Services.Services;
 using Ptg.SplatmapGenerator.Interfaces;
@@ -31,19 +32,11 @@ namespace PtgWeb
 
             services.AddSignalR();
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(5);//You can set Time   
+                options.IdleTimeout = TimeSpan.FromMinutes(5);
             });
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
-            services.AddScoped<IRandomHeightmapGenerator, RandomHeightmapGenerator>();
-            services.AddScoped<IFaultHeightmapGenerator, FaultHeightmapGenerator>();
-            services.AddScoped<IDiamondSquareGenerator, DiamondSquareGenerator>();
-            services.AddScoped<IOpenSimplexGenerator, OpenSimplexGenerator>();
-            services.AddScoped<IGameManagerService, GameManagerService>();
-            services.AddScoped<ITerrainService, TerrainService>();
-            services.AddSingleton<IRepository, RepositoryInMemory>(); // TODO remove reference to DataAccess, make separate service init classes in the projects
-            services.AddScoped<IRandomSplatmapGenerator, RandomSplatmapGenerator>();
-            services.AddScoped<IHeightBasedSplatmapGenerator, HeightBasedSplatmapGenerator>();
+            ServicesDependencyLoader.AddServices(services);
             services.AddSingleton<ILocationChangedBroadcasterService, LocationChangedBroadcasterService>();
         }
 
@@ -61,7 +54,6 @@ namespace PtgWeb
             app.UseCors("AllowAll");
             app.UseSignalR(options =>
             {
-                options.MapHub<HeightmapHub>("/heightmap");
                 options.MapHub<GameManagerHub>("/gameManager");
             });
 

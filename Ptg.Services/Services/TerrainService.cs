@@ -13,19 +13,15 @@ namespace Ptg.Services.Services
         private readonly static object chunkGenerationLockObj = new object();
 
         private readonly IRepository repository;
-        private readonly IRandomSplatmapGenerator randomSplatmapGenerator;
         private readonly IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator;
-        private readonly IRandomHeightmapGenerator randomHeightmapGenerator;
         private readonly IFaultHeightmapGenerator faultHeightmapGenerator;
         private readonly IDiamondSquareGenerator diamondSquareGenerator;
         private readonly IOpenSimplexGenerator openSimplexGenerator;
 
-        public TerrainService(IRepository repository, IRandomSplatmapGenerator randomSplatmapGenerator, IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator, IRandomHeightmapGenerator randomHeightmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator, IOpenSimplexGenerator openSimplexGenerator)
+        public TerrainService(IRepository repository, IHeightBasedSplatmapGenerator heightBasedSplatmapGenerator, IFaultHeightmapGenerator faultHeightmapGenerator, IDiamondSquareGenerator diamondSquareGenerator, IOpenSimplexGenerator openSimplexGenerator)
         {
             this.repository = repository;
-            this.randomSplatmapGenerator = randomSplatmapGenerator;
             this.heightBasedSplatmapGenerator = heightBasedSplatmapGenerator;
-            this.randomHeightmapGenerator = randomHeightmapGenerator;
             this.faultHeightmapGenerator = faultHeightmapGenerator;
             this.diamondSquareGenerator = diamondSquareGenerator;
             this.openSimplexGenerator = openSimplexGenerator;
@@ -41,13 +37,6 @@ namespace Ptg.Services.Services
         public Guid Generate(FaultHeightmapRequestDto requestDto)
         {
             var heightmapDto = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
-
-            return CreateHeightmap(heightmapDto);
-        }
-
-        public Guid Generate(RandomHeightmapRequestDto requestDto)
-        {
-            var heightmapDto = randomHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height);
 
             return CreateHeightmap(heightmapDto);
         }
@@ -109,6 +98,21 @@ namespace Ptg.Services.Services
                     return heightmapDto.HeightmapByteArray;
                 }
             }
+        }
+
+        public byte[] GetHeightmap(Guid id)
+        {
+            return repository.GetHeightmap(id);
+        }
+
+        public byte[] GetSplatmap(Guid id)
+        {
+            return repository.GetSplatmap(id).SplatmapByteArray;
+        }
+
+        public HeightmapInfoDto GetHeightmapInfo(Guid id)
+        {
+            return repository.GetHeightmapInfo(id);
         }
 
         private HeightmapDto CreateHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ)

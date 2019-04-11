@@ -26,7 +26,7 @@ namespace Ptg.DataAccess
         BaseHeightmapChunkDto GetBaseHeightmapChunk(Guid id);
         byte[] GetHeightmapChunk(Guid baseChunkId, int offsetX, int offsetZ);
         HeightmapInfoDto GetHeightmapInfo(Guid id);
-        SplatmapDto Getsplatmap(Guid id);
+        SplatmapDto GetSplatmap(Guid id);
         List<PlayerDto> GetPlayers(Guid sessionId);
         bool HeightmapExists(Guid id);
         bool SplatmapExists(Guid id);
