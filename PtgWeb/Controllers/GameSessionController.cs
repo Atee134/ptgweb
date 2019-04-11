@@ -52,7 +52,7 @@ namespace PtgWeb.Controllers
                 throw new PtgInvalidActionException("The provided Game Lobby ID is not valid.");
             }
 
-            gameManagerService.AddPlayer(sessionGuid, requestDto.PlayerName); // TODO add error handling middleware, if session is not found return 404 to client
+            gameManagerService.AddPlayer(sessionGuid, requestDto.PlayerName);
 
             HttpContext.Session.SetString("SessionId", requestDto.SessionId.ToString());
             HttpContext.Session.SetString("PlayerName", requestDto.PlayerName);

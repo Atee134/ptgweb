@@ -67,10 +67,9 @@ export class GameInitializerService {
     for (const loc of locations) {
       const head = BABYLON.MeshBuilder.CreateSphere('head', {diameter: 0.55}, this.scene);
       head.position.y = 1.5;
-
       const body = BABYLON.MeshBuilder.CreateSphere('body', {diameterX: 1, diameterY: 3, diameterZ: 0.6}, this.scene);
       const backpack = BABYLON.MeshBuilder.CreateBox('backpack', {height: 1.15, width: 0.65, depth: 0.25}, this.scene);
-      backpack.position.z = 0.4;
+      backpack.position.z = -0.4;
       backpack.position.y = 0.25;
 
       const playerMesh = BABYLON.Mesh.MergeMeshes([head, body, backpack], true);
@@ -78,6 +77,12 @@ export class GameInitializerService {
       playerMesh.position.x = loc.positionX;
       playerMesh.position.y = loc.positionY;
       playerMesh.position.z = loc.positionZ;
+
+      const playerMat = new BABYLON.StandardMaterial('backpackMat', this.scene);
+      playerMat.diffuseColor = new BABYLON.Color3(1, 1, 1);
+      playerMat.ambientColor = new BABYLON.Color3(0.4, 0.8, 0.4);
+      playerMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+      playerMesh.material = playerMat;
 
       const player: Player = {
         Mesh: playerMesh,
@@ -196,7 +201,7 @@ export class GameInitializerService {
   private initializeCamera(scene: BABYLON.Scene,
                            startPosition: BABYLON.Vector3,
                            cameraSize: BABYLON.Vector3,
-                           canvas: HTMLCanvasElement): BABYLON.Camera {
+                           canvas: HTMLCanvasElement): BABYLON.UniversalCamera {
     const camera = new BABYLON.UniversalCamera('universalCamera', startPosition, scene);
     camera.attachControl(canvas, true);
     camera.ellipsoid = cameraSize;

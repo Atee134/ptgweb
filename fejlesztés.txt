@@ -32,7 +32,6 @@ authentikáció\authorizáció nincs benn
 szerintem felesleges, session hijackelés most így lehetséges, viszont a legrosszabb ami történhet, hogy nem a lobby létrehozója indítja el a játékmenetet
 
 architektúra menyire érdekes?
-szerver oldalt több projektbõl épül fel az alkalmazás, lazán csatolva.
 kliens oldalon komponensekre van osztva az egész angularral, maga a játék is egy külön komponensként jelenik meg benn, lazy loaded modulokkal
 error handling szerver oldalt is 1 osztály kezeli, kliens oldalon is 1 dedikált osztály
 

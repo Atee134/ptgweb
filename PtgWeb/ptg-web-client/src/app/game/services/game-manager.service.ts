@@ -91,6 +91,7 @@ export class GameManagerService {
         player.Mesh.position.x = loc.positionX;
         player.Mesh.position.y = loc.positionY;
         player.Mesh.position.z = loc.positionZ;
+        player.Mesh.rotation.y = loc.rotationY;
       }
     }
   }
@@ -154,6 +155,7 @@ export class GameManagerService {
     this.ownLocation.positionX = this.game.camera.position.x;
     this.ownLocation.positionY = this.game.camera.position.y - (this.cameraAltitudeOffset / 2);
     this.ownLocation.positionZ = this.game.camera.position.z;
+    this.ownLocation.rotationY = this.game.camera.rotation.y;
   }
 
   private getRandom(min: number, max: number) {
