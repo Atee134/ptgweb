@@ -14,17 +14,15 @@ import { SessionService } from 'src/app/_services/session.service';
 })
 export class LobbySettingsComponent implements OnInit {
   @Input() gameSessionId: string;
-  public infiniteTerrain = true;
+  public infiniteTerrain = false;
+  public isRandom = true;
+  public seed = 0;
   public diamondSquareRequestDto: DiamondSquareHeightmapRequestDto;
   public diamondSquareSizePossibleValues = [
-    65,
-    129,
-    257,
     513,
     1025,
-    2049,
   ];
-  public diamondSquareSizeIndex = 3;
+  public diamondSquareSizeIndex = 1;
   public faultRequestDto: FaultHeightmapRequestDto;
   public openSimplexRequestdto: OpenSimplexRequestDto;
 
@@ -42,19 +40,19 @@ export class LobbySettingsComponent implements OnInit {
 
   private initDtosWithDefaults() {
     this.diamondSquareRequestDto = new DiamondSquareHeightmapRequestDto({
-      size: 257,
+      size: 513,
       offsetRange: 350,
       offsetReductionRate: 0.55
     });
     this.faultRequestDto = new FaultHeightmapRequestDto({
-      width: 256,
-      height: 256,
-      iterationCount: 500,
+      width: 512,
+      height: 512,
+      iterationCount: 400,
       offsetPerIteration: 5
     });
     this.openSimplexRequestdto = new OpenSimplexRequestDto({
-      width: 128,
-      height: 128,
+      width: 1024,
+      height: 1024,
       overlappedSize: 0,
       seed: 134,
       scale: 0.02,
@@ -101,18 +99,36 @@ export class LobbySettingsComponent implements OnInit {
 
     switch (this.selectedHeightmapType) {
       case HeightmapType.Fault: {
+        if (!this.isRandom) {
+          this.faultRequestDto.seed = this.seed;
+        } else {
+          this.faultRequestDto.seed = null;
+        }
+
         this.heightmapService.generateFaultHeightmap(this.faultRequestDto).subscribe(terrainDataId => {
           this.sendStartSession(terrainDataId);
         });
         break;
       }
       case HeightmapType.DiamondSquare: {
+        if (!this.isRandom) {
+          this.diamondSquareRequestDto.seed = this.seed;
+        } else {
+          this.diamondSquareRequestDto.seed = null;
+        }
+
         this.heightmapService.generateDiamondSquareHeightmap(this.diamondSquareRequestDto).subscribe(terrainDataId => {
           this.sendStartSession(terrainDataId);
         });
         break;
       }
       case HeightmapType.OpenSimplex: {
+        if (!this.isRandom) {
+          this.openSimplexRequestdto.seed = this.seed;
+        } else {
+          this.openSimplexRequestdto.seed = null;
+        }
+
         if (this.infiniteTerrain) {
           this.openSimplexRequestdto.infinite = true;
           this.openSimplexRequestdto.width = 256;

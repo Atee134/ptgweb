@@ -44,6 +44,34 @@
         }
       }
     },
+    "HeightmapInfoDto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Id",
+        "Width",
+        "Height",
+        "OverlappedSize"
+      ],
+      "properties": {
+        "Id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "Width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OverlappedSize": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "LocationDto": {
       "type": "object",
       "additionalProperties": false,
@@ -145,6 +173,10 @@
           "format": "double",
           "maximum": 1.0,
           "minimum": 0.0
+        },
+        "Seed": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -173,6 +205,10 @@
         "OffsetPerIteration": {
           "type": "number",
           "format": "double"
+        },
+        "Seed": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -217,7 +253,6 @@
       "required": [
         "Width",
         "Height",
-        "Seed",
         "Scale",
         "Octaves",
         "Persistance",
@@ -258,24 +293,6 @@
           "type": "boolean"
         },
         "OverlappedSize": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "RandomHeightmapRequestDto": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "Width",
-        "Height"
-      ],
-      "properties": {
-        "Width": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Height": {
           "type": "integer",
           "format": "int32"
         }

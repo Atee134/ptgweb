@@ -22,6 +22,8 @@ export class GameManagerService {
   private game: Game;
   private terrainDataId: string;
   private infinite: boolean;
+  private terrainData: TerrainData;
+  private cameraBlockDistance = 100;
 
   constructor(
     private gameInitializerService: GameInitializerService,
@@ -46,6 +48,7 @@ export class GameManagerService {
   }
 
   private onTerrainLoaded(terrainData: TerrainData) {
+    this.terrainData = terrainData;
     this.chunkManagerService.initialize(terrainData, this.terrainDataId, this.game.scene);
     this.playerManagerService.initialize(this.game, terrainData, this.sessionId);
     this.startRendering(this.game.engine, this.game.scene);
@@ -54,16 +57,30 @@ export class GameManagerService {
   private startRendering(engine: BABYLON.Engine, scene: BABYLON.Scene): void {
     engine.runRenderLoop(() => {
 
-      this.playerManagerService.update();
-
       if (this.infinite) {
         this.chunkManagerService.manageChunks(this.game.camera.position);
       } else {
-        // TODO add invisible camera wall here
+        this.clampCamera();
       }
+
+      this.playerManagerService.update();
 
       scene.render();
     });
   }
 
+  private clampCamera() {
+    if (this.game.camera.position.x + this.cameraBlockDistance >  this.terrainData.heightmapInfo.width / 2) {
+      this.game.camera.position.x = this.terrainData.heightmapInfo.width / 2 - this.cameraBlockDistance;
+    }
+    if (this.game.camera.position.x - this.cameraBlockDistance <  -this.terrainData.heightmapInfo.width / 2) {
+      this.game.camera.position.x = -this.terrainData.heightmapInfo.width / 2 + this.cameraBlockDistance;
+    }
+    if (this.game.camera.position.z + this.cameraBlockDistance >  this.terrainData.heightmapInfo.height / 2) {
+      this.game.camera.position.z = this.terrainData.heightmapInfo.height / 2 - this.cameraBlockDistance;
+    }
+    if (this.game.camera.position.z - this.cameraBlockDistance <  -this.terrainData.heightmapInfo.height / 2) {
+      this.game.camera.position.z = -this.terrainData.heightmapInfo.height / 2 + this.cameraBlockDistance;
+    }
+  }
 }

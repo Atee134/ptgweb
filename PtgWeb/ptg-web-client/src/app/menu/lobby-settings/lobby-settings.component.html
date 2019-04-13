@@ -16,12 +16,22 @@
   <input type="checkbox" class="float-right setting-input" [(ngModel)]="infiniteTerrain">
 </div>
 
+<div class="form-group">
+  <label for="israndom">Random:</label>
+  <input id="israndom" type="checkbox" class="float-right setting-input" [(ngModel)]="isRandom">
+</div>
+
+<div class="form-group" *ngIf="!isRandom">
+  <label for="seed">Seed:</label>
+  <input id="seed" type="number" class="float-right setting-input" [(ngModel)]="seed">
+</div>
+
 <div *ngIf="isSelectedType('Fault')">
   <div class="form-group">
     <label for="width">Width:</label>
     <input type="number" class="float-right setting-input" [(ngModel)]="faultRequestDto.width">
     <input type="range" class="custom-range" id="width" [(ngModel)]="faultRequestDto.width"
-    min="64"
+    min="512"
     max="2048"
     step="1">
   </div>
@@ -30,7 +40,7 @@
     <label for="height">Height:</label>
     <input type="number" class="float-right setting-input" [(ngModel)]="faultRequestDto.height">
     <input type="range" class="custom-range" id="height" [(ngModel)]="faultRequestDto.height"
-    min="64"
+    min="512"
     max="2048"
     step="1">
   </div>
@@ -60,7 +70,7 @@
       <input type="number" class="float-right setting-input" [(ngModel)]="diamondSquareRequestDto.size" disabled>
       <input type="range" class="custom-range" id="size" [(ngModel)]="diamondSquareSizeIndex" (ngModelChange)="onDiamondSquareSizeChanged()"
       min="1"
-      max="6"
+      max="2"
       step="1">
     </div>
   
@@ -88,8 +98,8 @@
       <label for="width">Width:</label>
       <input type="number" class="float-right setting-input" [(ngModel)]="openSimplexRequestdto.width">
       <input type="range" class="custom-range" id="width" [(ngModel)]="openSimplexRequestdto.width"
-      min="64"
-      max="2048"
+      min="512"
+      max="4096"
       step="1">
     </div>
   
@@ -97,8 +107,8 @@
       <label for="height">Height:</label>
       <input type="number" class="float-right setting-input" [(ngModel)]="openSimplexRequestdto.height">
       <input type="range" class="custom-range" id="height" [(ngModel)]="openSimplexRequestdto.height"
-      min="64"
-      max="2048"
+      min="512"
+      max="4096"
       step="1">
     </div>
   

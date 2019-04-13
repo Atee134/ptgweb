@@ -6,5 +6,6 @@
         public int Height { get; set; }
         public int IterationCount { get; set; }
         public float OffsetPerIteration { get; set; }
+        public int? Seed { get; set; }
     }
 }

@@ -29,25 +29,27 @@ namespace Ptg.Services.Services
 
         public Guid Generate(DiamondSquareHeightmapRequestDto requestDto)
         {
-            var heightmapDto = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate);
+            var heightmapDto = diamondSquareGenerator.Generate(requestDto.Size, requestDto.OffsetRange, requestDto.OffsetReductionRate, requestDto.Seed);
 
             return CreateHeightmap(heightmapDto);
         }
 
         public Guid Generate(FaultHeightmapRequestDto requestDto)
         {
-            var heightmapDto = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration);
+            var heightmapDto = faultHeightmapGenerator.GenerateHeightmap(requestDto.Width, requestDto.Height, requestDto.IterationCount, requestDto.OffsetPerIteration, requestDto.Seed);
 
             return CreateHeightmap(heightmapDto);
         }
 
         public Guid Generate(OpenSimplexRequestDto requestDto)
         {
+            int seed = requestDto.Seed.HasValue ? requestDto.Seed.Value : new Random().Next();
+
             var heightmapDto = openSimplexGenerator.Generate(
                 requestDto.Width,
                 requestDto.Height,
                 requestDto.OverlappedSize,
-                requestDto.Seed,
+                seed,
                 requestDto.Scale,
                 requestDto.Octaves,
                 requestDto.Persistance,
@@ -64,7 +66,7 @@ namespace Ptg.Services.Services
                     Width = requestDto.Width,
                     Height = requestDto.Height,
                     OverlappedSize = requestDto.OverlappedSize,
-                    Seed = requestDto.Seed,
+                    Seed = seed,
                     Scale = requestDto.Scale,
                     Octaves = requestDto.Octaves,
                     Persistance = requestDto.Persistance,

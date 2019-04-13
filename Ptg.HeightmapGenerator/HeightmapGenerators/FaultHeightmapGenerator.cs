@@ -16,10 +16,12 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             Bottom
         }
 
-        private readonly Random random = new Random(10);
+        private Random random;
 
-        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, float offsetPerIteration)
+        public HeightmapDto GenerateHeightmap(int width, int height, int iterationCount, float offsetPerIteration, int? seed)
         {
+            random = seed.HasValue ? new Random(seed.Value) : new Random();
+
             float[,] heightmapData = InitHeightmapData(width, height);
 
             for (int i = 0; i < iterationCount; i++)

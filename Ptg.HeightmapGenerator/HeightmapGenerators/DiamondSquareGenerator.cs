@@ -8,10 +8,12 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 {
     public class DiamondSquareGenerator : IDiamondSquareGenerator
     {
-        private static readonly Random random = new Random();
+        private Random random;
 
-        public HeightmapDto Generate(int size, float offsetRange, float offsetReductionRate)
+        public HeightmapDto Generate(int size, float offsetRange, float offsetReductionRate, int? seed)
         {
+            random = seed.HasValue ? new Random(seed.Value) : new Random();
+
             float[,] heightmapData = GenerateInitialHeightmapData(size);
             int stepSize = size - 1;
 

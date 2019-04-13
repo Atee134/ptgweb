@@ -119,7 +119,7 @@ export class GameInitializerService {
   }
 
   private createSkyBox(scene: BABYLON.Scene): void {
-    const skybox = BABYLON.MeshBuilder.CreateBox('skyBox', {size: 10000.0}, scene);
+    const skybox = BABYLON.MeshBuilder.CreateBox('skyBox', {size: 9000.0}, scene);
     const skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('assets/textures/skybox/miramar', scene);
@@ -173,7 +173,7 @@ export class GameInitializerService {
 
   private createTerrain(mapData: number[], mapSubX: number, mapSubZ: number): void {
     const options = {
-      terrainSub: 200,
+      terrainSub: 100,
       mapData,
       mapSubX,
       mapSubZ

@@ -2,6 +2,7 @@
 using Ptg.Common.Dtos;
 using Ptg.HeightmapGenerator.Interfaces;
 using Ptg.HeightmapGenerator.NoiseFunctions;
+using System;
 using System.Drawing;
 using System.Linq;
 
@@ -32,8 +33,8 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
 
         public float[,] GenerateHeightmap(int width, int height, int seed, float scale, int octaves, float persistance, float lacunarity, int offsetX, int offsetZ)
         {
-            var noise = new OpenSimplexNoise(seed);
-            System.Random rnd = new System.Random(seed);
+            OpenSimplexNoise noise = new OpenSimplexNoise(seed);
+            Random rnd = new Random(seed);
 
             float amplitude = 1f;
             float frequency = 1f;
@@ -52,10 +53,6 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
             }
 
             float[,] heightmap = new float[width, height];
-
-            //bool testMode = offsetX != -50 || offsetZ != -50;
-            //System.Random trueRnd = new System.Random();
-            //int testRandom = trueRnd.Next(0, 255);
 
             for (int y = 0; y < height; y++)
             {
@@ -79,15 +76,6 @@ namespace Ptg.HeightmapGenerator.HeightmapGenerators
                     }
 
                     float calculatedValue = (noiseValueSum + HEIGHT_OFFSET) * UPSCALE_MULTIPLIER;
-
-                    //if (testMode)
-                    //{
-                    //    calculatedValue = y + x;
-                    //    if (x == 50)
-                    //    {
-                    //        calculatedValue = testRandom;
-                    //    }
-                    //}
 
                     if (calculatedValue > byte.MaxValue)
                     {

@@ -41,8 +41,8 @@ export class PlayerManagerService {
   }
 
   private setInitialLocation(terrainData: TerrainData) {
-    this.game.camera.position.x = this.getRandom(-terrainData.heightmapInfo.width / 2, terrainData.heightmapInfo.width / 2);
-    this.game.camera.position.z = this.getRandom(-terrainData.heightmapInfo.height / 2, terrainData.heightmapInfo.height / 2);
+    this.game.camera.position.x = this.getRandom(-terrainData.heightmapInfo.width / 8, terrainData.heightmapInfo.width / 8);
+    this.game.camera.position.z = this.getRandom(-terrainData.heightmapInfo.height / 8, terrainData.heightmapInfo.height / 8);
     this.setCameraOnGround(this.game.camera, terrainData.terrain);
 
     this.ownLocation = new LocationDto({

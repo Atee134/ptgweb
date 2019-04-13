@@ -10,5 +10,7 @@ namespace Ptg.Common.Dtos.Request
 
         [Range(0,1)]
         public float OffsetReductionRate { get; set; }
+
+        public int? Seed { get; set; }
     }
 }
