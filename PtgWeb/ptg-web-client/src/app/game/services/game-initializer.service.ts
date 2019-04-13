@@ -22,6 +22,7 @@ export class GameInitializerService {
   private heightmapInfo: HeightmapInfoResponseDto;
 
   private scene: BABYLON.Scene;
+  private engine: BABYLON.Engine;
   private terrainDataId: string;
   private sceneSettings = {
     gravity: new BABYLON.Vector3(0, -0.2, 0),
@@ -39,22 +40,26 @@ export class GameInitializerService {
     keysLeft: ['A'.charCodeAt(0), 'a'.charCodeAt(0), 37]
   };
 
-  private resolution = { width: 1920, height: 1080 }; // TODO add this as an input component, and make it selectable from the settings
+  private resolution = { width: 1920, height: 1080 };
+
+  private alreadyLocked = false;
 
   constructor(private heightmapService: HeightmapService) { }
 
   public initializeGame(terrainDataId: string, canvas: HTMLCanvasElement): Game {
     this.terrainDataId = terrainDataId;
-    this.setCanvasResolution(canvas, this.resolution);
-    const engine = this.initializeEngine(canvas);
-    const scene = this.initializeScene(engine);
+    this.engine = this.initializeEngine(canvas);
+    this.setCanvasResolution(canvas);
+    const scene = this.initializeScene(this.engine);
     this.scene = scene;
     const camera = this.initializeCamera(scene, this.sceneSettings.cameraStartPosition, this.sceneSettings.cameraSize, canvas);
     this.createSkyBox(scene);
     this.initDynamicTerrain(scene, terrainDataId);
+    this.addResizeListener(canvas);
+    this.addPointerLockListeners(canvas);
 
     const game: Game = {
-      engine,
+      engine: this.engine,
       scene,
       camera,
     };
@@ -95,10 +100,7 @@ export class GameInitializerService {
     return players;
   }
 
-  private setCanvasResolution(canvas: HTMLCanvasElement, resolution: any): void {
-    canvas.style.width = `${resolution.width}px`;
-    canvas.style.height = `${resolution.height}px`;
-  }
+
 
   private initializeEngine(canvas: HTMLCanvasElement): BABYLON.Engine {
     const engine = new BABYLON.Engine(canvas, true);
@@ -224,5 +226,50 @@ export class GameInitializerService {
     }
 
     return camera;
+  }
+
+  private addResizeListener(canvas: HTMLCanvasElement) {
+    window.addEventListener('resize', () => {
+      this.setCanvasResolution(canvas);
+    });
+  }
+
+  private setCanvasResolution(canvas: HTMLCanvasElement): void {
+    canvas.style.width = `${this.resolution.width}px`;
+    canvas.style.height = `${this.resolution.height}px`;
+    this.engine.resize();
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+  }
+
+  private addPointerLockListeners(canvas: HTMLCanvasElement) {
+      this.scene.onPointerDown = () => {
+          if (!this.alreadyLocked) {
+              canvas.requestPointerLock = canvas.requestPointerLock
+              || canvas.msRequestPointerLock
+              || canvas.mozRequestPointerLock
+              || canvas.webkitRequestPointerLock;
+              canvas.requestPointerLock();
+          }
+      };
+
+      document.addEventListener('pointerlockchange', this.pointerLockListener);
+      document.addEventListener('mspointerlockchange', this.pointerLockListener);
+      document.addEventListener('mozpointerlockchange', this.pointerLockListener);
+      document.addEventListener('webkitpointerlockchange', this.pointerLockListener);
+  }
+
+  private pointerLockListener() {
+    const doc = document as any;
+    const element = doc.pointerLockElement
+    || doc.msPointerLockElement
+    || doc.mozPointerLockElement
+    || doc.webkitPointerLockElement || null;
+
+    if (element) {
+      this.alreadyLocked = true;
+    } else {
+      this.alreadyLocked = false;
+    }
   }
 }

@@ -42,63 +42,10 @@ export class ChunkManagerService {
     this.terrainChunkRealSizeZ = terrainData.heightmapInfo.height + terrainData.heightmapInfo.overlappedSize * 2;
     this.terrainChunkHalfBaseSizeX = this.terrainChunkBaseSizeX / 2;
     this.terrainChunkHalfBaseSizeZ = this.terrainChunkBaseSizeZ / 2;
-
-    window.addEventListener('keypress', (e) => {
-      if (e.keyCode === 32) {
-          console.log('Chunkcoord X: ' + this.currentChunkCoords.x + '   chunkcoord Z: ' + this.currentChunkCoords.y);
-      }
-  }, false);
   }
 
   public manageChunks(currentPosition: BABYLON.Vector3) {
     this.refreshChunkCoords(currentPosition);
-
-
-
-    // // Check position to request new chunks
-    // const chunksNeeded: BABYLON.Vector2[] = [];
-
-    // // X direction
-    // const upperXBoundary =
-    //   this.getBoundaryValue(this.currentChunkCoords.x, this.terrainChunkHalfSizeX, this.terrainChunkHalfSizeX, true);
-
-    // if (currentPosition.x > upperXBoundary) {
-    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x + 1, this.currentChunkCoords.y));
-    // }
-
-    // const lowerXBoundary =
-    //   this.getBoundaryValue(this.currentChunkCoords.x, this.terrainChunkHalfSizeX, this.terrainChunkHalfSizeX, false);
-
-    // if (currentPosition.x < lowerXBoundary) {
-    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x - 1, this.currentChunkCoords.y));
-    // }
-
-    // // Z direction
-    // const upperZBoundary =
-    //   this.getBoundaryValue(this.currentChunkCoords.y, this.terrainChunkHalfSizeZ, this.terrainChunkHalfSizeZ, true);
-
-    // if (currentPosition.z > upperZBoundary) {
-    //   if (chunksNeeded.length > 0) {
-    //     const xDirection = chunksNeeded[0];
-    //     chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y + 1));
-    //   }
-    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y + 1));
-    // }
-
-    // const lowerZBoundary =
-    // this.getBoundaryValue(this.currentChunkCoords.y, this.terrainChunkHalfSizeZ, this.terrainChunkHalfSizeZ, false);
-
-    // if (currentPosition.z < lowerZBoundary) {
-    //   if (chunksNeeded.length > 0) {
-    //     const xDirection = chunksNeeded[0];
-    //     chunksNeeded.push(new BABYLON.Vector2(xDirection.x, this.currentChunkCoords.y - 1));
-    //   }
-    //   chunksNeeded.push(new BABYLON.Vector2(this.currentChunkCoords.x, this.currentChunkCoords.y - 1));
-    // }
-
-    // for (const chunkNeeded of chunksNeeded) {
-    //   this.requestChunk(chunkNeeded);
-    // }
   }
 
   private getBoundaryValue(currentChunkCoord: number, terrainChunkSize: number, terrainChunkHalfSize: number, upper: boolean): number {
