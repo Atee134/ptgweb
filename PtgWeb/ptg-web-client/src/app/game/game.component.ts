@@ -19,7 +19,6 @@ export class GameComponent implements OnInit {
     const sessionId = sessionStorage.getItem('sessionId');
     const infinite = sessionStorage.getItem('infinite') === 'true';
     const canvas = this.viewPort.nativeElement as HTMLCanvasElement;
-    // TODO add settings inside initializer to this constructor
     this.gameManagerService.startGame(sessionId, terrainDataId, canvas, infinite);
   }
 }
