@@ -131,9 +131,9 @@ export class LobbySettingsComponent implements OnInit {
 
         if (this.infiniteTerrain) {
           this.openSimplexRequestdto.infinite = true;
-          this.openSimplexRequestdto.width = 256;
-          this.openSimplexRequestdto.height = 256;
-          this.openSimplexRequestdto.overlappedSize = 0;
+          this.openSimplexRequestdto.width = 512;
+          this.openSimplexRequestdto.height = 512;
+          this.openSimplexRequestdto.overlappedSize = 150;
           this.heightmapService.generateOpenSimplexHeightmap(this.openSimplexRequestdto).subscribe(terrainDataId => {
             this.sendStartSession(terrainDataId);
           });
