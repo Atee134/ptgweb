@@ -33,6 +33,11 @@ namespace Ptg.Services.Services
                 throw new PtgNotFoundException($"Session with ID: {sessionId} does not exist.");
             }
 
+            if (repository.GetPlayers(sessionId).Any(p => p.Name == playerName))
+            {
+                throw new PtgInvalidActionException($"Player with name: {playerName} already is in session, choose another name.");
+            }
+
             var playerDto = new PlayerDto
             {
                 SessionId = sessionId,

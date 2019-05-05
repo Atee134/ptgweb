@@ -7,9 +7,7 @@ import '../extensions/babylon.dynamicTerrain.js';
 import { Injectable } from '@angular/core';
 import { GameInitializerService } from './game-initializer.service';
 import { SignalRService } from 'src/app/shared/signalr.service';
-import { MapLoadedMessage, LocationDto, LocationChangedMessage, HeightmapInfoResponseDto } from '../../_models/generatedDtos.js';
 import { Game } from '../interfaces/game.js';
-import { Player } from '../interfaces/player.js';
 import { ChunkManagerService } from './chunk-manager.service';
 import { TerrainData } from '../interfaces/terrainData.js';
 import { PlayerManagerService } from './player-manager.service.js';
@@ -27,7 +25,6 @@ export class GameManagerService {
 
   constructor(
     private gameInitializerService: GameInitializerService,
-    private signalrService: SignalRService,
     private chunkManagerService: ChunkManagerService,
     private playerManagerService: PlayerManagerService) { }
 
